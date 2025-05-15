@@ -24,7 +24,7 @@ public class RepositorioPersona : IRepositorioPersona
        int id;
        using var reader = new StreamReader(_archivo_id);
        int ultId = int.Parse(reader.ReadToEnd());
-       id=ultId++;
+       id= ultId + 1;
        using var writer = new StreamWriter(_archivo_id, false);
             {
                 writer.Write(id);
@@ -115,7 +115,29 @@ public class RepositorioPersona : IRepositorioPersona
 
     public void ModificarPersona(Persona persona)
     {
-        throw new NotImplementedException();
+      if (!ExistePersonaPorId(persona.Id)) { 
+        throw new KeyNotFoundException($"ID {persona.Id} no encontrado");  //Validar si existe la persona con el Id
+      }
+      var nuevasLineas = new List<string>();
+      using (var reader = new StreamReader(_archivo))
+      {
+        string linea;
+        while ((linea = reader.ReadLine()) != null)
+        {
+            Persona p = convertirString(linea);
+            if (p.Id == persona.Id)
+                nuevasLineas.Add(cadenaPersona(persona));    // actualiza los datos
+            else
+                nuevasLineas.Add(linea);                    // mantiene los datos
+        }
+      }
+      using (var writer = new StreamWriter(_archivo, false))
+      {
+        foreach (string l in nuevasLineas)                       //Abre archivo y modifica datos viejos con nuevos
+        {
+            writer.WriteLine(l);
+        }
+      }
     }
 
     public Persona? ObtenerPersona(int id)
