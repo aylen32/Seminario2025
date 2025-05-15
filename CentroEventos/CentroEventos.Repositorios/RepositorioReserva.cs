@@ -1,5 +1,6 @@
 using System;
 using CentroEventos.Aplicacion;
+using CentroEventos.Aplicacion.CasosUso;
 using CentroEventos.Aplicacion.Validaciones;
 
 namespace CentroEventos.Repositorios;
@@ -13,7 +14,7 @@ public class RepositorioReserva : IRepositorioReserva
        int id;
        using var reader = new StreamReader(_archivo_id);
        int ultId = int.Parse(reader.ReadToEnd());
-       id=ultId++;
+       id=++ultId;
        using var writer = new StreamWriter(_archivo_id, false);
             {
                 writer.Write(id);
@@ -107,11 +108,33 @@ public class RepositorioReserva : IRepositorioReserva
 
     public IEnumerable<Reserva> ObtenerReservasPorEvento(int eventoId)
     {
-        throw new NotImplementedException();
+        List<Reserva> reservas = new List<Reserva>();
+       using var reader = new StreamReader(_archivo);
+       string? unaReserva;
+       while((unaReserva=reader.ReadLine())!=null){
+            if(!string.IsNullOrWhiteSpace(unaReserva)){
+               Reserva r = convertirString(unaReserva);
+               if(r.EventoDeportivoId==eventoId){
+                    reservas.Add(r);
+               }
+            }
+       }
+       return reservas;
     }
 
     public IEnumerable<Reserva> ObtenerReservasPorPersona(int personaId)
     {
-        throw new NotImplementedException();
+        List<Reserva> reservas = new List<Reserva>();
+       using var reader = new StreamReader(_archivo);
+       string? unaReserva;
+       while((unaReserva=reader.ReadLine())!=null){
+            if(!string.IsNullOrWhiteSpace(unaReserva)){
+               Reserva r = convertirString(unaReserva);
+               if(r.EventoDeportivoId==personaId){
+                    reservas.Add(r);
+               }
+            }
+       }
+       return reservas;      
     }
 }
