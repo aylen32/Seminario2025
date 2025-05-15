@@ -26,7 +26,7 @@ public class RepositorioReserva : IRepositorioReserva
         
     }
     private string cadenaReserva(Reserva reserva){
-        return reserva.Id +","+reserva.PersonaId+","+reserva.EventoDeportivoId+","+reserva.FechaAltaReserva;
+        return reserva.Id +","+reserva.PersonaId+","+reserva.EventoDeportivoId+","+reserva.FechaAltaReserva+","+reserva.Estado;
     }
     public void AgregarReserva(Reserva reserva)
     {
@@ -34,10 +34,39 @@ public class RepositorioReserva : IRepositorioReserva
         using var sw = new StreamWriter(_archivo, true);
         sw.WriteLine(cadenaReserva(reserva));
     }
+      private static Reserva convertirString(string r)
+        {
+        string[] partes = r.Split(",");
+        Reserva re = new Reserva();
+        re.Id= int.Parse(partes[0]);
+        re.PersonaId= int.Parse(partes[1]);
+        re.EventoDeportivoId=int.Parse(partes[2]);
+        re.FechaAltaReserva=DateTime.Parse(partes[3]);
+        //re.Estado=(partes[4]); Averiguar cómo parsear un Enum!!
+        return re;
+        }
 
     public void EliminarReserva(int id)
     {
-        throw new NotImplementedException();
+        using var reader = new StreamReader(_archivo);
+        using var writer = new StreamWriter(_archivo,false);
+                List<string> nuevasLineas = new List<string>();        
+        if(!ExisteReservaPorId(id)){
+            throw new KeyNotFoundException($"ID {id} no encontrado");
+        }else{
+            string linea;
+            while((linea=reader.ReadLine())!=null){
+
+                Reserva r = convertirString(linea);
+                if(r.Id!=id){
+                    nuevasLineas.Add(linea);
+                }
+            }
+            foreach (string l in nuevasLineas)
+            {
+                writer.WriteLine(l);
+            }
+        }
     }
 
     public bool ExisteReservaDuplicada(int personaId, int eventoId)
@@ -47,7 +76,15 @@ public class RepositorioReserva : IRepositorioReserva
 
     public bool ExisteReservaPorId(int id)
     {
-        throw new NotImplementedException();
+        using var reader = new StreamReader(_archivo);
+        string linea;
+        while((linea = reader.ReadLine())!=null){
+            Reserva r = convertirString(linea);
+            if(r.Id==id){
+                return true;
+            }
+        }
+        return false;
     }
 
     public void ModificarReserva(Reserva reserva)
@@ -57,7 +94,15 @@ public class RepositorioReserva : IRepositorioReserva
 
     public Reserva ObtenerReserva(int id)
     {
-        throw new NotImplementedException();
+        using var reader = new StreamReader(_archivo);
+        string? unaReserva;
+        while((unaReserva= reader.ReadLine())!=null){
+            Reserva r = convertirString(unaReserva);
+            if(r.Id==id){
+                return r;
+            }
+        }
+        return null;
     }
 
     public IEnumerable<Reserva> ObtenerReservasPorEvento(int eventoId)

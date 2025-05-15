@@ -41,7 +41,26 @@ public class RepositorioPersona : IRepositorioPersona
     }
     public void EliminarPersona(int id)
     {
-        throw new NotImplementedException();
+        using var reader = new StreamReader(_archivo);
+        using var writer = new StreamWriter(_archivo,false);
+                List<string> nuevasLineas = new List<string>();        
+        if(!ExistePersonaPorId(id)){
+            throw new KeyNotFoundException($"ID {id} no encontrado");
+        }else{
+            string linea;
+            while((linea=reader.ReadLine())!=null){
+
+                Persona p = convertirString(linea);
+                if(p.Id!=id){
+                    nuevasLineas.Add(linea);
+                }
+            }
+            foreach (string l in nuevasLineas)
+            {
+                writer.WriteLine(l);
+            }
+        }
+
     }
 
     private Persona convertirString(string p){
@@ -57,17 +76,41 @@ public class RepositorioPersona : IRepositorioPersona
     }
     public bool ExistePersonaPorDni(string dni)
     {
-        throw new NotImplementedException();
+        using var reader = new StreamReader(_archivo);
+        string linea;
+        while((linea = reader.ReadLine())!=null){
+            Persona per = convertirString(linea);
+            if(per.DNI.Equals(dni)){
+                return true;
+            }
+        }
+        return false;
     }
 
-    public bool ExistePersonaPorEmail(string email)
+    public bool ExistePersonaPorEmail(string mail)
     {
-        throw new NotImplementedException();
+        using var reader = new StreamReader(_archivo);
+        string linea;
+        while((linea = reader.ReadLine())!=null){
+            Persona per = convertirString(linea);
+            if(per.Mail.Equals(mail)){
+                return true;
+            }
+        }
+        return false;   
     }
 
     public bool ExistePersonaPorId(int id)
     {
-        throw new NotImplementedException();
+        using var reader = new StreamReader(_archivo);
+        string linea;
+        while((linea = reader.ReadLine())!=null){
+            Persona per = convertirString(linea);
+            if(per.Id==id){
+                return true;
+            }
+        }
+        return false;
     }
 
     public void ModificarPersona(Persona persona)
