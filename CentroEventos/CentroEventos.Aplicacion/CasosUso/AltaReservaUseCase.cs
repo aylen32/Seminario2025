@@ -1,4 +1,6 @@
 using System;
+using CentroEventos.Aplicacion.Interfaces;
+using CentroEventos.Aplicacion.Validaciones;
 
 namespace CentroEventos.Aplicacion.CasosUso;
 

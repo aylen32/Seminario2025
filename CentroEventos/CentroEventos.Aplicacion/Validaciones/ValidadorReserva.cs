@@ -1,8 +1,9 @@
 using System;
-
+using CentroEventos.Aplicacion.Excepciones;
+using CentroEventos.Aplicacion.Interfaces;
 namespace CentroEventos.Aplicacion.Validaciones;               //Falta reglas del negocio
 
-public class ValidadorReserva
+public class ValidadorReserva: IValidadorReserva
 {
     private readonly IRepositorioPersona _personaRepo;
     private readonly IRepositorioEventoDeportivo _eventoRepo;
@@ -17,11 +18,11 @@ public class ValidadorReserva
 
     public void Validar(Reserva reserva){
 
-        if (!_repositorioPersona.ExistePersonaPorId(reserva.PersonaId)){
+        if (!_personaRepo.ExistePersonaPorId(reserva.PersonaId)){
             throw new EntidadNotFoundException ("La persona no existe");
         }
 
-        if (!_repositorioEventoDeportivo.ExisteEventoDeportivoPorId(reserva.EventoDeportivoId)){
+        if (!_eventoRepo.ExisteEventoPorId(reserva.EventoDeportivoId)){
             throw new EntidadNotFoundException ("El evento deportivo no existe");
         }
     }

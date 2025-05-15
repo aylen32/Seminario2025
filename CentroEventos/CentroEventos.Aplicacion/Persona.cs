@@ -13,7 +13,7 @@ public class Persona
 
     public override string ToString()
     {
-        return $"[{Id}] {Nombre} {Apellido} - DNI: {DNI}, Email: {Email}, Tel: {Telefono}";
+        return $"[{Id}] {Nombre} {Apellido} - DNI: {DNI}, Email: {Mail}, Tel: {Telefono}";
     }
 
 
