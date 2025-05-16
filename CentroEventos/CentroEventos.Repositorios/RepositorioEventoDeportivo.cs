@@ -36,12 +36,53 @@ public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
     }
     public void EliminarEvento(int id)
     {
-        throw new NotImplementedException();
+        using var reader = new StreamReader(_archivo);
+        using var writer = new StreamWriter(_archivo,false);
+                List<string> nuevasLineas = new List<string>();        
+        if(!ExisteEventoPorId(id)){
+            throw new KeyNotFoundException($"ID {id} no encontrado");
+        }else{
+            string linea;
+            while((linea=reader.ReadLine())!=null){
+
+                EventoDeportivo e = convertirString(linea);
+                if(e.Id!=id){
+                    nuevasLineas.Add(linea);
+                }
+            }
+            foreach (string l in nuevasLineas)
+            {
+                writer.WriteLine(l);
+            }
+        }
+    }
+    private static EventoDeportivo convertirString(string e)
+    {
+        string[] partes = e.Split(",");
+        EventoDeportivo evento = new EventoDeportivo();
+        evento.Id = int.Parse(partes[0]);
+        evento.Nombre = partes[1];
+        evento.Descripcion = partes[2];
+        evento.FechaHoraInicio = DateTime.Parse(partes[3]);
+        evento.DuracionHoras = int.Parse(partes[4]);
+        evento.CupoMaximo = int.Parse(partes[5]);
+        evento.ResponsableId = int.Parse(partes[6]);
+        return evento;
     }
 
     public bool ExisteEventoPorId(int id)
     {
-        throw new NotImplementedException();
+        using var reader = new StreamReader(_archivo);
+        string linea;
+        while ((linea = reader.ReadLine()) != null)
+        {
+            EventoDeportivo evento = convertirString(linea);
+            if (evento.Id == id)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void ModificarEvento(EventoDeportivo evento)
@@ -51,11 +92,29 @@ public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
 
     public EventoDeportivo ObtenerEvento(int id)
     {
-        throw new NotImplementedException();
+        using var reader = new StreamReader(_archivo);
+        string linea;
+        while ((linea = reader.ReadLine()) != null)
+        {
+            EventoDeportivo evento = convertirString(linea);
+            if (evento.Id == id)
+            {
+                return evento;
+            }
+        }
+        return null;
     }
 
     public IEnumerable<EventoDeportivo> ObtenerTodos()
     {
-        throw new NotImplementedException();
+        List<EventoDeportivo> eventos = new List<EventoDeportivo>();
+        using var reader = new StreamReader(_archivo);
+        string linea;
+        while ((linea = reader.ReadLine()) != null)
+        {
+            EventoDeportivo e = convertirString(linea);
+            eventos.Add(e);
+        }
+        return eventos;
     }
 }

@@ -118,11 +118,29 @@ public class RepositorioReserva : IRepositorioReserva
 
     public IEnumerable<Reserva> ObtenerReservasPorEvento(int eventoId)
     {
-        throw new NotImplementedException();
+        using var reader = new StreamReader(_archivo);
+        string linea;
+        List<Reserva> reservas = new List<Reserva>();
+        while((linea = reader.ReadLine())!=null){
+            Reserva r = convertirString(linea);
+            if(r.EventoDeportivoId==eventoId){
+                reservas.Add(r);
+            }
+        }
+        return reservas;
     }
 
     public IEnumerable<Reserva> ObtenerReservasPorPersona(int personaId)
     {
-        throw new NotImplementedException();
+        using var reader = new StreamReader(_archivo);
+        string linea;
+        List<Reserva> reservas = new List<Reserva>();
+        while((linea = reader.ReadLine())!=null){
+            Reserva r = convertirString(linea);
+            if(r.PersonaId==personaId){
+                reservas.Add(r);
+            }
+        }
+        return reservas;
     }
 }
