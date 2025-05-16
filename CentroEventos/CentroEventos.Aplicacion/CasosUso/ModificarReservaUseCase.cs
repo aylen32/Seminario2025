@@ -19,10 +19,14 @@ public class ModificarReservaUseCase
 
     public void Ejecutar(Reserva reserva)
     {
-        if (!_repo.ExisteReservaPorId(reserva.Id))
+        if (!_autorizacion.PoseeElPermiso(_idUsuario, Permiso.ReservaModificacion))
         {
-            throw new EntidadNoEncontradaException($"La reserva con ID {reserva.Id} no existe.");
+            throw new FalloAutorizacionException("No tiene permiso para modificar reservas");
         }
+        if (!_repo.ExisteReservaPorId(reserva.Id))
+            {
+                throw new EntidadNotFoundException($"La reserva con ID {reserva.Id} no existe");
+            }
 
         _validador.Validar(reserva);
         _repo.ModificarReserva(reserva);

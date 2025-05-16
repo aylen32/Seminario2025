@@ -6,8 +6,6 @@ using CentroEventos.Aplicacion.Validaciones;
 
 public class ListarEventosConCupoDisponibleUseCase
 {
-
-
     private readonly IRepositorioEventoDeportivo _repositorioEvento;
     private readonly IRepositorioReserva _repositorioReserva;
     public ListarEventosConCupoDisponibleUseCase(IRepositorioEventoDeportivo repositorioEvento, IRepositorioReserva repositorioReserva)
@@ -16,9 +14,12 @@ public class ListarEventosConCupoDisponibleUseCase
         _repositorioReserva = repositorioReserva;
     }
 
-    public List<EventoDeportivo> ? ejecutar()
-
+    public List<EventoDeportivo> ? Ejecutar()
     {
+        if (!_autorizacion.PoseeElPermiso(_idUsuario, Permiso.EventoAlta)) 
+        {
+            throw new FalloAutorizacionException("No tiene permiso para consultar eventos con cupo disponible");
+        }
         List<EventoDeportivo> eventosConCupo = new List<EventoDeportivo>();
         foreach (EventoDeportivo ev in _repositorioEvento.ObtenerTodos())
         {
@@ -32,7 +33,5 @@ public class ListarEventosConCupoDisponibleUseCase
             }
         }
         return eventosConCupo;
-    }
-
-    
+    }  
 }

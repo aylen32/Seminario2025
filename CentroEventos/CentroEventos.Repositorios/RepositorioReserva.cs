@@ -58,7 +58,7 @@ public class RepositorioReserva : IRepositorioReserva
         List<string> nuevasLineas = new List<string>();
         if (!ExisteReservaPorId(id))
         {
-            throw new EntidadNoEncontradaException($"La reserva de persona con ID {id} no existe.");
+            throw new EntidadNotFoundException($"La reserva de persona con ID {id} no existe.");
         }
         else
         {
@@ -114,7 +114,7 @@ public class RepositorioReserva : IRepositorioReserva
     {
         if (!ExisteReservaPorId(reserva.Id))
         {
-            throw new EntidadNoEncontradaException($"La reserva de la persona con ID {reserva.Id} no existe.");
+            throw new EntidadNotFoundException($"La reserva de la persona con ID {reserva.Id} no existe.");
         }
         var nuevasLineas = new List<string>();
         using (var reader = new StreamReader(_archivo))

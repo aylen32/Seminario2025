@@ -8,19 +8,26 @@ using CentroEventos.Aplicacion.Excepciones;
 public class ModificarEventoDeportivoUseCase
 {
     private readonly IRepositorioEventoDeportivo _repositorioEventoDeportivo;
+    private readonly IValidadorEventoDeportivo _validadorEventoDeportivo;
 
-    public ModificarEventoDeportivoUseCase(IRepositorioEventoDeportivo repositorioEventoDeportivo)
+    public ModificarEventoDeportivoUseCase(IRepositorioEventoDeportivo repositorioEventoDeportivo, IValidadorEventoDeportivo validadorEventoDeportivo)
     {
         _repositorioEventoDeportivo = repositorioEventoDeportivo;
+        _validadorEventoDeportivo = validadorEventoDeportivo;
     }
 
     public void Ejecutar(EventoDeportivo evento)
     {
-        if (!_repositorioEventoDeportivo.ExisteEventoPorId(evento.Id))
+        if (!_autorizacion.PoseeElPermiso(_idUsuario, Permiso.EventoModificacion))
         {
-            throw new EntidadNoEncontradaException($"El evento deportivo con ID {evento.Id} no existe.");
+            throw new FalloAutorizacionException("No tiene permiso para modificar eventos");
         }
+        if (!_repositorioEventoDeportivo.ExisteEventoPorId(evento.Id))
+            {
+                throw new EntidadNotFoundException($"El evento deportivo con ID {evento.Id} no existe");
+            }
 
+        _validadorEventoDeportivo.Validar(evento);
         _repositorioEventoDeportivo.ModificarEvento(evento);
     }
 }

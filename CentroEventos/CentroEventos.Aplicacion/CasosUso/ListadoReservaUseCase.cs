@@ -8,11 +8,16 @@ public class ListadoReservaUseCase
     private readonly IRepositorioReserva _repositorioReserva;
     public ListadoReservaUseCase(IRepositorioReserva repositorioReserva)
     {
-        _repositorioReserva = repositorioReserva; // Inyeccion de dependencia por constructor (supuestamente se puede)
+        _repositorioReserva = repositorioReserva; 
     }
 
     public IEnumerable<Reserva> ? Ejecutar()
     {
+        if (!_autorizacion.PoseeElPermiso(_idUsuario, Permiso.ReservaAlta))
+        {
+            throw new FalloAutorizacionException("No tiene permiso para listar reservas");
+        }
+
         return _repositorioReserva.ObtenerTodas();
     }
     

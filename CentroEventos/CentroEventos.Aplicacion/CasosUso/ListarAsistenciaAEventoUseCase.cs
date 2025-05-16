@@ -12,15 +12,23 @@ public class ListarAsistenciaAEventoUseCase
 
     public ListarAsistenciaAEventoUseCase(IRepositorioEventoDeportivo repositorioEvento, IRepositorioPersona repositorioPersona, IRepositorioReserva repositorioReserva)
     {
-        _repositorioEvento = repositorioEvento; // Inyeccion de dependencia por constructor (supuestamente se puede)
-        _repositorioPersona = repositorioPersona; // Inyeccion de dependencia por constructor (supuestamente se puede)
-        _repositorioReserva = repositorioReserva; // Inyeccion de dependencia por constructor (supuestamente se puede)
+        _repositorioEvento = repositorioEvento; 
+        _repositorioPersona = repositorioPersona; 
+        _repositorioReserva = repositorioReserva; 
     }
-   
+
 
 
     public IEnumerable<Persona>? Ejecutar(int id)
     {
+        if (!_autorizacion.PoseeElPermiso(_idUsuario, Permiso.EventoAlta))
+        {
+            throw new FalloAutorizacionException("No tiene permiso para consultar la asistencia a eventos");
+        }
+        if (!_repositorioEvento.ExisteEventoPorId(id))
+            {
+                throw new EntidadNotFoundException($"Evento con ID {id} no encontrado.");
+            }
         var personas = new List<Persona>();
         foreach (Reserva reserva in _repositorioReserva.ObtenerReservasPorEvento(id))
         {

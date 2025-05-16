@@ -39,7 +39,7 @@ public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
     {
         if (!ExisteEventoPorId(id))
         {
-            throw new EntidadNoEncontradaException($"El evento con ID {id} no existe.");
+            throw new EntidadNotFoundException($"El evento con ID {id} no existe.");
         }
         var nuevasLineas = new List<string>();
         using (var reader = new StreamReader(_archivo))
@@ -91,7 +91,7 @@ public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
     {
         if (!ExisteEventoPorId(evento.Id))
         {
-            throw new EntidadNoEncontradaException($"El evento con ID {evento.Id} no existe.");
+            throw new EntidadNotFoundException($"El evento con ID {evento.Id} no existe.");
         }
         var nuevasLineas = new List<string>();
         using (var reader = new StreamReader(_archivo))

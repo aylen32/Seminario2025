@@ -46,7 +46,7 @@ public class RepositorioPersona : IRepositorioPersona
         using var writer = new StreamWriter(_archivo,false);
                 List<string> nuevasLineas = new List<string>();        
         if(!ExistePersonaPorId(id)){
-            throw new EntidadNoEncontradaException($"La persona con ID {id} no existe.");
+            throw new EntidadNotFoundException($"La persona con ID {id} no existe.");
         }else{
             string ? linea;
             while((linea=reader.ReadLine())!=null){
@@ -117,7 +117,7 @@ public class RepositorioPersona : IRepositorioPersona
     public void ModificarPersona(Persona persona)
     {
       if (!ExistePersonaPorId(persona.Id)) { 
-        throw new EntidadNoEncontradaException($"La persona con ID {persona.Id} no existe.");  //Validar si existe la persona con el Id
+        throw new EntidadNotFoundException($"La persona con ID {persona.Id} no existe.");  //Validar si existe la persona con el Id
       }
       var nuevasLineas = new List<string>();
       using (var reader = new StreamReader(_archivo))

@@ -12,10 +12,15 @@ public class AltaPersonaUseCase
     public AltaPersonaUseCase(IRepositorioPersona repositorioPersona, IValidadorPersona validadorPersona){
 
         _repositorioPersona = repositorioPersona;     //Inyeccion de dependencia por constructor (supuestamente se puede)
-        _validadorPersona = validadorPersona;         //No se si esto estaria bien! ¡Consultar!
+        _validadorPersona = validadorPersona;         
     }
 
-    public void Ejecutar(Persona persona){
+    public void Ejecutar(Persona persona) {
+
+        if (!_autorizacion.PoseeElPermiso(_idUsuario, Permiso.UsuarioAlta))
+        {
+            throw new FalloAutorizacionException ("No tiene permiso para dar de alta personas");
+        }
 
         _validadorPersona.Validar(persona);           // Validar la persona antes de guardarla
         _repositorioPersona.AgregarPersona(persona);  // Si pasa la validación, agregarla al repositorio

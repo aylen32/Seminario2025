@@ -12,11 +12,16 @@ public class AltaEventoDeportivoUseCase
     public AltaEventoDeportivoUseCase(IRepositorioEventoDeportivo repositorioEventoDeportivo, IValidadorEventoDeportivo validadorEventoDeportivo){
 
         _repositorioEventoDeportivo = repositorioEventoDeportivo;       //Inyeccion de dependencia por constructor (supuestamente se puede)
-        _validadorEventoDeportivo = validadorEventoDeportivo;           //No se si esto estaria bien! ¡Consultar!
+        _validadorEventoDeportivo = validadorEventoDeportivo;           
     }
     public void Ejecutar(EventoDeportivo eventoDeportivo){
 
+    if (!_autorizacion.PoseeElPermiso(_idUsuario, Permiso.EventoAlta))
+    {
+      throw new FalloAutorizacionException("No tiene permiso para dar de alta eventos");
+    }
+
       _validadorEventoDeportivo.Validar(eventoDeportivo);                    // Validar el evento antes de guardarlo
-      _repositorioEventoDeportivo.AgregarEvento(eventoDeportivo);   // Agregar el evento deportivo
+      _repositorioEventoDeportivo.AgregarEvento(eventoDeportivo);            // Agregar el evento deportivo
     }
 }

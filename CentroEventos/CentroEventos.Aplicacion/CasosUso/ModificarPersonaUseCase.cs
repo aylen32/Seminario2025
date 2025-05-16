@@ -19,9 +19,13 @@ public class ModificarPersonaUseCase
 
     public void Ejecutar(Persona persona)
     {
+        if (!_autorizacion.PoseeElPermiso(_idUsuario, Permiso.UsuarioModificacion))
+        {
+            throw new FalloAutorizacionException("No tiene permiso para modificar personas");
+        }
         if (!_repo.ExistePersonaPorId(persona.Id))
-        { 
-            throw new EntidadNoEncontradaException($"La persona con ID {persona.Id} no existe.");
+        {
+            throw new EntidadNotFoundException($"La persona con ID {persona.Id} no existe");
         }
         _validador.Validar(persona); 
         _repo.ModificarPersona(persona);

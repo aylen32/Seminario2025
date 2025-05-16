@@ -1,6 +1,6 @@
 namespace CentroEventos.Aplicacion.Enumerativos;
 
-public enum Permisos
+public enum Permiso
 {
     EventoAlta,
     EventoModificacion,
