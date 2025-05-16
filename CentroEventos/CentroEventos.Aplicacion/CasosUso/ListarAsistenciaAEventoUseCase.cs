@@ -13,12 +13,17 @@ public class ListarAsistenciaAEventoUseCase
     private readonly IRepositorioEventoDeportivo _repositorioEvento;
     private readonly IRepositorioPersona _repositorioPersona;
     private readonly IRepositorioReserva _repositorioReserva;
+    private readonly IServicioAutorizacion _autorizacion;
+    private readonly int _idUsuario;
 
-    public ListarAsistenciaAEventoUseCase(IRepositorioEventoDeportivo repositorioEvento, IRepositorioPersona repositorioPersona, IRepositorioReserva repositorioReserva)
+    public ListarAsistenciaAEventoUseCase(IRepositorioEventoDeportivo repositorioEvento, IRepositorioPersona repositorioPersona, IRepositorioReserva repositorioReserva, IServicioAutorizacion autorizacion,
+    int idUsuario)
     {
-        _repositorioEvento = repositorioEvento; 
-        _repositorioPersona = repositorioPersona; 
-        _repositorioReserva = repositorioReserva; 
+        _repositorioEvento = repositorioEvento;
+        _repositorioPersona = repositorioPersona;
+        _repositorioReserva = repositorioReserva;
+        _autorizacion = autorizacion;
+        _idUsuario = idUsuario;
     }
 
 

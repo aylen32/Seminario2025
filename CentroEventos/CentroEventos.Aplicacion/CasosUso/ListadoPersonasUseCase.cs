@@ -8,9 +8,14 @@ namespace CentroEventos.Aplicacion.CasosUso;
 public class ListadoPersonasUseCase
 {
     private readonly IRepositorioPersona _repositorioPersona;
-    public ListadoPersonasUseCase(IRepositorioPersona repositorioPersona)
+    private readonly IServicioAutorizacion _autorizacion;
+    private readonly int _idUsuario;
+    public ListadoPersonasUseCase(IRepositorioPersona repositorioPersona, IServicioAutorizacion autorizacion,
+    int idUsuario)
     {
-        _repositorioPersona = repositorioPersona; 
+        _repositorioPersona = repositorioPersona;
+        _autorizacion = autorizacion;
+        _idUsuario = idUsuario;
     }
 
     public IEnumerable<Persona> Ejecutar()

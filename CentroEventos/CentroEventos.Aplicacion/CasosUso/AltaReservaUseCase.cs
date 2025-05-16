@@ -13,22 +13,25 @@ public class AltaReservaUseCase
     private readonly IRepositorioEventoDeportivo _repositorioEventoDeportivo;
     private readonly IRepositorioPersona _repositorioPersona;
     private readonly IValidadorReserva _validadorReserva;
-    private readonly IServicioAutorizacion _servicioAutorizacion;
+    private readonly IServicioAutorizacion _autorizacion;
+    private readonly int _idUsuario;
 
-    public AltaReservaUseCase(IRepositorioReserva repositorioReserva, IValidadorReserva validadorReserva, IServicioAutorizacion servicioAutorizacion, IRepositorioEventoDeportivo repositorioEventoDeportivo, IRepositorioPersona repositorioPersona)
+    public AltaReservaUseCase(IRepositorioReserva repositorioReserva, IValidadorReserva validadorReserva, IRepositorioEventoDeportivo repositorioEventoDeportivo, IRepositorioPersona repositorioPersona, IServicioAutorizacion autorizacion,
+    int idUsuario)
     {
 
-        _repositorioEventoDeportivo = repositorioEventoDeportivo;  
-        _repositorioPersona = repositorioPersona;              
-        _repositorioReserva = repositorioReserva;        
-        _validadorReserva = validadorReserva;  
-        _servicioAutorizacion = servicioAutorizacion;    
+        _repositorioEventoDeportivo = repositorioEventoDeportivo;
+        _repositorioPersona = repositorioPersona;
+        _repositorioReserva = repositorioReserva;
+        _validadorReserva = validadorReserva;
+        _autorizacion = autorizacion;
+        _idUsuario = idUsuario;
     }
 
     public void Ejecutar (Reserva reserva, int idUsuario){
 
         // Verificar si el usuario tiene permiso para reservar
-        if (!_servicioAutorizacion.PoseeElPermiso(idUsuario, Permiso.EventoAlta))
+        if (!_autorizacion.PoseeElPermiso(idUsuario, Permiso.EventoAlta))
         {
             throw new FalloAutorizacionException("El usuario no tiene permiso para realizar reservas");
         }

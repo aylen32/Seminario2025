@@ -11,11 +11,16 @@ public class ModificarReservaUseCase
 {
     private readonly IRepositorioReserva _repo;
     private readonly IValidadorReserva _validador;
+    private readonly IServicioAutorizacion _autorizacion;
+    private readonly int _idUsuario;
 
-    public ModificarReservaUseCase(IRepositorioReserva repo, IValidadorReserva validador)
+    public ModificarReservaUseCase(IRepositorioReserva repo, IValidadorReserva validador, IServicioAutorizacion autorizacion,
+    int idUsuario)
     {
         _repo = repo;
         _validador = validador;
+        _autorizacion = autorizacion;
+        _idUsuario = idUsuario;
     }
 
     public void Ejecutar(Reserva reserva)

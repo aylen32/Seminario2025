@@ -10,11 +10,16 @@ public class BajaEventoDeportivoUseCase
 {
     private readonly IRepositorioEventoDeportivo _repositorioEventoDeportivo;
     private readonly IRepositorioReserva _repositorioReserva;
-   
-    public BajaEventoDeportivoUseCase(IRepositorioEventoDeportivo repositorioEventoDeportivo, IRepositorioReserva repositorioReserva)
+    private readonly IServicioAutorizacion _autorizacion;
+    private readonly int _idUsuario;
+
+    public BajaEventoDeportivoUseCase(IRepositorioEventoDeportivo repositorioEventoDeportivo, IRepositorioReserva repositorioReserva, IServicioAutorizacion autorizacion,
+    int idUsuario)
     {
         _repositorioEventoDeportivo = repositorioEventoDeportivo;
         _repositorioReserva = repositorioReserva;
+        _autorizacion = autorizacion;
+        _idUsuario = idUsuario;
     }
   
     public void Ejecutar(int id)

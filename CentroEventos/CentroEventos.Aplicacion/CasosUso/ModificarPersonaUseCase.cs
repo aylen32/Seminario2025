@@ -11,11 +11,16 @@ public class ModificarPersonaUseCase
 {
     private readonly IRepositorioPersona _repo;
     private readonly IValidadorPersona _validador;
+    private readonly IServicioAutorizacion _autorizacion;
+    private readonly int _idUsuario;
 
-    public ModificarPersonaUseCase(IRepositorioPersona repo, IValidadorPersona validador)
+    public ModificarPersonaUseCase(IRepositorioPersona repo, IValidadorPersona validador, IServicioAutorizacion autorizacion,
+    int idUsuario)
     {
         _repo = repo;
         _validador = validador;
+        _autorizacion = autorizacion;
+        _idUsuario = idUsuario;
     }
 
     public void Ejecutar(Persona persona)

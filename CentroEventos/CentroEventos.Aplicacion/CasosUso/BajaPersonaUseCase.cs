@@ -13,12 +13,17 @@ public class BajaPersonaUseCase
     private readonly IRepositorioPersona _repositorioPersona;
     private readonly IRepositorioReserva _repositorioReserva;
     private readonly IRepositorioEventoDeportivo _repositorioEventoDeportivo;
+    private readonly IServicioAutorizacion _autorizacion;
+    private readonly int _idUsuario;
 
-    public BajaPersonaUseCase(IRepositorioPersona repositorioPersona, IRepositorioReserva repositorioReserva, IRepositorioEventoDeportivo repositorioEventoDeportivo)
+    public BajaPersonaUseCase(IRepositorioPersona repositorioPersona, IRepositorioReserva repositorioReserva, IRepositorioEventoDeportivo repositorioEventoDeportivo, IServicioAutorizacion autorizacion,
+    int idUsuario)
     {
-        _repositorioReserva = repositorioReserva;       
-        _repositorioPersona = repositorioPersona;     
-        _repositorioEventoDeportivo = repositorioEventoDeportivo;      
+        _repositorioReserva = repositorioReserva;
+        _repositorioPersona = repositorioPersona;
+        _repositorioEventoDeportivo = repositorioEventoDeportivo;
+        _autorizacion = autorizacion;
+        _idUsuario = idUsuario;
     }
 
     public void Ejecutar(int id){

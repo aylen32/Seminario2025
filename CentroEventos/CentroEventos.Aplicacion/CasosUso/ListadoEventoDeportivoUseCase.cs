@@ -8,10 +8,15 @@ using CentroEventos.Aplicacion.Excepciones;
 public class ListadoEventoDeportivoUseCase
 {
     private readonly IRepositorioEventoDeportivo _repositorioEventoDeportivo;
+    private readonly IServicioAutorizacion _autorizacion;
+    private readonly int _idUsuario;
 
-    public ListadoEventoDeportivoUseCase(IRepositorioEventoDeportivo repositorioEventoDeportivo)
+    public ListadoEventoDeportivoUseCase(IRepositorioEventoDeportivo repositorioEventoDeportivo, IServicioAutorizacion autorizacion,
+    int idUsuario)
     {
-        _repositorioEventoDeportivo = repositorioEventoDeportivo; // Inyeccion de dependencia por constructor (supuestamente se puede)
+        _repositorioEventoDeportivo = repositorioEventoDeportivo;
+        _autorizacion = autorizacion;
+        _idUsuario = idUsuario;                              
     }
 
     public IEnumerable<EventoDeportivo> ? Ejecutar()

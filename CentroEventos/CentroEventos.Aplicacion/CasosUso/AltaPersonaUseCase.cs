@@ -10,11 +10,17 @@ public class AltaPersonaUseCase
 {
     private readonly IRepositorioPersona _repositorioPersona;
     private readonly IValidadorPersona _validadorPersona;
+    private readonly IServicioAutorizacion _autorizacion;
+    private readonly int _idUsuario;
 
-    public AltaPersonaUseCase(IRepositorioPersona repositorioPersona, IValidadorPersona validadorPersona){
+    public AltaPersonaUseCase(IRepositorioPersona repositorioPersona, IValidadorPersona validadorPersona, IServicioAutorizacion autorizacion,
+    int idUsuario)
+    {
 
         _repositorioPersona = repositorioPersona;     //Inyeccion de dependencia por constructor (supuestamente se puede)
-        _validadorPersona = validadorPersona;         
+        _validadorPersona = validadorPersona;
+        _autorizacion = autorizacion;
+        _idUsuario = idUsuario;
     }
 
     public void Ejecutar(Persona persona) {
