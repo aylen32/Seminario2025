@@ -20,13 +20,14 @@ public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
             }
         return id;
     }
-    private int GenerarId() {
+    private int GenerarId()
+    {
         int idNuevo = buscarUltID();
-        return idNuevo;    
-       
+        return idNuevo;
+    }
     public void AgregarEvento(EventoDeportivo evento)
     {
-        evento.Id=GenerarId();
+        evento.Id = GenerarId();
         using var sw = new StreamWriter(_archivo, true);
         sw.WriteLine(cadenaEvento(evento));
     }
