@@ -1,6 +1,5 @@
 using System;
 using CentroEventos.Aplicacion;
-using CentroEventos.Aplicacion.CasosUso;
 using CentroEventos.Aplicacion.Validaciones;
 using static CentroEventos.Aplicacion.Reserva;
 
@@ -15,7 +14,7 @@ public class RepositorioReserva : IRepositorioReserva
        int id;
        using var reader = new StreamReader(_archivo_id);
        int ultId = int.Parse(reader.ReadToEnd());
-       id=ultId+1;
+       id=ultId + 1;
        using var writer = new StreamWriter(_archivo_id, false);
             {
                 writer.Write(id);
@@ -33,6 +32,7 @@ public class RepositorioReserva : IRepositorioReserva
     public void AgregarReserva(Reserva reserva)
     {
         int idReserva = GenerarId();
+        reserva.Id = idReserva;
         using var sw = new StreamWriter(_archivo, true);
         sw.WriteLine(cadenaReserva(reserva));
     }
@@ -118,33 +118,11 @@ public class RepositorioReserva : IRepositorioReserva
 
     public IEnumerable<Reserva> ObtenerReservasPorEvento(int eventoId)
     {
-        List<Reserva> reservas = new List<Reserva>();
-       using var reader = new StreamReader(_archivo);
-       string? unaReserva;
-       while((unaReserva=reader.ReadLine())!=null){
-            if(!string.IsNullOrWhiteSpace(unaReserva)){
-               Reserva r = convertirString(unaReserva);
-               if(r.EventoDeportivoId==eventoId){
-                    reservas.Add(r);
-               }
-            }
-       }
-       return reservas;
+        throw new NotImplementedException();
     }
 
     public IEnumerable<Reserva> ObtenerReservasPorPersona(int personaId)
     {
-        List<Reserva> reservas = new List<Reserva>();
-       using var reader = new StreamReader(_archivo);
-       string? unaReserva;
-       while((unaReserva=reader.ReadLine())!=null){
-            if(!string.IsNullOrWhiteSpace(unaReserva)){
-               Reserva r = convertirString(unaReserva);
-               if(r.EventoDeportivoId==personaId){
-                    reservas.Add(r);
-               }
-            }
-       }
-       return reservas;      
+        throw new NotImplementedException();
     }
 }
