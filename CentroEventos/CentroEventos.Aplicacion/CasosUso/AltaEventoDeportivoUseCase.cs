@@ -17,6 +17,6 @@ public class AltaEventoDeportivoUseCase
     public void Ejecutar(EventoDeportivo eventoDeportivo){
 
       _validadorEventoDeportivo.Validar(eventoDeportivo);                    // Validar el evento antes de guardarlo
-      _repositorioEventoDeportivo.AgregarEventoDeportivo(eventoDeportivo);   // Agregar el evento deportivo
+      _repositorioEventoDeportivo.AgregarEvento(eventoDeportivo);   // Agregar el evento deportivo
     }
 }

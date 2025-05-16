@@ -86,19 +86,6 @@ public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
       }
       return false;
     }
-    
-    public bool ExisteEventoPorId(int id)
-    {
-      using var reader = new StreamReader(_archivo);
-      string linea;
-      while ((linea = reader.ReadLine()) != null)
-      {
-        var e = convertirString(linea);
-        if (e.Id == id)
-            return true;
-      }
-      return false;
-    }
 
     public void ModificarEvento(EventoDeportivo evento)
     {
