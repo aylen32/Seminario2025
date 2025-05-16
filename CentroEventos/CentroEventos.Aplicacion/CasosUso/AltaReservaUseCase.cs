@@ -28,7 +28,7 @@ public class AltaReservaUseCase
     public void Ejecutar (Reserva reserva, int idUsuario){
 
         // Verificar si el usuario tiene permiso para reservar
-        if (!_servicioAutorizacion.PoseeElPermiso(idUsuario, Permisos.EventoAlta))
+        if (!_servicioAutorizacion.PoseeElPermiso(idUsuario, Permiso.EventoAlta))
         {
             throw new FalloAutorizacionException("El usuario no tiene permiso para realizar reservas");
         }

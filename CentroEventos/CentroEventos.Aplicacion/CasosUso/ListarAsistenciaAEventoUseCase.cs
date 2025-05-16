@@ -1,8 +1,12 @@
 using System;
 
 namespace CentroEventos.Aplicacion.CasosUso;
+
 using CentroEventos.Aplicacion.Interfaces;
+using CentroEventos.Aplicacion.Excepciones;
 using CentroEventos.Aplicacion.Validaciones;
+using CentroEventos.Aplicacion.Enumerativos;
+
 
 public class ListarAsistenciaAEventoUseCase
 {

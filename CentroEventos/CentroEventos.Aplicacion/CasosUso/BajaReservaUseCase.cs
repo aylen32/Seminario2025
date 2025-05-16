@@ -1,7 +1,9 @@
 using System;
 using CentroEventos.Aplicacion.Interfaces;
 using CentroEventos.Aplicacion.Validaciones;
+using CentroEventos.Aplicacion.Enumerativos;
 namespace CentroEventos.Aplicacion.CasosUso;
+using CentroEventos.Aplicacion.Excepciones;
 
 public class BajaReservaUseCase
 {
