@@ -54,7 +54,7 @@ public class RepositorioReserva : IRepositorioReserva
         using var writer = new StreamWriter(_archivo,false);
                 List<string> nuevasLineas = new List<string>();        
         if(!ExisteReservaPorId(id)){
-            throw new KeyNotFoundException($"ID {id} no encontrado");
+            throw new EntidadNoEncontradaException($"La reserva de persona con ID {id} no existe.");
         }else{
             string linea;
             while((linea=reader.ReadLine())!=null){
@@ -102,7 +102,7 @@ public class RepositorioReserva : IRepositorioReserva
     {
         if (!ExisteReservaPorId(reserva.Id))
         {
-            throw new KeyNotFoundException($"ID {reserva.Id} no encontrado");
+            throw new EntidadNoEncontradaException($"La reserva de la persona con ID {id} no existe.");
         }
         var nuevasLineas = new List<string>();
         using (var reader = new StreamReader(_archivo))
