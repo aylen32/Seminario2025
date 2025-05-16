@@ -13,7 +13,7 @@ public class ListadoReservaUseCase
 
     public IEnumerable<Reserva> ? Ejecutar()
     {
-        return null; // Obtener la lista de reservas del repositorio
+        return _repositorioReserva.ObtenerTodas();
     }
     
 }

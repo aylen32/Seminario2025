@@ -16,14 +16,25 @@ public class ValidadorReserva: IValidadorReserva
         _reservaRepo = reservaRepo;
     }
 
-    public void Validar(Reserva reserva){
+    public void Validar(Reserva reserva)
+    {
 
-        if (!_personaRepo.ExistePersonaPorId(reserva.PersonaId)){
-            throw new EntidadNotFoundException ("La persona no existe");
+        if (!_personaRepo.ExistePersonaPorId(reserva.PersonaId))
+        {
+            throw new EntidadNotFoundException("La persona no existe");
         }
 
-        if (!_eventoRepo.ExisteEventoPorId(reserva.EventoDeportivoId)){
-            throw new EntidadNotFoundException ("El evento deportivo no existe");
+        if (!_eventoRepo.ExisteEventoPorId(reserva.EventoDeportivoId))
+        {
+            throw new EntidadNotFoundException("El evento deportivo no existe");
+        }
+        if (_reservaRepo.ExisteReservaDuplicada(reserva.PersonaId, reserva.EventoDeportivoId))
+        {
+            throw new DuplicadoException("Ya existe una reserva para este evento deportivo de esta persona");
+        }
+        if (_eventoRepo.ObtenerEvento(reserva.EventoDeportivoId).CupoMaximo <= _reservaRepo.ObtenerReservasPorEvento(reserva.EventoDeportivoId).Count())
+        {
+            throw new CupoExcedidoException("El evento deportivo no tiene cupo disponible");
         }
     }
 

@@ -10,24 +10,27 @@ public class RepositorioReserva : IRepositorioReserva
 {
     private readonly string _archivo = @"C:\Users\aylen\OneDrive\Documentos\proyecto2025\archivo_reserva.txt";
     private readonly string _archivo_id = @"C:\Users\aylen\OneDrive\Documentos\proyecto2025\archivo_id_reserva.txt";
-     private int buscarUltID(){
-       int id;
-       using var reader = new StreamReader(_archivo_id);
-       int ultId = int.Parse(reader.ReadToEnd());
-       id=ultId + 1;
-       using var writer = new StreamWriter(_archivo_id, false);
-            {
-                writer.Write(id);
-            }
+    private int buscarUltID()
+    {
+        int id;
+        using var reader = new StreamReader(_archivo_id);
+        int ultId = int.Parse(reader.ReadToEnd());
+        id = ultId + 1;
+        using var writer = new StreamWriter(_archivo_id, false);
+        {
+            writer.Write(id);
+        }
         return id;
     }
-    private int GenerarId() {
+    private int GenerarId()
+    {
         int idNuevo = buscarUltID();
-        return idNuevo;    
-        
+        return idNuevo;
+
     }
-    private string cadenaReserva(Reserva reserva){
-        return reserva.Id +","+reserva.PersonaId+","+reserva.EventoDeportivoId+","+reserva.FechaAltaReserva+","+reserva.Estado;
+    private string cadenaReserva(Reserva reserva)
+    {
+        return reserva.Id + "," + reserva.PersonaId + "," + reserva.EventoDeportivoId + "," + reserva.FechaAltaReserva + "," + reserva.Estado;
     }
     public void AgregarReserva(Reserva reserva)
     {
@@ -36,31 +39,36 @@ public class RepositorioReserva : IRepositorioReserva
         using var sw = new StreamWriter(_archivo, true);
         sw.WriteLine(cadenaReserva(reserva));
     }
-      private static Reserva convertirString(string r)
-        {
+    private static Reserva convertirString(string r)
+    {
         string[] partes = r.Split(",");
         Reserva re = new Reserva();
-        re.Id= int.Parse(partes[0]);
-        re.PersonaId= int.Parse(partes[1]);
-        re.EventoDeportivoId=int.Parse(partes[2]);
-        re.FechaAltaReserva=DateTime.Parse(partes[3]);
+        re.Id = int.Parse(partes[0]);
+        re.PersonaId = int.Parse(partes[1]);
+        re.EventoDeportivoId = int.Parse(partes[2]);
+        re.FechaAltaReserva = DateTime.Parse(partes[3]);
         re.Estado = (EstadoAsistencia)Enum.Parse(typeof(EstadoAsistencia), partes[4]);
         return re;
-        }
+    }
 
     public void EliminarReserva(int id)
     {
         using var reader = new StreamReader(_archivo);
-        using var writer = new StreamWriter(_archivo,false);
-                List<string> nuevasLineas = new List<string>();        
-        if(!ExisteReservaPorId(id)){
+        using var writer = new StreamWriter(_archivo, false);
+        List<string> nuevasLineas = new List<string>();
+        if (!ExisteReservaPorId(id))
+        {
             throw new EntidadNoEncontradaException($"La reserva de persona con ID {id} no existe.");
-        }else{
-            string ? linea;
-            while((linea=reader.ReadLine())!=null){
+        }
+        else
+        {
+            string? linea;
+            while ((linea = reader.ReadLine()) != null)
+            {
 
                 Reserva r = convertirString(linea);
-                if(r.Id!=id){
+                if (r.Id != id)
+                {
                     nuevasLineas.Add(linea);
                 }
             }
@@ -75,10 +83,12 @@ public class RepositorioReserva : IRepositorioReserva
     {
 
         using var reader = new StreamReader(_archivo);
-        string ? linea;
-        while((linea = reader.ReadLine())!=null){
+        string? linea;
+        while ((linea = reader.ReadLine()) != null)
+        {
             Reserva r = convertirString(linea);
-            if(r.PersonaId==personaId && r.EventoDeportivoId==eventoId){
+            if (r.PersonaId == personaId && r.EventoDeportivoId == eventoId)
+            {
                 return true;
             }
         }
@@ -88,10 +98,12 @@ public class RepositorioReserva : IRepositorioReserva
     public bool ExisteReservaPorId(int id)
     {
         using var reader = new StreamReader(_archivo);
-        string ? linea;
-        while((linea = reader.ReadLine())!=null){
+        string? linea;
+        while ((linea = reader.ReadLine()) != null)
+        {
             Reserva r = convertirString(linea);
-            if(r.Id==id){
+            if (r.Id == id)
+            {
                 return true;
             }
         }
@@ -107,17 +119,17 @@ public class RepositorioReserva : IRepositorioReserva
         var nuevasLineas = new List<string>();
         using (var reader = new StreamReader(_archivo))
         {
-          string ? linea;
-          while ((linea = reader.ReadLine()) != null)
-          {
-            var r = convertirString(linea);
-            if (r.Id == reserva.Id)
-                nuevasLineas.Add(cadenaReserva(reserva)); // reemplaza
-            else
-                nuevasLineas.Add(linea); // mantiene
-          }
+            string? linea;
+            while ((linea = reader.ReadLine()) != null)
+            {
+                var r = convertirString(linea);
+                if (r.Id == reserva.Id)
+                    nuevasLineas.Add(cadenaReserva(reserva)); // reemplaza
+                else
+                    nuevasLineas.Add(linea); // mantiene
+            }
         }
-        
+
         using (var writer = new StreamWriter(_archivo, false))
         {
             foreach (var l in nuevasLineas)
@@ -125,13 +137,15 @@ public class RepositorioReserva : IRepositorioReserva
         }
     }
 
-    public Reserva ? ObtenerReserva(int id)
+    public Reserva? ObtenerReserva(int id)
     {
         using var reader = new StreamReader(_archivo);
         string? unaReserva;
-        while((unaReserva= reader.ReadLine())!=null){
+        while ((unaReserva = reader.ReadLine()) != null)
+        {
             Reserva r = convertirString(unaReserva);
-            if(r.Id==id){
+            if (r.Id == id)
+            {
                 return r;
             }
         }
@@ -140,29 +154,41 @@ public class RepositorioReserva : IRepositorioReserva
 
     public IEnumerable<Reserva> ObtenerReservasPorEvento(int eventoId)
     {
-      var reservas = new List<Reserva>();
-      using var reader = new StreamReader(_archivo);
-      string? linea;
-      while ((linea = reader.ReadLine()) != null)
-      {
-        var r = convertirString(linea);
-        if (r.EventoDeportivoId == eventoId)
-            reservas.Add(r);
-      }
-      return reservas;
+        var reservas = new List<Reserva>();
+        using var reader = new StreamReader(_archivo);
+        string? linea;
+        while ((linea = reader.ReadLine()) != null)
+        {
+            var r = convertirString(linea);
+            if (r.EventoDeportivoId == eventoId)
+                reservas.Add(r);
+        }
+        return reservas;
     }
 
     public IEnumerable<Reserva> ObtenerReservasPorPersona(int personaId)
     {
-      var reservas = new List<Reserva>();
-      using var reader = new StreamReader(_archivo);
-      string? linea;
-      while ((linea = reader.ReadLine()) != null)
-      {
-        var r = convertirString(linea);
-        if (r.PersonaId == personaId)
-            reservas.Add(r);
-      }
-      return reservas;
+        var reservas = new List<Reserva>();
+        using var reader = new StreamReader(_archivo);
+        string? linea;
+        while ((linea = reader.ReadLine()) != null)
+        {
+            var r = convertirString(linea);
+            if (r.PersonaId == personaId)
+                reservas.Add(r);
+        }
+        return reservas;
+    }
+    public IEnumerable<Reserva> ObtenerTodas()
+    {
+        var lista = new List<Reserva>();
+        using var reader = new StreamReader(_archivo);
+        string? linea;
+        while ((linea = reader.ReadLine()) != null)
+        {
+            Reserva r = convertirString(linea);
+            lista.Add(r);
+        }
+        return lista;
     }
 }
