@@ -2,6 +2,7 @@ using System;
 using CentroEventos.Aplicacion;
 using CentroEventos.Aplicacion.CasosUso;
 using CentroEventos.Aplicacion.Validaciones;
+using static CentroEventos.Aplicacion.Reserva;
 
 namespace CentroEventos.Repositorios;
 
@@ -14,7 +15,7 @@ public class RepositorioReserva : IRepositorioReserva
        int id;
        using var reader = new StreamReader(_archivo_id);
        int ultId = int.Parse(reader.ReadToEnd());
-       id=++ultId;
+       id=ultId+1;
        using var writer = new StreamWriter(_archivo_id, false);
             {
                 writer.Write(id);
@@ -43,7 +44,7 @@ public class RepositorioReserva : IRepositorioReserva
         re.PersonaId= int.Parse(partes[1]);
         re.EventoDeportivoId=int.Parse(partes[2]);
         re.FechaAltaReserva=DateTime.Parse(partes[3]);
-        //re.Estado=(partes[4]); Averiguar cómo parsear un Enum!!
+        re.Estado = (EstadoAsistencia)Enum.Parse(typeof(EstadoAsistencia), partes[4]);
         return re;
         }
 
@@ -72,7 +73,16 @@ public class RepositorioReserva : IRepositorioReserva
 
     public bool ExisteReservaDuplicada(int personaId, int eventoId)
     {
-        throw new NotImplementedException();
+
+        using var reader = new StreamReader(_archivo);
+        string linea;
+        while((linea = reader.ReadLine())!=null){
+            Reserva r = convertirString(linea);
+            if(r.PersonaId==personaId && r.EventoDeportivoId==eventoId){
+                return true;
+            }
+        }
+        return false;
     }
 
     public bool ExisteReservaPorId(int id)
