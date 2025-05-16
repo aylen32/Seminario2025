@@ -47,7 +47,7 @@ public class RepositorioPersona : IRepositorioPersona
         if(!ExistePersonaPorId(id)){
             throw new EntidadNoEncontradaException($"La persona con ID {id} no existe.");
         }else{
-            string linea;
+            string ? linea;
             while((linea=reader.ReadLine())!=null){
 
                 Persona p = convertirString(linea);
@@ -77,7 +77,7 @@ public class RepositorioPersona : IRepositorioPersona
     public bool ExistePersonaPorDni(string dni)
     {
         using var reader = new StreamReader(_archivo);
-        string linea;
+        string ? linea;
         while((linea = reader.ReadLine())!=null){
             Persona per = convertirString(linea);
             if(per.DNI.Equals(dni)){
@@ -90,7 +90,7 @@ public class RepositorioPersona : IRepositorioPersona
     public bool ExistePersonaPorEmail(string mail)
     {
         using var reader = new StreamReader(_archivo);
-        string linea;
+        string ? linea;
         while((linea = reader.ReadLine())!=null){
             Persona per = convertirString(linea);
             if(per.Mail.Equals(mail)){
@@ -103,7 +103,7 @@ public class RepositorioPersona : IRepositorioPersona
     public bool ExistePersonaPorId(int id)
     {
         using var reader = new StreamReader(_archivo);
-        string linea;
+        string ? linea;
         while((linea = reader.ReadLine())!=null){
             Persona per = convertirString(linea);
             if(per.Id==id){
@@ -121,7 +121,7 @@ public class RepositorioPersona : IRepositorioPersona
       var nuevasLineas = new List<string>();
       using (var reader = new StreamReader(_archivo))
       {
-        string linea;
+        string ? linea;
         while ((linea = reader.ReadLine()) != null)
         {
             Persona p = convertirString(linea);
@@ -140,7 +140,7 @@ public class RepositorioPersona : IRepositorioPersona
       }
     }
 
-    public Persona? ObtenerPersona(int id)
+    public Persona ? ObtenerPersona(int id)
     {
         using var reader = new StreamReader(_archivo);
         string? unaPersona;

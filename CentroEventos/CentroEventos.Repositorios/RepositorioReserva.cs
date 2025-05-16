@@ -56,7 +56,7 @@ public class RepositorioReserva : IRepositorioReserva
         if(!ExisteReservaPorId(id)){
             throw new EntidadNoEncontradaException($"La reserva de persona con ID {id} no existe.");
         }else{
-            string linea;
+            string ? linea;
             while((linea=reader.ReadLine())!=null){
 
                 Reserva r = convertirString(linea);
@@ -75,7 +75,7 @@ public class RepositorioReserva : IRepositorioReserva
     {
 
         using var reader = new StreamReader(_archivo);
-        string linea;
+        string ? linea;
         while((linea = reader.ReadLine())!=null){
             Reserva r = convertirString(linea);
             if(r.PersonaId==personaId && r.EventoDeportivoId==eventoId){
@@ -88,7 +88,7 @@ public class RepositorioReserva : IRepositorioReserva
     public bool ExisteReservaPorId(int id)
     {
         using var reader = new StreamReader(_archivo);
-        string linea;
+        string ? linea;
         while((linea = reader.ReadLine())!=null){
             Reserva r = convertirString(linea);
             if(r.Id==id){
@@ -107,7 +107,7 @@ public class RepositorioReserva : IRepositorioReserva
         var nuevasLineas = new List<string>();
         using (var reader = new StreamReader(_archivo))
         {
-          string linea;
+          string ? linea;
           while ((linea = reader.ReadLine()) != null)
           {
             var r = convertirString(linea);
@@ -117,14 +117,15 @@ public class RepositorioReserva : IRepositorioReserva
                 nuevasLineas.Add(linea); // mantiene
           }
         }
+        
         using (var writer = new StreamWriter(_archivo, false))
         {
-          foreach (var l in nuevasLineas)
-            writer.WriteLine(l);
+            foreach (var l in nuevasLineas)
+                writer.WriteLine(l);
         }
     }
 
-    public Reserva ObtenerReserva(int id)
+    public Reserva ? ObtenerReserva(int id)
     {
         using var reader = new StreamReader(_archivo);
         string? unaReserva;

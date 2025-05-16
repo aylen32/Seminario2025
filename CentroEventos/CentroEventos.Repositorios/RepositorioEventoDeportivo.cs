@@ -44,7 +44,7 @@ public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
         var nuevasLineas = new List<string>();
         using (var reader = new StreamReader(_archivo))
         {
-          string linea;
+          string ? linea;
           while ((linea = reader.ReadLine()) != null)
           {
             var e = convertirString(linea);
@@ -77,7 +77,7 @@ public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
     public bool ExisteEventoPorId(int id)
     {
       using var reader = new StreamReader(_archivo);
-      string linea;
+      string ? linea;
       while ((linea = reader.ReadLine()) != null)
       {
         var e = convertirString(linea);
@@ -96,7 +96,7 @@ public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
         var nuevasLineas = new List<string>();
         using (var reader = new StreamReader(_archivo))
         {
-            string linea;
+            string ? linea;
             while ((linea = reader.ReadLine()) != null)
             {
                 var e = convertirString(linea);
@@ -113,10 +113,10 @@ public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
         }
     }
 
-    public EventoDeportivo ObtenerEvento(int id)
+    public EventoDeportivo ? ObtenerEvento(int id)
     {
       using var reader = new StreamReader(_archivo);
-      string linea;
+      string? linea;
       while ((linea = reader.ReadLine()) != null)
       {
         var e = convertirString(linea);
@@ -130,7 +130,7 @@ public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
     {
       var lista = new List<EventoDeportivo>();
       using var reader = new StreamReader(_archivo);
-      string linea;
+      string ?linea;
       while ((linea = reader.ReadLine()) != null)
       {
         if (!string.IsNullOrWhiteSpace(linea))
