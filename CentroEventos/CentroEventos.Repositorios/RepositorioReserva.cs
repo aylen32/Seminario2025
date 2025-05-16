@@ -100,7 +100,28 @@ public class RepositorioReserva : IRepositorioReserva
 
     public void ModificarReserva(Reserva reserva)
     {
-        throw new NotImplementedException();
+        if (!ExisteReservaPorId(reserva.Id))
+        {
+            throw new KeyNotFoundException($"ID {reserva.Id} no encontrado");
+        }
+        var nuevasLineas = new List<string>();
+        using (var reader = new StreamReader(_archivo))
+        {
+          string linea;
+          while ((linea = reader.ReadLine()) != null)
+          {
+            var r = convertirString(linea);
+            if (r.Id == reserva.Id)
+                nuevasLineas.Add(cadenaReserva(reserva)); // reemplaza
+            else
+                nuevasLineas.Add(linea); // mantiene
+          }
+        }
+        using (var writer = new StreamWriter(_archivo, false))
+        {
+          foreach (var l in nuevasLineas)
+            writer.WriteLine(l);
+        }
     }
 
     public Reserva ObtenerReserva(int id)
@@ -118,11 +139,29 @@ public class RepositorioReserva : IRepositorioReserva
 
     public IEnumerable<Reserva> ObtenerReservasPorEvento(int eventoId)
     {
-        throw new NotImplementedException();
+      var reservas = new List<Reserva>();
+      using var reader = new StreamReader(_archivo);
+      string? linea;
+      while ((linea = reader.ReadLine()) != null)
+      {
+        var r = convertirString(linea);
+        if (r.EventoDeportivoId == eventoId)
+            reservas.Add(r);
+      }
+      return reservas;
     }
 
     public IEnumerable<Reserva> ObtenerReservasPorPersona(int personaId)
     {
-        throw new NotImplementedException();
+      var reservas = new List<Reserva>();
+      using var reader = new StreamReader(_archivo);
+      string? linea;
+      while ((linea = reader.ReadLine()) != null)
+      {
+        var r = convertirString(linea);
+        if (r.PersonaId == personaId)
+            reservas.Add(r);
+      }
+      return reservas;
     }
 }

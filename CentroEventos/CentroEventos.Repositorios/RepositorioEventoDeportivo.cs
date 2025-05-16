@@ -34,28 +34,121 @@ public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
     private string cadenaEvento(EventoDeportivo evento){
         return evento.Id+","+evento.Nombre+","+evento.Descripcion+","+evento.FechaHoraInicio+","+evento.DuracionHoras+","+evento.CupoMaximo+","+evento.ResponsableId;
     }
+    
     public void EliminarEvento(int id)
     {
-        throw new NotImplementedException();
+        if (!ExisteEventoPorId(id))
+        {
+            throw new KeyNotFoundException($"ID {id} no encontrado");
+        }
+        var nuevasLineas = new List<string>();
+        using (var reader = new StreamReader(_archivo))
+        {
+          string linea;
+          while ((linea = reader.ReadLine()) != null)
+          {
+            var e = convertirString(linea);
+            if (e.Id != id)
+                nuevasLineas.Add(linea);
+          }
+        }
+        using (var writer = new StreamWriter(_archivo, false))
+        {
+          foreach (var l in nuevasLineas)
+            writer.WriteLine(l);
+        }
+    }
+
+    private EventoDeportivo convertirString(string linea)
+    {
+        var partes = linea.Split(',');
+        return new EventoDeportivo
+        {
+            Id = int.Parse(partes[0]),
+            Nombre = partes[1],
+            Descripcion = partes[2],
+            FechaHoraInicio = DateTime.Parse(partes[3]),
+            DuracionHoras = double.Parse(partes[4]),
+            CupoMaximo = int.Parse(partes[5]),
+            ResponsableId = int.Parse(partes[6])
+        };
     }
 
     public bool ExisteEventoPorId(int id)
     {
-        throw new NotImplementedException();
+      using var reader = new StreamReader(_archivo);
+      string linea;
+      while ((linea = reader.ReadLine()) != null)
+      {
+        var e = convertirString(linea);
+        if (e.Id == id)
+            return true;
+      }
+      return false;
+    }
+    
+    public bool ExisteEventoPorId(int id)
+    {
+      using var reader = new StreamReader(_archivo);
+      string linea;
+      while ((linea = reader.ReadLine()) != null)
+      {
+        var e = convertirString(linea);
+        if (e.Id == id)
+            return true;
+      }
+      return false;
     }
 
     public void ModificarEvento(EventoDeportivo evento)
     {
-        throw new NotImplementedException();
+        if (!ExisteEventoPorId(evento.Id))
+        {
+            throw new KeyNotFoundException($"ID {evento.Id} no encontrado");
+        }
+        var nuevasLineas = new List<string>();
+        using (var reader = new StreamReader(_archivo))
+        {
+            string linea;
+            while ((linea = reader.ReadLine()) != null)
+            {
+                var e = convertirString(linea);
+                if (e.Id == evento.Id)
+                    nuevasLineas.Add(cadenaEvento(evento));
+                else
+                    nuevasLineas.Add(linea);
+            }
+        }
+        using (var writer = new StreamWriter(_archivo, false))
+        {
+            foreach (var l in nuevasLineas)
+                writer.WriteLine(l);
+        }
     }
 
     public EventoDeportivo ObtenerEvento(int id)
     {
-        throw new NotImplementedException();
+      using var reader = new StreamReader(_archivo);
+      string linea;
+      while ((linea = reader.ReadLine()) != null)
+      {
+        var e = convertirString(linea);
+        if (e.Id == id)
+            return e;
+      }
+      return null;
     }
 
     public IEnumerable<EventoDeportivo> ObtenerTodos()
     {
-        throw new NotImplementedException();
+      var lista = new List<EventoDeportivo>();
+      using var reader = new StreamReader(_archivo);
+      string linea;
+      while ((linea = reader.ReadLine()) != null)
+      {
+        if (!string.IsNullOrWhiteSpace(linea))
+            lista.Add(convertirString(linea));
+      }
+      return lista;
     }
 }

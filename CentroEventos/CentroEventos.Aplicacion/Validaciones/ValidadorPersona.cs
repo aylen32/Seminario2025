@@ -8,7 +8,7 @@ public class ValidadorPersona: IValidadorPersona{
     private readonly IRepositorioPersona _personaRepo;
 
     public ValidadorPersona(IRepositorioPersona personaRepo)          //Constructor para recibir el repositorio 
-    {                                                                 //Creo que deberia ser publico?
+    {                                                                 
         _personaRepo = personaRepo;
     }
 
