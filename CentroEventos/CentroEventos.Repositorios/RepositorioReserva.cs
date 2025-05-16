@@ -2,7 +2,7 @@ using System;
 using CentroEventos.Aplicacion;
 using CentroEventos.Aplicacion.Validaciones;
 using static CentroEventos.Aplicacion.Reserva;
-
+using CentroEventos.Aplicacion.Excepciones;
 namespace CentroEventos.Repositorios;
 
 
@@ -102,7 +102,7 @@ public class RepositorioReserva : IRepositorioReserva
     {
         if (!ExisteReservaPorId(reserva.Id))
         {
-            throw new EntidadNoEncontradaException($"La reserva de la persona con ID {id} no existe.");
+            throw new EntidadNoEncontradaException($"La reserva de la persona con ID {reserva.Id} no existe.");
         }
         var nuevasLineas = new List<string>();
         using (var reader = new StreamReader(_archivo))

@@ -2,6 +2,10 @@ using System;
 
 namespace CentroEventos.Aplicacion.CasosUso;
 
+using CentroEventos.Aplicacion.Excepciones;
+using CentroEventos.Aplicacion.Interfaces;
+using CentroEventos.Aplicacion.Validaciones;
+
 public class ModificarPersonaUseCase
 {
     private readonly IRepositorioPersona _repo;
@@ -17,7 +21,7 @@ public class ModificarPersonaUseCase
     {
         if (!_repo.ExistePersonaPorId(persona.Id))
         { 
-            throw new EntidadNoEncontradaException($"La persona con ID {id} no existe.");
+            throw new EntidadNoEncontradaException($"La persona con ID {persona.Id} no existe.");
         }
         _validador.Validar(persona); 
         _repo.ModificarPersona(persona);

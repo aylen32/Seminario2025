@@ -11,7 +11,7 @@ public class ListadoReservaUseCase
         _repositorioReserva = repositorioReserva; // Inyeccion de dependencia por constructor (supuestamente se puede)
     }
 
-    public IEnumerable<Reserva> Ejecutar()
+    public IEnumerable<Reserva> ? Ejecutar()
     {
         return null; // Obtener la lista de reservas del repositorio
     }

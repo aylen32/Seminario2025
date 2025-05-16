@@ -1,7 +1,7 @@
 using System;
 using CentroEventos.Aplicacion;
 using CentroEventos.Aplicacion.Validaciones;
-
+using CentroEventos.Aplicacion.Excepciones;
 namespace CentroEventos.Repositorios;
 
 public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
@@ -91,7 +91,7 @@ public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
     {
         if (!ExisteEventoPorId(evento.Id))
         {
-            throw new EntidadNoEncontradaException($"El evento con ID {id} no existe.");
+            throw new EntidadNoEncontradaException($"El evento con ID {evento.Id} no existe.");
         }
         var nuevasLineas = new List<string>();
         using (var reader = new StreamReader(_archivo))

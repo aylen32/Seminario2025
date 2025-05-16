@@ -2,6 +2,7 @@ using System;
 
 using CentroEventos.Aplicacion.Validaciones;
 using CentroEventos.Aplicacion;
+using CentroEventos.Aplicacion.Excepciones;
 using System.Reflection.Metadata.Ecma335;
 using System.ComponentModel;
 using System.Data.Common;
@@ -116,7 +117,7 @@ public class RepositorioPersona : IRepositorioPersona
     public void ModificarPersona(Persona persona)
     {
       if (!ExistePersonaPorId(persona.Id)) { 
-        throw new EntidadNoEncontradaException($"La persona con ID {id} no existe.");  //Validar si existe la persona con el Id
+        throw new EntidadNoEncontradaException($"La persona con ID {persona.Id} no existe.");  //Validar si existe la persona con el Id
       }
       var nuevasLineas = new List<string>();
       using (var reader = new StreamReader(_archivo))
