@@ -17,7 +17,7 @@ public class AltaPersonaUseCase
     int idUsuario)
     {
 
-        _repositorioPersona = repositorioPersona;     //Inyeccion de dependencia por constructor (supuestamente se puede)
+        _repositorioPersona = repositorioPersona;     //Inyeccion de dependencia por constructor 
         _validadorPersona = validadorPersona;
         _autorizacion = autorizacion;
         _idUsuario = idUsuario;

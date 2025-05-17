@@ -1,7 +1,7 @@
 using System;
 using CentroEventos.Aplicacion.Excepciones;
 using CentroEventos.Aplicacion.Interfaces;
-namespace CentroEventos.Aplicacion.Validaciones;         //Falta reglas del negocio
+namespace CentroEventos.Aplicacion.Validaciones;         
 
 public class ValidadorEventoDeportivo: IValidadorEventoDeportivo
 {

@@ -15,6 +15,4 @@ public class Persona
     {
         return $"[{Id}] {Nombre} {Apellido} - DNI: {DNI}, Email: {Mail}, Tel: {Telefono}";
     }
-
-
 }

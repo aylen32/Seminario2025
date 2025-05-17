@@ -13,7 +13,6 @@ public class RepositorioPersona : IRepositorioPersona
 {
     private readonly string _archivo = @"C:\Users\aylen\OneDrive\Documentos\proyecto2025\archivo.txt";
     private readonly string _archivo_id = @"C:\Users\aylen\OneDrive\Documentos\proyecto2025\archivo_id.txt";
-    // Elimina una persona buscandolo por su ID
     public void AgregarPersona(Persona persona)
     {
         persona.Id=GenerarId();
@@ -21,7 +20,8 @@ public class RepositorioPersona : IRepositorioPersona
         sw.WriteLine(cadenaPersona(persona));
         
     }
-    private int buscarUltID(){
+    private int buscarUltID()
+    {
        int id;
        using var reader = new StreamReader(_archivo_id);
        int ultId = int.Parse(reader.ReadToEnd());
@@ -32,12 +32,14 @@ public class RepositorioPersona : IRepositorioPersona
             }
         return id;
     }
-    private int GenerarId() {
+    private int GenerarId()
+    {
         int idNuevo = buscarUltID();
         return idNuevo;    
         
     }
-    private string cadenaPersona(Persona persona){
+    private string cadenaPersona(Persona persona)
+    {
         return persona.Id+","+persona.DNI+","+persona.Nombre+","+persona.Apellido+","+persona.Mail+","+persona.Telefono;
     }
     public void EliminarPersona(int id)
@@ -45,14 +47,19 @@ public class RepositorioPersona : IRepositorioPersona
         using var reader = new StreamReader(_archivo);
         using var writer = new StreamWriter(_archivo,false);
                 List<string> nuevasLineas = new List<string>();        
-        if(!ExistePersonaPorId(id)){
-            throw new EntidadNotFoundException($"La persona con ID {id} no existe.");
-        }else{
-            string ? linea;
-            while((linea=reader.ReadLine())!=null){
+        if(!ExistePersonaPorId(id))
+        {
+            throw new EntidadNotFoundException ($"La persona con ID {id} no existe");
+        }
+        else
+        {
+            string? linea;
+            while ((linea = reader.ReadLine()) != null)
+            {
 
                 Persona p = convertirString(linea);
-                if(p.Id!=id){
+                if (p.Id != id)
+                {
                     nuevasLineas.Add(linea);
                 }
             }
@@ -61,10 +68,10 @@ public class RepositorioPersona : IRepositorioPersona
                 writer.WriteLine(l);
             }
         }
-
     }
 
-    private Persona convertirString(string p){
+    private Persona convertirString(string p)
+    {
         string[] partes = p.Split(",");
         Persona per = new Persona();
         per.Id= int.Parse(partes[0]);
@@ -79,9 +86,11 @@ public class RepositorioPersona : IRepositorioPersona
     {
         using var reader = new StreamReader(_archivo);
         string ? linea;
-        while((linea = reader.ReadLine())!=null){
+        while((linea = reader.ReadLine())!=null)
+        {
             Persona per = convertirString(linea);
-            if(per.DNI.Equals(dni)){
+            if(per.DNI.Equals(dni))
+            {
                 return true;
             }
         }
@@ -92,9 +101,11 @@ public class RepositorioPersona : IRepositorioPersona
     {
         using var reader = new StreamReader(_archivo);
         string ? linea;
-        while((linea = reader.ReadLine())!=null){
+        while((linea = reader.ReadLine())!=null)
+        {
             Persona per = convertirString(linea);
-            if(per.Mail.Equals(mail)){
+            if(per.Mail.Equals(mail))
+            {
                 return true;
             }
         }
@@ -105,9 +116,11 @@ public class RepositorioPersona : IRepositorioPersona
     {
         using var reader = new StreamReader(_archivo);
         string ? linea;
-        while((linea = reader.ReadLine())!=null){
+        while((linea = reader.ReadLine())!=null)
+        {
             Persona per = convertirString(linea);
-            if(per.Id==id){
+            if(per.Id==id)
+            {
                 return true;
             }
         }
@@ -116,7 +129,8 @@ public class RepositorioPersona : IRepositorioPersona
 
     public void ModificarPersona(Persona persona)
     {
-      if (!ExistePersonaPorId(persona.Id)) { 
+      if (!ExistePersonaPorId(persona.Id))
+      { 
         throw new EntidadNotFoundException($"La persona con ID {persona.Id} no existe.");  //Validar si existe la persona con el Id
       }
       var nuevasLineas = new List<string>();
@@ -127,14 +141,14 @@ public class RepositorioPersona : IRepositorioPersona
         {
             Persona p = convertirString(linea);
             if (p.Id == persona.Id)
-                nuevasLineas.Add(cadenaPersona(persona));    // actualiza los datos
+                nuevasLineas.Add(cadenaPersona(persona));         // actualiza los datos
             else
-                nuevasLineas.Add(linea);                    // mantiene los datos
+                nuevasLineas.Add(linea);                         // mantiene los datos
         }
       }
       using (var writer = new StreamWriter(_archivo, false))
       {
-        foreach (string l in nuevasLineas)                       //Abre archivo y modifica datos viejos con nuevos
+        foreach (string l in nuevasLineas)                       // Abre archivo y modifica datos viejos con nuevos
         {
             writer.WriteLine(l);
         }
@@ -145,9 +159,11 @@ public class RepositorioPersona : IRepositorioPersona
     {
         using var reader = new StreamReader(_archivo);
         string? unaPersona;
-        while((unaPersona= reader.ReadLine())!=null){
+        while((unaPersona= reader.ReadLine())!=null)
+        {
             Persona p = convertirString(unaPersona);
-            if(p.Id==id){
+            if(p.Id==id)
+            {
                 return p;
             }
         }
@@ -159,11 +175,13 @@ public class RepositorioPersona : IRepositorioPersona
        List<Persona> personas = new List<Persona>();
        using var reader = new StreamReader(_archivo);
        string? unaPersona;
-       while((unaPersona=reader.ReadLine())!=null){
-            if(!string.IsNullOrWhiteSpace(unaPersona)){
+       while((unaPersona=reader.ReadLine())!=null)
+        {
+            if(!string.IsNullOrWhiteSpace(unaPersona))
+            {
                 personas.Add(convertirString(unaPersona));
             }
-       }
+        }
        return personas;
     }
 }

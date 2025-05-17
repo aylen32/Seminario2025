@@ -33,9 +33,7 @@ public class ModificarReservaUseCase
             {
                 throw new EntidadNotFoundException($"La reserva con ID {reserva.Id} no existe");
             }
-
         _validador.Validar(reserva);
         _repo.ModificarReserva(reserva);
-
     }
 }

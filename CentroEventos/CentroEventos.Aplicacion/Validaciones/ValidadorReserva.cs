@@ -1,9 +1,9 @@
 using System;
 using CentroEventos.Aplicacion.Excepciones;
 using CentroEventos.Aplicacion.Interfaces;
-namespace CentroEventos.Aplicacion.Validaciones;               //Falta reglas del negocio
+namespace CentroEventos.Aplicacion.Validaciones;
 
-public class ValidadorReserva: IValidadorReserva
+public class ValidadorReserva : IValidadorReserva
 {
     private readonly IRepositorioPersona _personaRepo;
     private readonly IRepositorioEventoDeportivo _eventoRepo;
@@ -37,7 +37,4 @@ public class ValidadorReserva: IValidadorReserva
             throw new CupoExcedidoException("El evento deportivo no tiene cupo disponible");
         }
     }
-
-    //Falta la validacion de que una persona no reserve dos veces el mismo evento deportivo
-    //Falta la validacion de que haya cupo disponible en el EventoDeportivo antes de guardar
 }

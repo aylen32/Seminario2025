@@ -49,10 +49,7 @@ public class ListarAsistenciaAEventoUseCase
                     personas.Add(persona);
                 }
             }
-
         }
         return personas;
     }
-
-
 }

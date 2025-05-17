@@ -16,7 +16,7 @@ public class AltaEventoDeportivoUseCase
   public AltaEventoDeportivoUseCase(IRepositorioEventoDeportivo repositorioEventoDeportivo, IValidadorEventoDeportivo validadorEventoDeportivo, IServicioAutorizacion autorizacion,
   int idUsuario)
   {
-    _repositorioEventoDeportivo = repositorioEventoDeportivo;       //Inyeccion de dependencia por constructor (supuestamente se puede)
+    _repositorioEventoDeportivo = repositorioEventoDeportivo;       //Inyeccion de dependencia por constructor 
     _validadorEventoDeportivo = validadorEventoDeportivo;
     _autorizacion = autorizacion;
     _idUsuario = idUsuario;

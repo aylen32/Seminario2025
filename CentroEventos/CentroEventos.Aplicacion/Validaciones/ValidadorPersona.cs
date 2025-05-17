@@ -2,12 +2,12 @@ using System;
 using CentroEventos.Aplicacion.Excepciones;
 using CentroEventos.Aplicacion.Interfaces;
 
-namespace CentroEventos.Aplicacion.Validaciones;                      //Falta reglas del negocio
+namespace CentroEventos.Aplicacion.Validaciones;                      
 
 public class ValidadorPersona: IValidadorPersona{           
     private readonly IRepositorioPersona _personaRepo;
 
-    public ValidadorPersona(IRepositorioPersona personaRepo)          //Constructor para recibir el repositorio 
+    public ValidadorPersona(IRepositorioPersona personaRepo)          
     {                                                                 
         _personaRepo = personaRepo;
     }
@@ -31,10 +31,10 @@ public class ValidadorPersona: IValidadorPersona{
       }
 
       if (_personaRepo.ExistePersonaPorDni (persona.DNI)){
-        throw new DuplicadoException ("La persona con este DNI ya está registrada");  // Verificar que el DNI no esté repetido
+        throw new DuplicadoException ("La persona con este DNI ya está registrada");  
       }
 
-      if (_personaRepo.ExistePersonaPorEmail (persona.Mail)){                         // Verificar que el Email no esté repetido
+      if (_personaRepo.ExistePersonaPorEmail (persona.Mail)){                        
         throw new DuplicadoException ("La persona con este Email ya está registrada");
       }
     }

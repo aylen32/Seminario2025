@@ -9,7 +9,8 @@ public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
      private readonly string _archivo = @"C:\Users\aylen\OneDrive\Documentos\proyecto2025\archivo_evento.txt";
     private readonly string _archivo_id = @"C:\Users\aylen\OneDrive\Documentos\proyecto2025\archivo_id_evento.txt";
 
-    private int buscarUltID(){
+    private int buscarUltID()
+    {
        int id;
        using var reader = new StreamReader(_archivo_id);
        int ultId = int.Parse(reader.ReadToEnd());
@@ -31,7 +32,8 @@ public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
         using var sw = new StreamWriter(_archivo, true);
         sw.WriteLine(cadenaEvento(evento));
     }
-    private string cadenaEvento(EventoDeportivo evento){
+    private string cadenaEvento(EventoDeportivo evento)
+    {
         return evento.Id+","+evento.Nombre+","+evento.Descripcion+","+evento.FechaHoraInicio+","+evento.DuracionHoras+","+evento.CupoMaximo+","+evento.ResponsableId;
     }
     

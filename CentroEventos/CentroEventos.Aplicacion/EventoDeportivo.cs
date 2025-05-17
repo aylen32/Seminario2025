@@ -16,5 +16,4 @@ public class EventoDeportivo
     {
         return $"[{Id}] {Nombre} ({Descripcion}) - Inicio: {FechaHoraInicio}, Duración: {DuracionHoras} hs, Cupo: {CupoMaximo}, ResponsableId: {ResponsableId}";
     }
-
 }
