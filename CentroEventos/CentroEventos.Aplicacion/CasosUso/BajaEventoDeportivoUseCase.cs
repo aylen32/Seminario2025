@@ -5,6 +5,7 @@ namespace CentroEventos.Aplicacion.CasosUso;
 
 using CentroEventos.Aplicacion.Excepciones;
 using CentroEventos.Aplicacion.Enumerativos;
+using CentroEventos.Aplicacion.Servicio;
 
 public class BajaEventoDeportivoUseCase
 {

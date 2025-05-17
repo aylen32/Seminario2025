@@ -2,6 +2,7 @@ using System;
 using CentroEventos.Aplicacion.Interfaces;
 using CentroEventos.Aplicacion.Validaciones;
 using CentroEventos.Aplicacion.Enumerativos;
+using CentroEventos.Aplicacion.Servicio;
 namespace CentroEventos.Aplicacion.CasosUso;
 using CentroEventos.Aplicacion.Excepciones;
 

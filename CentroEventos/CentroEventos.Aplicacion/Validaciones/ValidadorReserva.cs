@@ -32,9 +32,15 @@ public class ValidadorReserva : IValidadorReserva
         {
             throw new DuplicadoException("Ya existe una reserva para este evento deportivo de esta persona");
         }
-        if (_eventoRepo.ObtenerEvento(reserva.EventoDeportivoId).CupoMaximo <= _reservaRepo.ObtenerReservasPorEvento(reserva.EventoDeportivoId).Count())
+
+        EventoDeportivo ? evento = _eventoRepo.ObtenerEvento(reserva.EventoDeportivoId);
+        if (evento != null) //pobre manejo de null, pero manejo al fin
+        {
+            if (evento.CupoMaximo <= _reservaRepo.ObtenerReservasPorEvento(reserva.EventoDeportivoId).Count())
         {
             throw new CupoExcedidoException("El evento deportivo no tiene cupo disponible");
         }
+        }
+        
     }
 }
