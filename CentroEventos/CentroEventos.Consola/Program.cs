@@ -13,7 +13,7 @@ class Program
     {
             Console.Clear();
         // Solicitar ID de usuario-------------------------> Importante para saber si tiene permiso o no
-        Console.Write("Ingrese su ID de usuario: ");
+        Console.Write("¡Bienvenido/a! Ingrese su ID de usuario: ");
         string? inputUsuario = Console.ReadLine();
         if (string.IsNullOrWhiteSpace(inputUsuario))
         {
@@ -101,12 +101,12 @@ class Program
                     case "3":
                         var modificarPersona = new ModificarPersonaUseCase(repoPersona, validadorPersona, servicioAutorizacion, idUsuario);
                         Persona pMod = new Persona();
-                        Console.Write("ID: "); pMod.Id = int.Parse(Console.ReadLine()!);
-                        Console.Write("Nombre: "); pMod.Nombre = Console.ReadLine()!;
-                        Console.Write("Apellido: "); pMod.Apellido = Console.ReadLine()!;
-                        Console.Write("DNI: "); pMod.DNI = Console.ReadLine()!;
-                        Console.Write("Email: "); pMod.Mail = Console.ReadLine()!;
-                        Console.Write("Teléfono: "); pMod.Telefono = Console.ReadLine()!;
+                        Console.Write("ID de la persona a modificar: "); pMod.Id = int.Parse(Console.ReadLine()!);
+                        Console.Write("Nombre nuevo: "); pMod.Nombre = Console.ReadLine()!;
+                        Console.Write("Apellido nuevo: "); pMod.Apellido = Console.ReadLine()!;
+                        Console.Write("DNI nuevo: "); pMod.DNI = Console.ReadLine()!;
+                        Console.Write("Email actualizado: "); pMod.Mail = Console.ReadLine()!;
+                        Console.Write("Teléfono actualizado: "); pMod.Telefono = Console.ReadLine()!;
                         modificarPersona.Ejecutar(pMod);
                         Console.WriteLine(1);
                         break;
@@ -123,7 +123,7 @@ class Program
                         var altaEvento = new AltaEventoDeportivoUseCase(repoEvento, validadorEvento, servicioAutorizacion, idUsuario);
                         EventoDeportivo e = new EventoDeportivo();
                         Console.Write("Nombre: "); e.Nombre = Console.ReadLine()!;
-                        Console.Write("Descripcion: "); e.Descripcion = Console.ReadLine()!;
+                        Console.Write("Descripción: "); e.Descripcion = Console.ReadLine()!;
                         Console.Write("Fecha inicio (yyyy-MM-dd HH:mm): "); e.FechaHoraInicio = DateTime.Parse(Console.ReadLine()!);
                         Console.Write("Duración en horas: "); e.DuracionHoras = double.Parse(Console.ReadLine()!);
                         Console.Write("Cupo máximo: "); e.CupoMaximo = int.Parse(Console.ReadLine()!);
@@ -152,14 +152,13 @@ class Program
                     case "7":
                         var modificarEvento = new ModificarEventoDeportivoUseCase(repoEvento, validadorEvento, servicioAutorizacion, idUsuario);
                         EventoDeportivo eMod = new EventoDeportivo();
-                        Console.Write("ID: "); eMod.Id = int.Parse(Console.ReadLine()!);
-                        Console.Write("Nombre: "); eMod.Nombre = Console.ReadLine()!;
-                        Console.Write("Descripcion: "); eMod.Descripcion = Console.ReadLine()!;
-                        Console.Write("Fecha inicio (yyyy-MM-dd HH:mm): "); eMod.FechaHoraInicio = DateTime.Parse(Console.ReadLine()!);
-                        Console.Write("Duración en horas: "); eMod.DuracionHoras = double.Parse(Console.ReadLine()!);
-                        Console.Write("Cupo máximo: "); eMod.CupoMaximo = int.Parse(Console.ReadLine()!);
-                        Console.Write("ID Responsable: "); eMod.ResponsableId = int.Parse(Console.ReadLine()!);
-                        modificarEvento.Ejecutar(eMod);
+                        Console.Write("ID del evento a modificar: "); eMod.Id = int.Parse(Console.ReadLine()!);
+                        Console.Write("Nombre nuevo: "); eMod.Nombre = Console.ReadLine()!;
+                        Console.Write("Descripción nueva: "); eMod.Descripcion = Console.ReadLine()!;
+                        Console.Write("Fecha inicio (yyyy-MM-dd HH:mm) actualizada: "); eMod.FechaHoraInicio = DateTime.Parse(Console.ReadLine()!);
+                        Console.Write("Duración en horas actualizada: "); eMod.DuracionHoras = double.Parse(Console.ReadLine()!);
+                        Console.Write("Cupo máximo actualizado: "); eMod.CupoMaximo = int.Parse(Console.ReadLine()!);
+                        modificarEvento.Ejecutar(eMod.Id, eMod.Nombre, eMod.Descripcion, eMod.FechaHoraInicio, eMod.DuracionHoras, eMod.CupoMaximo);   
                         Console.WriteLine("Evento modificado exitosamente");
                         break;
 
@@ -199,12 +198,26 @@ class Program
                     case "11":
                         var modificarReserva = new ModificarReservaUseCase(repoReserva, validadorReserva, servicioAutorizacion, idUsuario);
                         Reserva rMod = new Reserva();
-                        Console.Write("ID: "); rMod.Id = int.Parse(Console.ReadLine()!);
-                        Console.Write("ID Persona: "); rMod.PersonaId = int.Parse(Console.ReadLine()!);
-                        Console.Write("ID Evento: "); rMod.EventoDeportivoId = int.Parse(Console.ReadLine()!);
-                        rMod.FechaAltaReserva = DateTime.Now;
-                        rMod.Estado = Reserva.EstadoAsistencia.Pendiente;
-                        modificarReserva.Ejecutar(rMod);
+                        Console.Write("ID de la reserva a modificar: "); rMod.Id = int.Parse(Console.ReadLine()!);
+                        Console.WriteLine("Ingrese el nuevo estado de la reserva (Pendiente, Presente, Ausente): ");
+                        string estadoNuevo = Console.ReadLine()!.ToUpper();
+                        switch (estadoNuevo)
+                        {
+                            case "PENDIENTE":
+                                rMod.Estado = Reserva.EstadoAsistencia.Pendiente;
+                                break;
+                            case "PRESENTE":
+                                rMod.Estado = Reserva.EstadoAsistencia.Presente;
+                                break;
+                            case "AUSENTE":
+                                rMod.Estado = Reserva.EstadoAsistencia.Ausente;
+                                break;
+                            default:
+                                Console.WriteLine("Estado inválido. Se asignará Pendiente por defecto");
+                                rMod.Estado = Reserva.EstadoAsistencia.Pendiente;
+                                break;
+                        }
+                        modificarReserva.Ejecutar(rMod.Id, rMod.Estado);
                         Console.WriteLine("Reserva modificada exitosamente");
                         break;
 

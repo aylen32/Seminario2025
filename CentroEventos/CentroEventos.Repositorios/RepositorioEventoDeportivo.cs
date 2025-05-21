@@ -104,11 +104,14 @@ public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
       return false;
     }
 
-    public void ModificarEvento(EventoDeportivo evento)
+    public void ModificarEvento(int id, string n, string d, DateTime f, double dur, int cupo)
     {
-        if (!ExisteEventoPorId(evento.Id))
+        
+
+
+        if (!ExisteEventoPorId(id))
         {
-            throw new EntidadNotFoundException($"El evento con ID {evento.Id} no existe.");
+            throw new EntidadNotFoundException($"El evento con ID {id} no existe.");
         }
         var nuevasLineas = new List<string>();
         using (var reader = new StreamReader(_archivo))
@@ -117,8 +120,17 @@ public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
             while ((linea = reader.ReadLine()) != null)
             {
                 var e = convertirString(linea);
-                if (e.Id == evento.Id)
-                    nuevasLineas.Add(cadenaEvento(evento));
+                if (e.Id == id) {
+                    e.Nombre = n;
+                    e.Descripcion = d;
+                    e.FechaHoraInicio = f;
+                    e.DuracionHoras = dur;
+                    e.CupoMaximo = cupo;
+                    
+
+                    nuevasLineas.Add(cadenaEvento(e));
+                }
+                    
                 else
                     nuevasLineas.Add(linea);
             }

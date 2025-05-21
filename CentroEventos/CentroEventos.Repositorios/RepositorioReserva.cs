@@ -3,6 +3,7 @@ using CentroEventos.Aplicacion;
 using CentroEventos.Aplicacion.Validaciones;
 using static CentroEventos.Aplicacion.Reserva;
 using CentroEventos.Aplicacion.Excepciones;
+using System.Data.Common;
 namespace CentroEventos.Repositorios;
 
 
@@ -120,11 +121,11 @@ public class RepositorioReserva : IRepositorioReserva
         return false;
     }
 
-    public void ModificarReserva(Reserva reserva)
+    public void ModificarReserva(int id, EstadoAsistencia estado)
     {
-        if (!ExisteReservaPorId(reserva.Id))
+        if (!ExisteReservaPorId(id))
         {
-            throw new EntidadNotFoundException($"La reserva de la persona con ID {reserva.Id} no existe");
+            throw new EntidadNotFoundException($"La reserva con ID {id} no existe");
         }
         var nuevasLineas = new List<string>();
         using (var reader = new StreamReader(_archivo))
@@ -132,11 +133,18 @@ public class RepositorioReserva : IRepositorioReserva
             string? linea;
             while ((linea = reader.ReadLine()) != null)
             {
-                var r = convertirString(linea);
-                if (r.Id == reserva.Id)
-                    nuevasLineas.Add(cadenaReserva(reserva)); // reemplaza
+                Reserva r = convertirString(linea);
+                if (r.Id == id)
+                {
+                    r.Estado = estado;
+                    nuevasLineas.Add(cadenaReserva(r));
+                }
+
                 else
-                    nuevasLineas.Add(linea); // mantiene
+                {
+                    nuevasLineas.Add(linea);
+                }
+                     
             }
         }
 
@@ -146,6 +154,7 @@ public class RepositorioReserva : IRepositorioReserva
                 writer.WriteLine(l);
         }
     }
+    
 
     public Reserva? ObtenerReserva(int id)
     {

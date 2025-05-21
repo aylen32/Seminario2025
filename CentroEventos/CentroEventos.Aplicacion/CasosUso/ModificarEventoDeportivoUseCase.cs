@@ -24,18 +24,18 @@ public class ModificarEventoDeportivoUseCase
         _idUsuario = idUsuario;
     }
 
-    public void Ejecutar(EventoDeportivo evento)
+    public void Ejecutar(int id, string nombre, string descripcion, DateTime fechaHoraInicio, double duracionHoras, int cupo)
     {
         if (!_autorizacion.PoseeElPermiso(_idUsuario, Permiso.EventoModificacion))
         {
             throw new FalloAutorizacionException("No tiene permiso para modificar eventos");
         }
-        if (!_repositorioEventoDeportivo.ExisteEventoPorId(evento.Id))
+        if (!_repositorioEventoDeportivo.ExisteEventoPorId(id))
             {
-                throw new EntidadNotFoundException($"El evento deportivo con ID {evento.Id} no existe");
+                throw new EntidadNotFoundException($"El evento deportivo con ID {id} no existe");
             }
 
-        _validadorEventoDeportivo.Validar(evento);
-        _repositorioEventoDeportivo.ModificarEvento(evento);
+        //_validadorEventoDeportivo.Validar(evento);
+        _repositorioEventoDeportivo.ModificarEvento(id, nombre, descripcion, fechaHoraInicio, duracionHoras, cupo);
     }
 }

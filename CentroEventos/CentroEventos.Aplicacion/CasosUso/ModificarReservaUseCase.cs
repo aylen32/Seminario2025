@@ -24,17 +24,17 @@ public class ModificarReservaUseCase
         _idUsuario = idUsuario;
     }
 
-    public void Ejecutar(Reserva reserva)
+    public void Ejecutar(int id, Reserva.EstadoAsistencia estado)
     {
         if (!_autorizacion.PoseeElPermiso(_idUsuario, Permiso.ReservaModificacion))
         {
             throw new FalloAutorizacionException("No tiene permiso para modificar reservas");
         }
-        if (!_repo.ExisteReservaPorId(reserva.Id))
+        if (!_repo.ExisteReservaPorId(id))
             {
-                throw new EntidadNotFoundException($"La reserva con ID {reserva.Id} no existe");
+                throw new EntidadNotFoundException($"La reserva con ID {id} no existe");
             }
-        _validador.Validar(reserva);
-        _repo.ModificarReserva(reserva);
+        //_validador.Validar(reserva);
+        _repo.ModificarReserva(id, estado);
     }
 }
