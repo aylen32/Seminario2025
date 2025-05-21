@@ -11,8 +11,8 @@ namespace CentroEventos.Repositorios;
 
 public class RepositorioPersona : IRepositorioPersona
 {
-    private readonly string _archivo = @"C:\Users\aylen\OneDrive\Documentos\proyecto2025\archivo.txt";
-    private readonly string _archivo_id = @"C:\Users\aylen\OneDrive\Documentos\proyecto2025\archivo_id.txt";
+    private readonly string _archivo = @"C:\Users\aylen\datos\archivo.txt";
+    private readonly string _archivo_id = @"C:\Users\aylen\datos\archivo_id.txt";
     public void AgregarPersona(Persona persona)
     {
         persona.Id=GenerarId();
@@ -22,16 +22,25 @@ public class RepositorioPersona : IRepositorioPersona
     }
     private int buscarUltID()
     {
-       int id;
-       using var reader = new StreamReader(_archivo_id);
-       int ultId = int.Parse(reader.ReadToEnd());
-       id= ultId + 1;
-       using var writer = new StreamWriter(_archivo_id, false);
-            {
-                writer.Write(id);
-            }
+        int id;
+        string? ultId;
+        using (var reader = new StreamReader(_archivo_id))
+        {
+            ultId = reader.ReadToEnd();
+        }
+
+        if (string.IsNullOrWhiteSpace(ultId))
+            ultId = "0";
+
+        id = int.Parse(ultId) + 1;
+        using (var writer = new StreamWriter(_archivo_id, false))
+        {
+         writer.Write(id);
+        }
+
         return id;
     }
+
     private int GenerarId()
     {
         int idNuevo = buscarUltID();
@@ -43,32 +52,36 @@ public class RepositorioPersona : IRepositorioPersona
         return persona.Id+","+persona.DNI+","+persona.Nombre+","+persona.Apellido+","+persona.Mail+","+persona.Telefono;
     }
     public void EliminarPersona(int id)
-    {
-        using var reader = new StreamReader(_archivo);
-        using var writer = new StreamWriter(_archivo,false);
-                List<string> nuevasLineas = new List<string>();        
-        if(!ExistePersonaPorId(id))
-        {
-            throw new EntidadNotFoundException ($"La persona con ID {id} no existe");
-        }
-        else
-        {
-            string? linea;
-            while ((linea = reader.ReadLine()) != null)
-            {
+{
+    List<string> nuevasLineas = new List<string>();
 
-                Persona p = convertirString(linea);
-                if (p.Id != id)
-                {
-                    nuevasLineas.Add(linea);
-                }
-            }
-            foreach (string l in nuevasLineas)
+    if (!ExistePersonaPorId(id))
+        throw new EntidadNotFoundException($"La persona con ID {id} no existe");
+
+    //  leer
+    using (var reader = new StreamReader(_archivo))
+    {
+        string? linea;
+        while ((linea = reader.ReadLine()) != null)
+        {
+            Persona p = convertirString(linea);
+            if (p.Id != id)
             {
-                writer.WriteLine(l);
+                nuevasLineas.Add(linea); // solo guardás las que no son la que querés eliminar
             }
         }
     }
+
+    //  escribir
+    using (var writer = new StreamWriter(_archivo, false))
+    {
+        foreach (string l in nuevasLineas)
+        {
+            writer.WriteLine(l);
+        }
+    }
+}
+
 
     private Persona convertirString(string p)
     {

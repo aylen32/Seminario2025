@@ -11,6 +11,7 @@ class Program
 {
     static void Main()
     {
+            Console.Clear();
         // Solicitar ID de usuario-------------------------> Importante para saber si tiene permiso o no
         Console.Write("Ingrese su ID de usuario: ");
         string? inputUsuario = Console.ReadLine();
@@ -38,24 +39,29 @@ class Program
         {
             Console.Clear(); //----------------------------------------------> Limpia la pantalla
             Console.WriteLine("===== MENÚ DEL CENTRO DE EVENTOS =====");
+            Console.WriteLine("===== PERSONAS =====");            
             Console.WriteLine("1. Agregar a una persona nueva");
             Console.WriteLine("2. Obtener un listado de las personas");
             Console.WriteLine("3. Modificar los datos de una persona");
             Console.WriteLine("4. Eliminar a una persona");
+            Console.WriteLine("===== EVENTOS =====");
             Console.WriteLine("5. Agregar un evento nuevo");
             Console.WriteLine("6. Obtener un listado de los eventos");
             Console.WriteLine("7. Modificar un evento");
             Console.WriteLine("8. Eliminar un evento");
+            Console.WriteLine("===== RESERVAS =====");
             Console.WriteLine("9. Agregar una nueva reserva");
             Console.WriteLine("10. Obtener un listado de las reservas");
             Console.WriteLine("11. Modificar una reserva");
             Console.WriteLine("12. Eliminar una reserva");
+            Console.WriteLine("===== LISTADOS =====");
             Console.WriteLine("13. Obtener un listado de la asistencia a un evento");
             Console.WriteLine("14. Obtener un listado de eventos con cupo disponible");
+            Console.WriteLine("===== SALIR =====");
             Console.WriteLine("15. Salir");
             Console.Write("Seleccione una opción del menu: ");
 
-            
+
             try
             {
                 switch (Console.ReadLine())
@@ -64,20 +70,34 @@ class Program
                         var altaPersona = new AltaPersonaUseCase(repoPersona, validadorPersona, servicioAutorizacion, idUsuario);
                         Persona p = new Persona();
                         Console.Write("Nombre: "); p.Nombre = Console.ReadLine()!;
+                        
                         Console.Write("Apellido: "); p.Apellido = Console.ReadLine()!;
+                        
                         Console.Write("DNI: "); p.DNI = Console.ReadLine()!;
+                        
                         Console.Write("Email: "); p.Mail = Console.ReadLine()!;
+                        
                         Console.Write("Teléfono: "); p.Telefono = Console.ReadLine()!;
+                        
                         altaPersona.Ejecutar(p);
-                        Console.WriteLine("Persona agregada exitosamente ");
+                        Console.WriteLine("Persona agregada exitosamente");
                         break;
 
                     case "2":
                         var listarPersonas = new ListadoPersonasUseCase(repoPersona, servicioAutorizacion, idUsuario);
-                        foreach (var persona in listarPersonas.Ejecutar())
-                            Console.WriteLine(persona);
+                         var personas = listarPersonas.Ejecutar();
+                        if (personas != null)
+                        {
+                            foreach (var persona in personas)
+                            {
+                                Console.WriteLine(persona);
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("No se encontraron personas.");
+                        }
                         break;
-
                     case "3":
                         var modificarPersona = new ModificarPersonaUseCase(repoPersona, validadorPersona, servicioAutorizacion, idUsuario);
                         Persona pMod = new Persona();
@@ -88,7 +108,7 @@ class Program
                         Console.Write("Email: "); pMod.Mail = Console.ReadLine()!;
                         Console.Write("Teléfono: "); pMod.Telefono = Console.ReadLine()!;
                         modificarPersona.Ejecutar(pMod);
-                        Console.WriteLine("Persona modificada exitosamente");
+                        Console.WriteLine(1);
                         break;
 
                     case "4":
@@ -126,7 +146,7 @@ class Program
                         {
                             Console.WriteLine("No se encontraron eventos.");
                         }
-                            
+
                         break;
 
                     case "7":
@@ -152,7 +172,7 @@ class Program
                         break;
 
                     case "9":
-                        var altaReserva = new AltaReservaUseCase(repoReserva, validadorReserva, repoEvento, repoPersona ,servicioAutorizacion, idUsuario);
+                        var altaReserva = new AltaReservaUseCase(repoReserva, validadorReserva, repoEvento, repoPersona, servicioAutorizacion, idUsuario);
                         Reserva r = new Reserva();
                         Console.Write("ID Persona: "); r.PersonaId = int.Parse(Console.ReadLine()!);
                         Console.Write("ID Evento: "); r.EventoDeportivoId = int.Parse(Console.ReadLine()!);
@@ -195,7 +215,7 @@ class Program
                         bajaReserva.Ejecutar(idReserva);
                         Console.WriteLine("Reserva eliminada exitosamente");
                         break;
-                        
+
                     case "13":
                         var listarAsistencia = new ListarAsistenciaAEventoUseCase(repoEvento, repoPersona, repoReserva, servicioAutorizacion, idUsuario);
                         Console.Write("ID del evento: ");
@@ -220,6 +240,7 @@ class Program
 
                     case "15":
                         salir = true;
+                        Console.WriteLine("Saliendo del programa...");
                         break;
 
                     default:
@@ -230,6 +251,7 @@ class Program
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
+                 //Console.WriteLine("StackTrace: " + ex.StackTrace);
             }
 
             Console.WriteLine("\nPresione Enter para continuar...");

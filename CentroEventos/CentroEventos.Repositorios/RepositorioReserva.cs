@@ -8,18 +8,26 @@ namespace CentroEventos.Repositorios;
 
 public class RepositorioReserva : IRepositorioReserva
 {
-    private readonly string _archivo = @"C:\Users\aylen\OneDrive\Documentos\proyecto2025\archivo_reserva.txt";
-    private readonly string _archivo_id = @"C:\Users\aylen\OneDrive\Documentos\proyecto2025\archivo_id_reserva.txt";
-    private int buscarUltID()
+    private readonly string _archivo = @"C:\Users\aylen\datos\archivo_reserva.txt";
+    private readonly string _archivo_id = @"C:\Users\aylen\datos\archivo_id_reserva.txt";
+      private int buscarUltID()
     {
         int id;
-        using var reader = new StreamReader(_archivo_id);
-        int ultId = int.Parse(reader.ReadToEnd());
-        id = ultId + 1;
-        using var writer = new StreamWriter(_archivo_id, false);
+        string? ultId;
+        using (var reader = new StreamReader(_archivo_id))
         {
-            writer.Write(id);
+            ultId = reader.ReadToEnd();
         }
+
+        if (string.IsNullOrWhiteSpace(ultId))
+            ultId = "0";
+
+        id = int.Parse(ultId) + 1;
+        using (var writer = new StreamWriter(_archivo_id, false))
+        {
+         writer.Write(id);
+        }
+
         return id;
     }
     private int GenerarId()
@@ -52,30 +60,33 @@ public class RepositorioReserva : IRepositorioReserva
 
     public void EliminarReserva(int id)
     {
-        using var reader = new StreamReader(_archivo);
-        using var writer = new StreamWriter(_archivo, false);
         List<string> nuevasLineas = new List<string>();
-        if (!ExisteReservaPorId(id))
-        {
-            throw new EntidadNotFoundException($"La reserva de persona con ID {id} no existe");
-        }
-        else
-        {
-            string? linea;
-            while ((linea = reader.ReadLine()) != null)
-            {
 
-                Reserva r = convertirString(linea);
-                if (r.Id != id)
-                {
-                    nuevasLineas.Add(linea);
-                }
-            }
-            foreach (string l in nuevasLineas)
+    if (!ExisteReservaPorId(id))
+        throw new EntidadNotFoundException($"La reserva con ID {id} no existe");
+
+    //  leer
+    using (var reader = new StreamReader(_archivo))
+    {
+        string? linea;
+        while ((linea = reader.ReadLine()) != null)
+        {
+            Reserva r = convertirString(linea);
+            if (r.Id != id)
             {
-                writer.WriteLine(l);
+                nuevasLineas.Add(linea); // solo guardás las que no son la que querés eliminar
             }
         }
+    }
+
+    //  escribir
+    using (var writer = new StreamWriter(_archivo, false))
+    {
+        foreach (string l in nuevasLineas)
+        {
+            writer.WriteLine(l);
+        }
+    }
     }
 
     public bool ExisteReservaDuplicada(int personaId, int eventoId)
