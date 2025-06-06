@@ -4,5 +4,6 @@ namespace CentroEventos.Aplicacion.Interfaces;
 
 public interface IValidadorPersona
 {
-        void Validar(Persona persona);
+    bool Validar(Persona persona);
+    string? ObtenerError();  // Para obtener el mensaje del último error de validación
 }

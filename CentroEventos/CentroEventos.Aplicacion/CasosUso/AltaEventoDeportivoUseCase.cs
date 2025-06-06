@@ -9,27 +9,33 @@ using CentroEventos.Aplicacion.Servicio;
 
 public class AltaEventoDeportivoUseCase
 {
-    private readonly IRepositorioEventoDeportivo _repositorioEventoDeportivo;
-    private readonly IValidadorEventoDeportivo _validadorEventoDeportivo;
+    private readonly IRepositorioEventoDeportivo _repositorioEvento;
+    private readonly IValidadorEventoDeportivo _validadorEvento;
     private readonly IServicioAutorizacion _autorizacion;
     private readonly int _idUsuario;
 
-  public AltaEventoDeportivoUseCase(IRepositorioEventoDeportivo repositorioEventoDeportivo, IValidadorEventoDeportivo validadorEventoDeportivo, IServicioAutorizacion autorizacion,
-  int idUsuario)
-  {
-    _repositorioEventoDeportivo = repositorioEventoDeportivo;       //Inyeccion de dependencia por constructor 
-    _validadorEventoDeportivo = validadorEventoDeportivo;
-    _autorizacion = autorizacion;
-    _idUsuario = idUsuario;
-  }
-    public void Ejecutar(EventoDeportivo eventoDeportivo){
-
-    if (!_autorizacion.PoseeElPermiso(_idUsuario, Permiso.EventoAlta))
+    public AltaEventoDeportivoUseCase(
+        IRepositorioEventoDeportivo repositorioEvento,
+        IValidadorEventoDeportivo validadorEvento,
+        IServicioAutorizacion autorizacion,
+        int idUsuario)
     {
-      throw new FalloAutorizacionException("No tiene permiso para dar de alta eventos");
+        _repositorioEvento = repositorioEvento;
+        _validadorEvento = validadorEvento;
+        _autorizacion = autorizacion;
+        _idUsuario = idUsuario;
     }
 
-      _validadorEventoDeportivo.Validar(eventoDeportivo);                    // Validar el evento antes de guardarlo
-      _repositorioEventoDeportivo.AgregarEvento(eventoDeportivo);            // Agregar el evento deportivo
+    public void Ejecutar(EventoDeportivo evento)
+    {
+        if (!_autorizacion.PoseeElPermiso(_idUsuario, Permiso.EventoAlta))
+            throw new FalloAutorizacionException("No tiene permiso para dar de alta eventos deportivos");
+
+        if (!_validadorEvento.Validar(evento))
+            throw new ValidacionException(_validadorEvento.ObtenerError() ?? "Error desconocido en la validación del evento");
+
+        _repositorioEvento.AgregarEvento(evento);
     }
 }
+
+  

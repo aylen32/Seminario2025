@@ -22,10 +22,6 @@ public class ListadoEventoDeportivoUseCase
 
     public IEnumerable<EventoDeportivo> ? Ejecutar()
     {
-        if (!_autorizacion.PoseeElPermiso(_idUsuario, Permiso.EventoAlta)) 
-        {
-            throw new FalloAutorizacionException("No tiene permiso para listar eventos deportivos");
-        }
         return _repositorioEventoDeportivo.ObtenerTodos();
     }
 }

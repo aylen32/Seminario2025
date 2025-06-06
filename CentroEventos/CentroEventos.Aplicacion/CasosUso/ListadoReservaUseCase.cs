@@ -21,11 +21,6 @@ public class ListadoReservaUseCase
 
     public IEnumerable<Reserva> ? Ejecutar()
     {
-        if (!_autorizacion.PoseeElPermiso(_idUsuario, Permiso.ReservaAlta))
-        {
-            throw new FalloAutorizacionException("No tiene permiso para listar reservas");
-        }
-
         return _repositorioReserva.ObtenerTodas();
     }
     

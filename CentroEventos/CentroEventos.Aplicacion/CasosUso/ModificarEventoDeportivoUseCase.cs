@@ -7,19 +7,21 @@ using CentroEventos.Aplicacion.Excepciones;
 using CentroEventos.Aplicacion.Servicio;
 using CentroEventos.Aplicacion.Enumerativos;
 
-
 public class ModificarEventoDeportivoUseCase
 {
-    private readonly IRepositorioEventoDeportivo _repositorioEventoDeportivo;
-    private readonly IValidadorEventoDeportivo _validadorEventoDeportivo;
+    private readonly IRepositorioEventoDeportivo _repositorioEvento;
+    private readonly IValidadorEventoDeportivo _validadorEvento;
     private readonly IServicioAutorizacion _autorizacion;
     private readonly int _idUsuario;
 
-    public ModificarEventoDeportivoUseCase(IRepositorioEventoDeportivo repositorioEventoDeportivo, IValidadorEventoDeportivo validadorEventoDeportivo, IServicioAutorizacion autorizacion,
-    int idUsuario)
+    public ModificarEventoDeportivoUseCase(
+        IRepositorioEventoDeportivo repositorioEvento,
+        IValidadorEventoDeportivo validadorEvento,
+        IServicioAutorizacion autorizacion,
+        int idUsuario)
     {
-        _repositorioEventoDeportivo = repositorioEventoDeportivo;
-        _validadorEventoDeportivo = validadorEventoDeportivo;
+        _repositorioEvento = repositorioEvento;
+        _validadorEvento = validadorEvento;
         _autorizacion = autorizacion;
         _idUsuario = idUsuario;
     }
@@ -27,15 +29,14 @@ public class ModificarEventoDeportivoUseCase
     public void Ejecutar(EventoDeportivo evento)
     {
         if (!_autorizacion.PoseeElPermiso(_idUsuario, Permiso.EventoModificacion))
-        {
-            throw new FalloAutorizacionException("No tiene permiso para modificar eventos");
-        }
-        if (!_repositorioEventoDeportivo.ExisteEventoPorId(evento.Id))
-            {
-                throw new EntidadNotFoundException($"El evento deportivo con ID {evento.Id} no existe");
-            }
+            throw new FalloAutorizacionException("No tiene permiso para modificar eventos deportivos");
 
-        _validadorEventoDeportivo.Validar(evento);
-        _repositorioEventoDeportivo.ModificarEvento(evento);
+        if (!_repositorioEvento.ExisteEventoPorId(evento.Id))
+            throw new EntidadNotFoundException($"El evento con ID {evento.Id} no existe");
+
+        if (!_validadorEvento.Validar(evento))
+            throw new ValidacionException(_validadorEvento.ObtenerError() ?? "Error desconocido en la validación del evento");
+
+        _repositorioEvento.ModificarEvento(evento);
     }
 }

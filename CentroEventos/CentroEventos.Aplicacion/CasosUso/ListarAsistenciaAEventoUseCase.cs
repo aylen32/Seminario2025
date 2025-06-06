@@ -31,10 +31,6 @@ public class ListarAsistenciaAEventoUseCase
 
     public IEnumerable<Persona>? Ejecutar(int id)
     {
-        if (!_autorizacion.PoseeElPermiso(_idUsuario, Permiso.EventoAlta))
-        {
-            throw new FalloAutorizacionException("No tiene permiso para consultar la asistencia a eventos");
-        }
         if (!_repositorioEvento.ExisteEventoPorId(id))
             {
                 throw new EntidadNotFoundException($"Evento con ID {id} no encontrado.");

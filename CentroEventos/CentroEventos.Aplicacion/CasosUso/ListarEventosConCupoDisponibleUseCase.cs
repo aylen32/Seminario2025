@@ -24,10 +24,6 @@ public class ListarEventosConCupoDisponibleUseCase
 
     public List<EventoDeportivo> ? Ejecutar()
     {
-        if (!_autorizacion.PoseeElPermiso(_idUsuario, Permiso.EventoAlta)) 
-        {
-            throw new FalloAutorizacionException("No tiene permiso para consultar eventos con cupo disponible");
-        }
         List<EventoDeportivo> eventosConCupo = new List<EventoDeportivo>();
         foreach (EventoDeportivo ev in _repositorioEvento.ObtenerTodos())
         {

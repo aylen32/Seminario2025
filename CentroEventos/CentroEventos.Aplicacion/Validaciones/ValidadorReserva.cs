@@ -8,39 +8,54 @@ public class ValidadorReserva : IValidadorReserva
     private readonly IRepositorioPersona _personaRepo;
     private readonly IRepositorioEventoDeportivo _eventoRepo;
     private readonly IRepositorioReserva _reservaRepo;
+    private string? _error;
 
-    public ValidadorReserva(IRepositorioPersona personaRepo, IRepositorioEventoDeportivo eventoRepo, IRepositorioReserva reservaRepo)
+    public ValidadorReserva(IRepositorioPersona personaRepo,
+                             IRepositorioEventoDeportivo eventoRepo,
+                             IRepositorioReserva reservaRepo)
     {
         _personaRepo = personaRepo;
         _eventoRepo = eventoRepo;
         _reservaRepo = reservaRepo;
     }
 
-    public void Validar(Reserva reserva)
+    public bool Validar(Reserva reserva)
     {
-
         if (!_personaRepo.ExistePersonaPorId(reserva.PersonaId))
         {
-            throw new EntidadNotFoundException("La persona no existe");
+            _error = "La persona no existe";
+            return false;
         }
 
         if (!_eventoRepo.ExisteEventoPorId(reserva.EventoDeportivoId))
         {
-            throw new EntidadNotFoundException("El evento deportivo no existe");
-        }
-        if (_reservaRepo.ExisteReservaDuplicada(reserva.PersonaId, reserva.EventoDeportivoId))
-        {
-            throw new DuplicadoException("Ya existe una reserva para este evento deportivo de esta persona");
+            _error = "El evento deportivo no existe";
+            return false;
         }
 
-        EventoDeportivo ? evento = _eventoRepo.ObtenerEvento(reserva.EventoDeportivoId);
-        if (evento != null) //pobre manejo de null, pero manejo al fin
+        if (_reservaRepo.ExisteReservaDuplicada(reserva.PersonaId, reserva.EventoDeportivoId))
         {
-            if (evento.CupoMaximo <= _reservaRepo.ObtenerReservasPorEvento(reserva.EventoDeportivoId).Count())
+            _error = "Ya existe una reserva para este evento deportivo de esta persona";
+            return false;
+        }
+
+        var evento = _eventoRepo.ObtenerEvento(reserva.EventoDeportivoId);
+        if (evento != null)
         {
-            throw new CupoExcedidoException("El evento deportivo no tiene cupo disponible");
+            int cantidadReservas = _reservaRepo.ObtenerReservasPorEvento(reserva.EventoDeportivoId).Count();
+            if (cantidadReservas >= evento.CupoMaximo)
+            {
+                _error = "El evento deportivo no tiene cupo disponible";
+                return false;
+            }
         }
-        }
-        
+
+        _error = null;
+        return true;
+    }
+
+    public string? ObtenerError()
+    {
+        return _error;
     }
 }
