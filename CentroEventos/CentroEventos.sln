@@ -10,6 +10,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CentroEventos.Consola", "CentroEventos.Consola\CentroEventos.Consola.csproj", "{5AACFBF4-BD2D-489C-B814-03930CCC0579}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{015FE221-96B2-289B-A0E8-6E7354784A75}"
+	ProjectSection(SolutionItems) = preProject
+		CentroEventosContext.cs = CentroEventosContext.cs
+		CentroEventosContextFactory.cs = CentroEventosContextFactory.cs
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using CentroEventos.Aplicacion.entidades;
 
-namespace CentroEventos.Aplicacion.Data
+namespace CentroEventos.Aplicacion
 {
     public class CentroEventosContext : DbContext
     {
@@ -11,13 +10,15 @@ namespace CentroEventos.Aplicacion.Data
         }
 
         public DbSet<Persona> Personas { get; set; }
-        public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<EventoDeportivo> EventosDeportivos { get; set; }
         public DbSet<Reserva> Reservas { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Data source=CentroEventos.sqlite");
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlite("Data Source=CentroEventos.sqlite");
+            }
         }
     }
 }
