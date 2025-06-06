@@ -106,8 +106,6 @@ public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
 
     public void ModificarEvento(int id, string n, string d, DateTime f, double dur, int cupo)
     {
-        
-
 
         if (!ExisteEventoPorId(id))
         {

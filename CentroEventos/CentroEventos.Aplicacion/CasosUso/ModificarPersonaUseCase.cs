@@ -10,16 +10,16 @@ using CentroEventos.Aplicacion.Servicio;
 
 public class ModificarPersonaUseCase
 {
-    private readonly IRepositorioPersona _repo;
-    private readonly IValidadorPersona _validador;
+    private readonly IRepositorioPersona _repositorioPersona;
+    private readonly IValidadorPersona _validadorPersona;
     private readonly IServicioAutorizacion _autorizacion;
     private readonly int _idUsuario;
 
     public ModificarPersonaUseCase(IRepositorioPersona repo, IValidadorPersona validador, IServicioAutorizacion autorizacion,
     int idUsuario)
     {
-        _repo = repo;
-        _validador = validador;
+        _repositorioPersona = repo;
+        _validadorPersona = validador;
         _autorizacion = autorizacion;
         _idUsuario = idUsuario;
     }
