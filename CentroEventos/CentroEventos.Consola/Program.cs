@@ -10,5 +10,5 @@ using Microsoft.Extensions.DependencyInjection;
 
 class Program
 {
-    
+
 }
