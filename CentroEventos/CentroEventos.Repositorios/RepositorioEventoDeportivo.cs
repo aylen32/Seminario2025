@@ -6,19 +6,27 @@ namespace CentroEventos.Repositorios;
 
 public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
 {
-     private readonly string _archivo = @"C:\Users\aylen\OneDrive\Documentos\proyecto2025\archivo_evento.txt";
-    private readonly string _archivo_id = @"C:\Users\aylen\OneDrive\Documentos\proyecto2025\archivo_id_evento.txt";
+     private readonly string _archivo = @"C:\Users\aylen\datos\archivo_evento.txt";
+    private readonly string _archivo_id = @"C:\Users\aylen\datos\archivo_id_evento.txt";
 
-    private int buscarUltID()
+       private int buscarUltID()
     {
-       int id;
-       using var reader = new StreamReader(_archivo_id);
-       int ultId = int.Parse(reader.ReadToEnd());
-       id=ultId+1;
-       using var writer = new StreamWriter(_archivo_id, false);
-            {
-                writer.Write(id);
-            }
+        int id;
+        string? ultId;
+        using (var reader = new StreamReader(_archivo_id))
+        {
+            ultId = reader.ReadToEnd();
+        }
+
+        if (string.IsNullOrWhiteSpace(ultId))
+            ultId = "0";
+
+        id = int.Parse(ultId) + 1;
+        using (var writer = new StreamWriter(_archivo_id, false))
+        {
+         writer.Write(id);
+        }
+
         return id;
     }
     private int GenerarId()
@@ -39,26 +47,33 @@ public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
     
     public void EliminarEvento(int id)
     {
-        if (!ExisteEventoPorId(id))
+       List<string> nuevasLineas = new List<string>();
+
+    if (!ExisteEventoPorId(id))
+        throw new EntidadNotFoundException($"El evento con ID {id} no existe");
+
+    //  leer
+    using (var reader = new StreamReader(_archivo))
+    {
+        string? linea;
+        while ((linea = reader.ReadLine()) != null)
         {
-            throw new EntidadNotFoundException($"El evento con ID {id} no existe.");
-        }
-        var nuevasLineas = new List<string>();
-        using (var reader = new StreamReader(_archivo))
-        {
-          string ? linea;
-          while ((linea = reader.ReadLine()) != null)
-          {
-            var e = convertirString(linea);
+            EventoDeportivo e = convertirString(linea);
             if (e.Id != id)
-                nuevasLineas.Add(linea);
-          }
+            {
+                nuevasLineas.Add(linea); // solo guardás las que no son la que querés eliminar
+            }
         }
-        using (var writer = new StreamWriter(_archivo, false))
+    }
+
+    //  escribir
+    using (var writer = new StreamWriter(_archivo, false))
+    {
+        foreach (string l in nuevasLineas)
         {
-          foreach (var l in nuevasLineas)
             writer.WriteLine(l);
         }
+    }
     }
 
     private EventoDeportivo convertirString(string linea)
@@ -89,11 +104,14 @@ public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
       return false;
     }
 
-    public void ModificarEvento(EventoDeportivo evento)
+    public void ModificarEvento(int id, string n, string d, DateTime f, double dur, int cupo)
     {
-        if (!ExisteEventoPorId(evento.Id))
+        
+
+
+        if (!ExisteEventoPorId(id))
         {
-            throw new EntidadNotFoundException($"El evento con ID {evento.Id} no existe.");
+            throw new EntidadNotFoundException($"El evento con ID {id} no existe.");
         }
         var nuevasLineas = new List<string>();
         using (var reader = new StreamReader(_archivo))
@@ -102,8 +120,17 @@ public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
             while ((linea = reader.ReadLine()) != null)
             {
                 var e = convertirString(linea);
-                if (e.Id == evento.Id)
-                    nuevasLineas.Add(cadenaEvento(evento));
+                if (e.Id == id) {
+                    e.Nombre = n;
+                    e.Descripcion = d;
+                    e.FechaHoraInicio = f;
+                    e.DuracionHoras = dur;
+                    e.CupoMaximo = cupo;
+                    
+
+                    nuevasLineas.Add(cadenaEvento(e));
+                }
+                    
                 else
                     nuevasLineas.Add(linea);
             }

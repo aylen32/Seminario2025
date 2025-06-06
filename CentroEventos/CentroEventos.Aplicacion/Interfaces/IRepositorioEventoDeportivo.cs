@@ -8,6 +8,6 @@ public interface IRepositorioEventoDeportivo
     EventoDeportivo ? ObtenerEvento(int id);       // Obtiene un evento deportivo con el ID
     IEnumerable<EventoDeportivo> ObtenerTodos();   // Obtiene todos los eventos deportivos
     void AgregarEvento(EventoDeportivo evento);    // Agrega un evento deportivo
-    void ModificarEvento(EventoDeportivo evento);  // Modifica un evento deportivo
+    void ModificarEvento(int id, string n, string d, DateTime f, double dur, int cupo);  // Modifica un evento deportivo
     void EliminarEvento(int id);                   // Elimina un evento deportivo por ID
 }

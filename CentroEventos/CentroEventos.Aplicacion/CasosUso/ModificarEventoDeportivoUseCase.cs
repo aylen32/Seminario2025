@@ -37,6 +37,6 @@ public class ModificarEventoDeportivoUseCase
         if (!_validadorEvento.Validar(evento))
             throw new ValidacionException(_validadorEvento.ObtenerError() ?? "Error desconocido en la validación del evento");
 
-        _repositorioEvento.ModificarEvento(evento);
+        _repositorioEvento.ModificarEvento(evento.Id, evento.Nombre, evento.Descripcion, evento.FechaHoraInicio, evento.DuracionHoras, evento.CupoMaximo);
     }
 }
