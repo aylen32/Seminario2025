@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using CentroEventos.Aplicacion.CasosUso;
+using CentroEventos.Aplicacion.Servicio;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,20 +27,25 @@ builder.Services.AddScoped<IRepositorioReserva, RepositorioReserva>();
 builder.Services.AddScoped<IRepositorioEventoDeportivo, RepositorioEventoDeportivo>();
 
 // Casos de uso
-builder.Services.AddScoped<AltaPersona>();
-builder.Services.AddScoped<BajaPersona>();
-builder.Services.AddScoped<ModificarPersona>();
-builder.Services.AddScoped<ListadoPersonas>();
+builder.Services.AddScoped<AltaPersonaUseCase>();
+builder.Services.AddScoped<BajaPersonaUseCase>();
+builder.Services.AddScoped<ModificarPersonaUseCase>();
+builder.Services.AddScoped<ListadoPersonasUseCase>();
 
-builder.Services.AddScoped<AltaReserva>();
-builder.Services.AddScoped<BajaReserva>();
-builder.Services.AddScoped<ModificarReserva>();
-builder.Services.AddScoped<ListadoReservas>();
+builder.Services.AddScoped<AltaReservaUseCase>();
+builder.Services.AddScoped<BajaReservaUseCase>();
+builder.Services.AddScoped<ModificarReservaUseCase>();
+builder.Services.AddScoped<ListadoReservaUseCase>();
 
-builder.Services.AddScoped<AltaEvento>();
-builder.Services.AddScoped<BajaEvento>();
-builder.Services.AddScoped<ModificarEvento>();
-builder.Services.AddScoped<ListadoEventos>();
+builder.Services.AddScoped<AltaEventoDeportivoUseCase>();
+builder.Services.AddScoped<BajaEventoDeportivoUseCase>();
+builder.Services.AddScoped<ModificarEventoDeportivoUseCase>();
+builder.Services.AddScoped<ListadoEventoDeportivoUseCase>();
+
+builder.Services.AddScoped<ListarEventosConCupoDisponibleUseCase>();
+builder.Services.AddScoped<ListarAsistenciaAEventoUseCase>();
+
+builder.Services.AddScoped<IServicioAutorizacion, ServicioAutorizacion>();
 
 var app = builder.Build();
 
