@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework> 
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Referencia al proyecto donde tenés las entidades y lógica -->
+    <ProjectReference Include="..\CentroEventos.Aplicacion\CentroEventos.Aplicacion.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Paquetes necesarios para EF Core y SQLite -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0" />
+  </ItemGroup>
+
+</Project>

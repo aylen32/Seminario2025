@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace CentroEventos.Aplicacion
 {
-    public class CentroEventosContextFactory : IDesignTimeDbContextFactory<CentroEventosContext>
+    public class CentroEventosContextFactory_ES : IDesignTimeDbContextFactory<CentroEventosContext>
     {
         public CentroEventosContext CreateDbContext(string[] args)
         {

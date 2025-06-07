@@ -1,200 +1,75 @@
 using System;
-
-using CentroEventos.Aplicacion.Validaciones;
+using System.Collections.Generic;
+using System.Linq;
 using CentroEventos.Aplicacion;
 using CentroEventos.Aplicacion.Excepciones;
-using System.Reflection.Metadata.Ecma335;
-using System.ComponentModel;
-using System.Data.Common;
+using CentroEventos.Aplicacion.Validaciones;
 
-namespace CentroEventos.Repositorios;
-
-public class RepositorioPersona : IRepositorioPersona
+namespace CentroEventos.Repositorios
 {
-    private readonly string _archivo = @"C:\Users\aylen\datos\archivo.txt";
-    private readonly string _archivo_id = @"C:\Users\aylen\datos\archivo_id.txt";
-    public void AgregarPersona(Persona persona)
+    public class RepositorioPersona : IRepositorioPersona
     {
-        persona.Id=GenerarId();
-        using var sw = new StreamWriter(_archivo, true);
-        sw.WriteLine(cadenaPersona(persona));
-        
-    }
-    private int buscarUltID()
-    {
-        int id;
-        string? ultId;
-        using (var reader = new StreamReader(_archivo_id))
+        private readonly CentroEventosContext _context;
+
+        public RepositorioPersona(CentroEventosContext context)
         {
-            ultId = reader.ReadToEnd();
+            _context = context;
         }
 
-        if (string.IsNullOrWhiteSpace(ultId))
-            ultId = "0";
-
-        id = int.Parse(ultId) + 1;
-        using (var writer = new StreamWriter(_archivo_id, false))
+        public void AgregarPersona(Persona persona)
         {
-         writer.Write(id);
+            _context.Personas.Add(persona);
+            _context.SaveChanges();
         }
 
-        return id;
-    }
-
-    private int GenerarId()
-    {
-        int idNuevo = buscarUltID();
-        return idNuevo;    
-        
-    }
-    private string cadenaPersona(Persona persona)
-    {
-        return persona.Id+","+persona.DNI+","+persona.Nombre+","+persona.Apellido+","+persona.Mail+","+persona.Telefono;
-    }
-    public void EliminarPersona(int id)
-{
-    List<string> nuevasLineas = new List<string>();
-
-    if (!ExistePersonaPorId(id))
-        throw new EntidadNotFoundException($"La persona con ID {id} no existe");
-
-    //  leer
-    using (var reader = new StreamReader(_archivo))
-    {
-        string? linea;
-        while ((linea = reader.ReadLine()) != null)
+        public void EliminarPersona(int id)
         {
-            Persona p = convertirString(linea);
-            if (p.Id != id)
-            {
-                nuevasLineas.Add(linea); // solo guardás las que no son la que querés eliminar
-            }
-        }
-    }
+            var persona = _context.Personas.Find(id);
+            if (persona == null)
+                throw new EntidadNotFoundException($"La persona con ID {id} no existe.");
 
-    //  escribir
-    using (var writer = new StreamWriter(_archivo, false))
-    {
-        foreach (string l in nuevasLineas)
-        {
-            writer.WriteLine(l);
+            _context.Personas.Remove(persona);
+            _context.SaveChanges();
         }
-    }
-}
 
+        public void ModificarPersona(Persona persona)
+        {
+            var existente = _context.Personas.Find(persona.Id);
+            if (existente == null)
+                throw new EntidadNotFoundException($"La persona con ID {persona.Id} no existe.");
 
-    private Persona convertirString(string p)
-    {
-        string[] partes = p.Split(",");
-        Persona per = new Persona();
-        per.Id= int.Parse(partes[0]);
-        per.DNI= partes[1];
-        per.Nombre=partes[2];
-        per.Apellido=partes[3];
-        per.Mail=partes[4];
-        per.Telefono=partes[5];
-        return per;
-    }
-    public bool ExistePersonaPorDni(string dni)
-    {
-        using var reader = new StreamReader(_archivo);
-        string ? linea;
-        while((linea = reader.ReadLine())!=null)
-        {
-            Persona per = convertirString(linea);
-            if(per.DNI.Equals(dni))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+            existente.Nombre = persona.Nombre;
+            existente.Apellido = persona.Apellido;
+            existente.DNI = persona.DNI;
+            existente.Mail = persona.Mail;
+            existente.Telefono = persona.Telefono;
 
-    public bool ExistePersonaPorEmail(string mail)
-    {
-        using var reader = new StreamReader(_archivo);
-        string ? linea;
-        while((linea = reader.ReadLine())!=null)
-        {
-            Persona per = convertirString(linea);
-            if(per.Mail.Equals(mail))
-            {
-                return true;
-            }
+            _context.SaveChanges();
         }
-        return false;   
-    }
 
-    public bool ExistePersonaPorId(int id)
-    {
-        using var reader = new StreamReader(_archivo);
-        string ? linea;
-        while((linea = reader.ReadLine())!=null)
+        public Persona? ObtenerPersona(int id)
         {
-            Persona per = convertirString(linea);
-            if(per.Id==id)
-            {
-                return true;
-            }
+            return _context.Personas.Find(id);
         }
-        return false;
-    }
 
-    public void ModificarPersona(Persona persona)
-    {
-      if (!ExistePersonaPorId(persona.Id))
-      { 
-        throw new EntidadNotFoundException($"La persona con ID {persona.Id} no existe.");  //Validar si existe la persona con el Id
-      }
-      var nuevasLineas = new List<string>();
-      using (var reader = new StreamReader(_archivo))
-      {
-        string ? linea;
-        while ((linea = reader.ReadLine()) != null)
+        public IEnumerable<Persona> ObtenerTodas()
         {
-            Persona p = convertirString(linea);
-            if (p.Id == persona.Id)
-                nuevasLineas.Add(cadenaPersona(persona));         // actualiza los datos
-            else
-                nuevasLineas.Add(linea);                         // mantiene los datos
+            return _context.Personas.ToList();
         }
-      }
-      using (var writer = new StreamWriter(_archivo, false))
-      {
-        foreach (string l in nuevasLineas)                       // Abre archivo y modifica datos viejos con nuevos
-        {
-            writer.WriteLine(l);
-        }
-      }
-    }
 
-    public Persona ? ObtenerPersona(int id)
-    {
-        using var reader = new StreamReader(_archivo);
-        string? unaPersona;
-        while((unaPersona= reader.ReadLine())!=null)
+        public bool ExistePersonaPorId(int id)
         {
-            Persona p = convertirString(unaPersona);
-            if(p.Id==id)
-            {
-                return p;
-            }
+            return _context.Personas.Any(p => p.Id == id);
         }
-        return null;
-    }
 
-    public IEnumerable<Persona> ObtenerTodas()
-    {
-       List<Persona> personas = new List<Persona>();
-       using var reader = new StreamReader(_archivo);
-       string? unaPersona;
-       while((unaPersona=reader.ReadLine())!=null)
+        public bool ExistePersonaPorDni(string dni)
         {
-            if(!string.IsNullOrWhiteSpace(unaPersona))
-            {
-                personas.Add(convertirString(unaPersona));
-            }
+            return _context.Personas.Any(p => p.DNI == dni);
         }
-       return personas;
+
+        public bool ExistePersonaPorEmail(string email)
+        {
+            return _context.Personas.Any(p => p.Mail == email);
+        }
     }
 }

@@ -1,13 +1,21 @@
 using System;
 
 namespace CentroEventos.Aplicacion.Entidades;
+using CentroEventos.Aplicacion.Enumerativos;
 
 public class Usuario
 {
     public int Id { get; set; }
-    public string Nombre { get; set; } = null!;
-    public string Apellido { get; set; } = null!;
-    public string Email { get; set; } = null!;
-    public string PasswordHash { get; set; } = null!;
-    public List<string> Permisos { get; set; } = new List<string>();
+
+    public string? Nombre { get; set; }
+
+    public string? Apellido { get; set; }
+
+    public string? CorreoElectronico { get; set; }
+
+    public string? HashContrasenia { get; set; }
+
+    public string? Salt { get; set; }
+
+    public List<Permiso>? Permisos { get; set; }
 }

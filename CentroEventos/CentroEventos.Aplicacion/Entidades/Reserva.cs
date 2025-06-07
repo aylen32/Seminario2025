@@ -2,6 +2,8 @@ using System;
 
 namespace CentroEventos.Aplicacion;
 
+using CentroEventos.Aplicacion.Enumerativos;
+
 public class Reserva
 {
     public int Id {get;set;}
@@ -10,13 +12,6 @@ public class Reserva
     public DateTime FechaAltaReserva {get;set;}
     public EstadoAsistencia Estado { get; set; } 
 
-    public enum EstadoAsistencia
-    {
-        Pendiente,
-        Presente,
-        Ausente
-    }
-    
     public override string ToString()
     {
         return $"[{Id}] PersonaId: {PersonaId}, EventoId: {EventoDeportivoId}, Alta: {FechaAltaReserva}, Estado: {Estado}";

@@ -1,168 +1,69 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using CentroEventos.Aplicacion;
-using CentroEventos.Aplicacion.Validaciones;
 using CentroEventos.Aplicacion.Excepciones;
-namespace CentroEventos.Repositorios;
+using CentroEventos.Aplicacion.Validaciones;
 
-public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
+
+namespace CentroEventos.Repositorios
 {
-     private readonly string _archivo = @"C:\Users\aylen\datos\archivo_evento.txt";
-    private readonly string _archivo_id = @"C:\Users\aylen\datos\archivo_id_evento.txt";
-
-       private int buscarUltID()
+    public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
     {
-        int id;
-        string? ultId;
-        using (var reader = new StreamReader(_archivo_id))
+        private readonly CentroEventosContext _context;
+
+        public RepositorioEventoDeportivo(CentroEventosContext context)
         {
-            ultId = reader.ReadToEnd();
+            _context = context;
         }
 
-        if (string.IsNullOrWhiteSpace(ultId))
-            ultId = "0";
-
-        id = int.Parse(ultId) + 1;
-        using (var writer = new StreamWriter(_archivo_id, false))
+        public bool ExisteEventoPorId(int id)
         {
-         writer.Write(id);
+            return _context.EventosDeportivos.Any(e => e.Id == id);
         }
 
-        return id;
-    }
-    private int GenerarId()
-    {
-        int idNuevo = buscarUltID();
-        return idNuevo;
-    }
-    public void AgregarEvento(EventoDeportivo evento)
-    {
-        evento.Id = GenerarId();
-        using var sw = new StreamWriter(_archivo, true);
-        sw.WriteLine(cadenaEvento(evento));
-    }
-    private string cadenaEvento(EventoDeportivo evento)
-    {
-        return evento.Id+","+evento.Nombre+","+evento.Descripcion+","+evento.FechaHoraInicio+","+evento.DuracionHoras+","+evento.CupoMaximo+","+evento.ResponsableId;
-    }
-    
-    public void EliminarEvento(int id)
-    {
-       List<string> nuevasLineas = new List<string>();
-
-    if (!ExisteEventoPorId(id))
-        throw new EntidadNotFoundException($"El evento con ID {id} no existe");
-
-    //  leer
-    using (var reader = new StreamReader(_archivo))
-    {
-        string? linea;
-        while ((linea = reader.ReadLine()) != null)
+        public EventoDeportivo? ObtenerEvento(int id)
         {
-            EventoDeportivo e = convertirString(linea);
-            if (e.Id != id)
-            {
-                nuevasLineas.Add(linea); // solo guardás las que no son la que querés eliminar
-            }
+            return _context.EventosDeportivos.Find(id);
         }
-    }
 
-    //  escribir
-    using (var writer = new StreamWriter(_archivo, false))
-    {
-        foreach (string l in nuevasLineas)
+        public IEnumerable<EventoDeportivo> ObtenerTodos()
         {
-            writer.WriteLine(l);
+            return _context.EventosDeportivos.ToList();
         }
-    }
-    }
 
-    private EventoDeportivo convertirString(string linea)
-    {
-        var partes = linea.Split(',');
-        return new EventoDeportivo
+        public void AgregarEvento(EventoDeportivo evento)
         {
-            Id = int.Parse(partes[0]),
-            Nombre = partes[1],
-            Descripcion = partes[2],
-            FechaHoraInicio = DateTime.Parse(partes[3]),
-            DuracionHoras = double.Parse(partes[4]),
-            CupoMaximo = int.Parse(partes[5]),
-            ResponsableId = int.Parse(partes[6])
-        };
-    }
-
-    public bool ExisteEventoPorId(int id)
-    {
-      using var reader = new StreamReader(_archivo);
-      string ? linea;
-      while ((linea = reader.ReadLine()) != null)
-      {
-        var e = convertirString(linea);
-        if (e.Id == id)
-            return true;
-      }
-      return false;
-    }
-
-    public void ModificarEvento(int id, string n, string d, DateTime f, double dur, int cupo)
-    {
-
-        if (!ExisteEventoPorId(id))
-        {
-            throw new EntidadNotFoundException($"El evento con ID {id} no existe.");
+            if (evento == null)
+                throw new ArgumentNullException(nameof(evento));
+            
+            _context.EventosDeportivos.Add(evento);
+            _context.SaveChanges();
         }
-        var nuevasLineas = new List<string>();
-        using (var reader = new StreamReader(_archivo))
+
+        public void ModificarEvento(int id, string nombre, string descripcion, DateTime fecha, double duracion, int cupo)
         {
-            string ? linea;
-            while ((linea = reader.ReadLine()) != null)
-            {
-                var e = convertirString(linea);
-                if (e.Id == id) {
-                    e.Nombre = n;
-                    e.Descripcion = d;
-                    e.FechaHoraInicio = f;
-                    e.DuracionHoras = dur;
-                    e.CupoMaximo = cupo;
-                    
+            var evento = _context.EventosDeportivos.Find(id);
+            if (evento == null)
+                throw new EntidadNotFoundException($"El evento con ID {id} no existe");
 
-                    nuevasLineas.Add(cadenaEvento(e));
-                }
-                    
-                else
-                    nuevasLineas.Add(linea);
-            }
+            evento.Nombre = nombre;
+            evento.Descripcion = descripcion;
+            evento.FechaHoraInicio = fecha;
+            evento.DuracionHoras = duracion;
+            evento.CupoMaximo = cupo;
+
+            _context.SaveChanges();
         }
-        using (var writer = new StreamWriter(_archivo, false))
+
+        public void EliminarEvento(int id)
         {
-            foreach (var l in nuevasLineas)
-                writer.WriteLine(l);
+            var evento = _context.EventosDeportivos.Find(id);
+            if (evento == null)
+                throw new EntidadNotFoundException($"El evento con ID {id} no existe");
+
+            _context.EventosDeportivos.Remove(evento);
+            _context.SaveChanges();
         }
-    }
-
-    public EventoDeportivo ? ObtenerEvento(int id)
-    {
-      using var reader = new StreamReader(_archivo);
-      string? linea;
-      while ((linea = reader.ReadLine()) != null)
-      {
-        var e = convertirString(linea);
-        if (e.Id == id)
-            return e;
-      }
-      return null;
-    }
-
-    public IEnumerable<EventoDeportivo> ObtenerTodos()
-    {
-      var lista = new List<EventoDeportivo>();
-      using var reader = new StreamReader(_archivo);
-      string ?linea;
-      while ((linea = reader.ReadLine()) != null)
-      {
-        if (!string.IsNullOrWhiteSpace(linea))
-            lista.Add(convertirString(linea));
-      }
-      return lista;
     }
 }

@@ -1,213 +1,76 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using CentroEventos.Aplicacion;
-using CentroEventos.Aplicacion.Validaciones;
-using static CentroEventos.Aplicacion.Reserva;
 using CentroEventos.Aplicacion.Excepciones;
-using System.Data.Common;
-namespace CentroEventos.Repositorios;
+using CentroEventos.Aplicacion.Enumerativos;
+using CentroEventos.Aplicacion.Validaciones;
 
-
-public class RepositorioReserva : IRepositorioReserva
+namespace CentroEventos.Repositorios
 {
-    private readonly string _archivo = @"C:\Users\aylen\datos\archivo_reserva.txt";
-    private readonly string _archivo_id = @"C:\Users\aylen\datos\archivo_id_reserva.txt";
-      private int buscarUltID()
+    public class RepositorioReserva : IRepositorioReserva
     {
-        int id;
-        string? ultId;
-        using (var reader = new StreamReader(_archivo_id))
+        private readonly CentroEventosContext _context;
+
+        public RepositorioReserva(CentroEventosContext context)
         {
-            ultId = reader.ReadToEnd();
+            _context = context;
         }
 
-        if (string.IsNullOrWhiteSpace(ultId))
-            ultId = "0";
-
-        id = int.Parse(ultId) + 1;
-        using (var writer = new StreamWriter(_archivo_id, false))
+        public void AgregarReserva(Reserva reserva)
         {
-         writer.Write(id);
+            _context.Reservas.Add(reserva);
+            _context.SaveChanges();
         }
 
-        return id;
-    }
-    private int GenerarId()
-    {
-        int idNuevo = buscarUltID();
-        return idNuevo;
-    }
-    private string cadenaReserva(Reserva reserva)
-    {
-        return reserva.Id + "," + reserva.PersonaId + "," + reserva.EventoDeportivoId + "," + reserva.FechaAltaReserva + "," + reserva.Estado;
-    }
-    public void AgregarReserva(Reserva reserva)
-    {
-        int idReserva = GenerarId();
-        reserva.Id = idReserva;
-        using var sw = new StreamWriter(_archivo, true);
-        sw.WriteLine(cadenaReserva(reserva));
-    }
-    private static Reserva convertirString(string r)
-    {
-        string[] partes = r.Split(",");
-        Reserva re = new Reserva();
-        re.Id = int.Parse(partes[0]);
-        re.PersonaId = int.Parse(partes[1]);
-        re.EventoDeportivoId = int.Parse(partes[2]);
-        re.FechaAltaReserva = DateTime.Parse(partes[3]);
-        re.Estado = (EstadoAsistencia)Enum.Parse(typeof(EstadoAsistencia), partes[4]);
-        return re;
-    }
-
-    public void EliminarReserva(int id)
-    {
-        List<string> nuevasLineas = new List<string>();
-
-    if (!ExisteReservaPorId(id))
-        throw new EntidadNotFoundException($"La reserva con ID {id} no existe");
-
-    //  leer
-    using (var reader = new StreamReader(_archivo))
-    {
-        string? linea;
-        while ((linea = reader.ReadLine()) != null)
+        public void EliminarReserva(int id)
         {
-            Reserva r = convertirString(linea);
-            if (r.Id != id)
-            {
-                nuevasLineas.Add(linea); // solo guardás las que no son la que querés eliminar
-            }
-        }
-    }
+            var reserva = _context.Reservas.Find(id);
+            if (reserva == null)
+                throw new EntidadNotFoundException($"La reserva con ID {id} no existe.");
 
-    //  escribir
-    using (var writer = new StreamWriter(_archivo, false))
-    {
-        foreach (string l in nuevasLineas)
-        {
-            writer.WriteLine(l);
-        }
-    }
-    }
-
-    public bool ExisteReservaDuplicada(int personaId, int eventoId)
-    {
-
-        using var reader = new StreamReader(_archivo);
-        string? linea;
-        while ((linea = reader.ReadLine()) != null)
-        {
-            Reserva r = convertirString(linea);
-            if (r.PersonaId == personaId && r.EventoDeportivoId == eventoId)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public bool ExisteReservaPorId(int id)
-    {
-        using var reader = new StreamReader(_archivo);
-        string? linea;
-        while ((linea = reader.ReadLine()) != null)
-        {
-            Reserva r = convertirString(linea);
-            if (r.Id == id)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void ModificarReserva(int id, EstadoAsistencia estado)
-    {
-        if (!ExisteReservaPorId(id))
-        {
-            throw new EntidadNotFoundException($"La reserva con ID {id} no existe");
-        }
-        var nuevasLineas = new List<string>();
-        using (var reader = new StreamReader(_archivo))
-        {
-            string? linea;
-            while ((linea = reader.ReadLine()) != null)
-            {
-                Reserva r = convertirString(linea);
-                if (r.Id == id)
-                {
-                    r.Estado = estado;
-                    nuevasLineas.Add(cadenaReserva(r));
-                }
-
-                else
-                {
-                    nuevasLineas.Add(linea);
-                }
-                     
-            }
+            _context.Reservas.Remove(reserva);
+            _context.SaveChanges();
         }
 
-        using (var writer = new StreamWriter(_archivo, false))
+        public void ModificarReserva(int id, EstadoAsistencia estado)
         {
-            foreach (var l in nuevasLineas)
-                writer.WriteLine(l);
-        }
-    }
-    
+            var reserva = _context.Reservas.Find(id);
+            if (reserva == null)
+                throw new EntidadNotFoundException($"La reserva con ID {id} no existe.");
 
-    public Reserva? ObtenerReserva(int id)
-    {
-        using var reader = new StreamReader(_archivo);
-        string? unaReserva;
-        while ((unaReserva = reader.ReadLine()) != null)
-        {
-            Reserva r = convertirString(unaReserva);
-            if (r.Id == id)
-            {
-                return r;
-            }
+            reserva.Estado = estado;
+            _context.SaveChanges();
         }
-        return null;
-    }
 
-    public IEnumerable<Reserva> ObtenerReservasPorEvento(int eventoId)
-    {
-        var reservas = new List<Reserva>();
-        using var reader = new StreamReader(_archivo);
-        string? linea;
-        while ((linea = reader.ReadLine()) != null)
+        public Reserva? ObtenerReserva(int id)
         {
-            var r = convertirString(linea);
-            if (r.EventoDeportivoId == eventoId)
-                reservas.Add(r);
+            return _context.Reservas.Find(id);
         }
-        return reservas;
-    }
 
-    public IEnumerable<Reserva> ObtenerReservasPorPersona(int personaId)
-    {
-        var reservas = new List<Reserva>();
-        using var reader = new StreamReader(_archivo);
-        string? linea;
-        while ((linea = reader.ReadLine()) != null)
+        public IEnumerable<Reserva> ObtenerReservasPorEvento(int eventoId)
         {
-            var r = convertirString(linea);
-            if (r.PersonaId == personaId)
-                reservas.Add(r);
+            return _context.Reservas.Where(r => r.EventoDeportivoId == eventoId).ToList();
         }
-        return reservas;
-    }
-    public IEnumerable<Reserva> ObtenerTodas()
-    {
-        var lista = new List<Reserva>();
-        using var reader = new StreamReader(_archivo);
-        string? linea;
-        while ((linea = reader.ReadLine()) != null)
+
+        public IEnumerable<Reserva> ObtenerReservasPorPersona(int personaId)
         {
-            Reserva r = convertirString(linea);
-            lista.Add(r);
+            return _context.Reservas.Where(r => r.PersonaId == personaId).ToList();
         }
-        return lista;
+
+        public IEnumerable<Reserva> ObtenerTodas()
+        {
+            return _context.Reservas.ToList();
+        }
+
+        public bool ExisteReservaPorId(int id)
+        {
+            return _context.Reservas.Any(r => r.Id == id);
+        }
+
+        public bool ExisteReservaDuplicada(int personaId, int eventoId)
+        {
+            return _context.Reservas.Any(r => r.PersonaId == personaId && r.EventoDeportivoId == eventoId);
+        }
     }
 }

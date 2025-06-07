@@ -1,3 +1,4 @@
+using CentroEventos.Aplicacion.Entidades;
 using Microsoft.EntityFrameworkCore;
 
 namespace CentroEventos.Aplicacion
@@ -12,13 +13,7 @@ namespace CentroEventos.Aplicacion
         public DbSet<Persona> Personas { get; set; }
         public DbSet<EventoDeportivo> EventosDeportivos { get; set; }
         public DbSet<Reserva> Reservas { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlite("Data Source=CentroEventos.sqlite");
-            }
-        }
     }
 }
