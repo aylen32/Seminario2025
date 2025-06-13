@@ -11,14 +11,43 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CentroEventos.Aplicacion.Migrations
 {
     [DbContext(typeof(CentroEventosContext))]
-    [Migration("20250606231002_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250613010359_Inicial")]
+    partial class Inicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.5");
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
+
+            modelBuilder.Entity("CentroEventos.Aplicacion.Entidades.Usuario", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Apellido")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CorreoElectronico")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("HashContrasenia")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Nombre")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Permisos")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Salt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Usuarios");
+                });
 
             modelBuilder.Entity("CentroEventos.Aplicacion.EventoDeportivo", b =>
                 {

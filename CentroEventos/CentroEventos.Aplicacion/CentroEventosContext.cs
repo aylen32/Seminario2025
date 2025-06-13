@@ -14,19 +14,14 @@ namespace CentroEventos.Aplicacion
         public DbSet<EventoDeportivo> EventosDeportivos { get; set; }
         public DbSet<Reserva> Reservas { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
-        public DbSet<UsuarioPermiso> UsuarioPermisos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-          base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Usuario>()
+                .Property(u => u.Permisos)
+                .HasConversion<int>(); // guarda los flags como int
 
-          modelBuilder.Entity<UsuarioPermiso>()
-            .HasKey(up => new { up.UsuarioId, up.Permiso }); // clave compuesta
-
-          modelBuilder.Entity<UsuarioPermiso>()
-            .HasOne(up => up.Usuario)
-            .WithMany(u => u.UsuarioPermisos)
-            .HasForeignKey(up => up.UsuarioId);
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

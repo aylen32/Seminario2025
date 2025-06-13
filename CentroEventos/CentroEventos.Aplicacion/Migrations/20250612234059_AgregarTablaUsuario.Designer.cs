@@ -3,6 +3,7 @@ using System;
 using CentroEventos.Aplicacion;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CentroEventos.Aplicacion.Migrations
 {
     [DbContext(typeof(CentroEventosContext))]
-    partial class CentroEventosContextModelSnapshot : ModelSnapshot
+    [Migration("20250612234059_AgregarTablaUsuario")]
+    partial class AgregarTablaUsuario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
@@ -35,15 +38,25 @@ namespace CentroEventos.Aplicacion.Migrations
                     b.Property<string>("Nombre")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Permisos")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Salt")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.ToTable("Usuarios");
+                });
+
+            modelBuilder.Entity("CentroEventos.Aplicacion.Entidades.UsuarioPermiso", b =>
+                {
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Permiso")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("UsuarioId", "Permiso");
+
+                    b.ToTable("UsuarioPermisos");
                 });
 
             modelBuilder.Entity("CentroEventos.Aplicacion.EventoDeportivo", b =>
@@ -129,6 +142,22 @@ namespace CentroEventos.Aplicacion.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Reservas");
+                });
+
+            modelBuilder.Entity("CentroEventos.Aplicacion.Entidades.UsuarioPermiso", b =>
+                {
+                    b.HasOne("CentroEventos.Aplicacion.Entidades.Usuario", "Usuario")
+                        .WithMany("UsuarioPermisos")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("CentroEventos.Aplicacion.Entidades.Usuario", b =>
+                {
+                    b.Navigation("UsuarioPermisos");
                 });
 #pragma warning restore 612, 618
         }

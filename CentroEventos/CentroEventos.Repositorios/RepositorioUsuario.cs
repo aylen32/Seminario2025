@@ -3,10 +3,9 @@ using System.Linq;
 using CentroEventos.Aplicacion.Entidades;
 using CentroEventos.Aplicacion.Excepciones;
 using CentroEventos.Aplicacion.Interfaces;
+using CentroEventos.Aplicacion.Enumerativos;
 using Microsoft.EntityFrameworkCore;
 using CentroEventos.Aplicacion;
-using CentroEventos.Aplicacion.Enumerativos; 
-
 
 namespace CentroEventos.Repositorios
 {
@@ -27,9 +26,9 @@ namespace CentroEventos.Repositorios
 
         public void EliminarUsuario(int id)
         {
-            var usuario = _context.Usuarios.Include(u => u.UsuarioPermisos).FirstOrDefault(u => u.Id == id);
+            var usuario = _context.Usuarios.Find(id);
             if (usuario == null)
-                throw new EntidadNotFoundException($"El usuario con ID {id} no existe.");
+                throw new EntidadNotFoundException($"El usuario con ID {id} no existe");
 
             _context.Usuarios.Remove(usuario);
             _context.SaveChanges();
@@ -37,30 +36,28 @@ namespace CentroEventos.Repositorios
 
         public void ModificarUsuario(Usuario usuario)
         {
-            var existente = _context.Usuarios.Include(u => u.UsuarioPermisos).FirstOrDefault(u => u.Id == usuario.Id);
+            var existente = _context.Usuarios.Find(usuario.Id);
             if (existente == null)
-                throw new EntidadNotFoundException($"El usuario con ID {usuario.Id} no existe.");
+                throw new EntidadNotFoundException($"El usuario con ID {usuario.Id} no existe");
 
             existente.Nombre = usuario.Nombre;
             existente.Apellido = usuario.Apellido;
             existente.CorreoElectronico = usuario.CorreoElectronico;
             existente.HashContrasenia = usuario.HashContrasenia;
             existente.Salt = usuario.Salt;
-
-            // Reemplazar permisos si es necesario
-            existente.UsuarioPermisos = usuario.UsuarioPermisos;
+            existente.Permisos = usuario.Permisos;
 
             _context.SaveChanges();
         }
 
         public Usuario? ObtenerUsuario(int id)
         {
-            return _context.Usuarios.Include(u => u.UsuarioPermisos).FirstOrDefault(u => u.Id == id);
+            return _context.Usuarios.FirstOrDefault(u => u.Id == id);
         }
 
         public IEnumerable<Usuario> ObtenerTodos()
         {
-            return _context.Usuarios.Include(u => u.UsuarioPermisos).ToList();
+            return _context.Usuarios.ToList();
         }
 
         public bool ExisteUsuarioPorId(int id)
@@ -70,31 +67,28 @@ namespace CentroEventos.Repositorios
 
         public void AgregarPermiso(int usuarioId, Permiso permiso)
         {
-            var usuario = _context.Usuarios.Include(u => u.UsuarioPermisos).FirstOrDefault(u => u.Id == usuarioId);
+            var usuario = _context.Usuarios.Find(usuarioId);
             if (usuario == null)
-               throw new EntidadNotFoundException($"Usuario con ID {usuarioId} no existe");
+                throw new EntidadNotFoundException($"Usuario con ID {usuarioId} no existe");
 
-            // Verifico que no tenga ya ese permiso
-            if (usuario.UsuarioPermisos.Any(p => p.Permiso == permiso))
+            if (usuario.Permisos.HasFlag(permiso))
                 throw new OperacionInvalidaException("El usuario ya posee ese permiso");
 
-            var usuarioPermiso = new UsuarioPermiso
-            {
-              UsuarioId = usuarioId,
-              Permiso = permiso,
-              Usuario = usuario
-            };
-             usuario.UsuarioPermisos.Add(usuarioPermiso);
-             _context.SaveChanges();
+            usuario.Permisos |= permiso;
+            _context.SaveChanges();
         }
 
         public void EliminarPermiso(int usuarioId, Permiso permiso)
         {
-           var usuarioPermiso = _context.UsuarioPermisos.FirstOrDefault(up => up.UsuarioId == usuarioId && up.Permiso == permiso);
-            if (usuarioPermiso == null)
+            var usuario = _context.Usuarios.Find(usuarioId);
+            if (usuario == null)
+                throw new EntidadNotFoundException($"Usuario con ID {usuarioId} no existe");
+
+            if (!usuario.Permisos.HasFlag(permiso))
                 throw new OperacionInvalidaException("El usuario no posee ese permiso");
-           _context.UsuarioPermisos.Remove(usuarioPermiso);
-           _context.SaveChanges();
+
+            usuario.Permisos &= ~permiso;
+            _context.SaveChanges();
         }
     }
 }

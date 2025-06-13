@@ -19,7 +19,7 @@ builder.Services.AddServerSideBlazor();
 
 // Registrar DbContext
 builder.Services.AddDbContext<CentroEventosContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite(builder.Configuration.GetConnectionString("CentroEventos")));
 
 // Repositorios
 builder.Services.AddScoped<IRepositorioPersona, RepositorioPersona>();
@@ -46,6 +46,7 @@ builder.Services.AddScoped<ListarEventosConCupoDisponibleUseCase>();
 builder.Services.AddScoped<ListarAsistenciaAEventoUseCase>();
 
 builder.Services.AddScoped<IServicioAutorizacion, ServicioAutorizacion>();
+
 
 var app = builder.Build();
 

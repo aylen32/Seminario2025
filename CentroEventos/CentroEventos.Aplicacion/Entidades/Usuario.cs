@@ -17,5 +17,5 @@ public class Usuario
 
     public string? Salt { get; set; }
 
-    public List<UsuarioPermiso> UsuarioPermisos { get; set; } = new();
+    public Permiso Permisos { get; set; } = Permiso.Ninguno;
 }

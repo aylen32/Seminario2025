@@ -1,8 +1,6 @@
-using System;
-
-namespace CentroEventos.Aplicacion.Servicio;
-
+using CentroEventos.Aplicacion.Entidades;
 using CentroEventos.Aplicacion.Enumerativos;
+
 
 public interface IServicioAutorizacion
 {
