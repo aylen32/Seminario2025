@@ -1,6 +1,7 @@
 using CentroEventos.UI.Components;
 using CentroEventos.Aplicacion;
 using CentroEventos.Aplicacion.Validaciones;
+using CentroEventos.Aplicacion.Interfaces;
 using CentroEventos.Repositorios;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
@@ -10,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using CentroEventos.Aplicacion.CasosUso;
 using CentroEventos.Aplicacion.Servicio;
-using CentroEventos.Aplicacion.Interfaces;
+
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -4,6 +4,9 @@ using System.Linq;
 using CentroEventos.Aplicacion;
 using CentroEventos.Aplicacion.Excepciones;
 using CentroEventos.Aplicacion.Enumerativos;
+using CentroEventos.Aplicacion.Entidades;
+using CentroEventos.Aplicacion.Interfaces;
+
 using CentroEventos.Aplicacion.Validaciones;
 
 namespace CentroEventos.Repositorios
