@@ -1,7 +1,9 @@
 using System;
 
-namespace CentroEventos.Aplicacion.Validaciones;
+namespace CentroEventos.Aplicacion.Interfaces;
+
 using CentroEventos.Aplicacion.Enumerativos;
+using CentroEventos.Aplicacion.Entidades;
 
 
 public interface IRepositorioReserva
