@@ -7,6 +7,7 @@ using CentroEventos.Aplicacion.Interfaces;
 using CentroEventos.Aplicacion.Validaciones;
 using CentroEventos.Aplicacion.Enumerativos;
 using CentroEventos.Aplicacion.Servicio;
+using CentroEventos.Aplicacion.Entidades;
 
 public class ModificarReservaUseCase
 {

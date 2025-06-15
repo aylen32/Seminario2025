@@ -7,8 +7,7 @@ using CentroEventos.Aplicacion.Excepciones;
 using CentroEventos.Aplicacion.Validaciones;
 using CentroEventos.Aplicacion.Enumerativos;
 using CentroEventos.Aplicacion.Servicio;
-
-
+using CentroEventos.Aplicacion.Entidades;
 public class ListarAsistenciaAEventoUseCase
 {
     private readonly IRepositorioEventoDeportivo _repositorioEvento;
