@@ -10,13 +10,10 @@ public class ListadoPersonasUseCase
 {
     private readonly IRepositorioPersona _repositorioPersona;
     private readonly IServicioAutorizacion _autorizacion;
-    private readonly int _idUsuario;
-    public ListadoPersonasUseCase(IRepositorioPersona repositorioPersona, IServicioAutorizacion autorizacion,
-    int idUsuario)
+    public ListadoPersonasUseCase(IRepositorioPersona repositorioPersona, IServicioAutorizacion autorizacion)
     {
         _repositorioPersona = repositorioPersona;
         _autorizacion = autorizacion;
-        _idUsuario = idUsuario;
     }
 
     public IEnumerable<Persona> Ejecutar()

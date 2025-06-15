@@ -6,7 +6,6 @@ using CentroEventos.Aplicacion.Enumerativos;
 using CentroEventos.Aplicacion.Excepciones;
 
 namespace CentroEventos.Aplicacion.CasosUso;
-
 public class AltaReservaUseCase
 {
     private readonly IRepositorioReserva _reservaRepo;
@@ -14,27 +13,24 @@ public class AltaReservaUseCase
     private readonly IRepositorioEventoDeportivo _eventoRepo;
     private readonly IValidadorReserva _validadorReserva;
     private readonly IServicioAutorizacion _autorizacion;
-    private readonly int _idUsuario;
 
     public AltaReservaUseCase(
         IRepositorioReserva reservaRepo,
         IRepositorioPersona personaRepo,
         IRepositorioEventoDeportivo eventoRepo,
         IValidadorReserva validadorReserva,
-        IServicioAutorizacion autorizacion,
-        int idUsuario)
+        IServicioAutorizacion autorizacion)
     {
         _reservaRepo = reservaRepo;
         _personaRepo = personaRepo;
         _eventoRepo = eventoRepo;
         _validadorReserva = validadorReserva;
         _autorizacion = autorizacion;
-        _idUsuario = idUsuario;
     }
 
-    public void Ejecutar(Reserva reserva)
+    public void Ejecutar(Reserva reserva, int idUsuario)
     {
-        if (!_autorizacion.PoseeElPermiso(_idUsuario, Permiso.ReservaAlta))
+        if (!_autorizacion.PoseeElPermiso(idUsuario, Permiso.ReservaAlta))
             throw new FalloAutorizacionException("No tiene permiso para dar de alta reservas");
 
         if (!_validadorReserva.Validar(reserva))

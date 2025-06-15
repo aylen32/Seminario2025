@@ -15,19 +15,14 @@ public class ListarAsistenciaAEventoUseCase
     private readonly IRepositorioPersona _repositorioPersona;
     private readonly IRepositorioReserva _repositorioReserva;
     private readonly IServicioAutorizacion _autorizacion;
-    private readonly int _idUsuario;
 
-    public ListarAsistenciaAEventoUseCase(IRepositorioEventoDeportivo repositorioEvento, IRepositorioPersona repositorioPersona, IRepositorioReserva repositorioReserva, IServicioAutorizacion autorizacion,
-    int idUsuario)
+    public ListarAsistenciaAEventoUseCase(IRepositorioEventoDeportivo repositorioEvento, IRepositorioPersona repositorioPersona, IRepositorioReserva repositorioReserva, IServicioAutorizacion autorizacion)
     {
         _repositorioEvento = repositorioEvento;
         _repositorioPersona = repositorioPersona;
         _repositorioReserva = repositorioReserva;
         _autorizacion = autorizacion;
-        _idUsuario = idUsuario;
     }
-
-
 
     public IEnumerable<Persona>? Ejecutar(int id)
     {

@@ -1,13 +1,18 @@
 using CentroEventos.Aplicacion.Entidades;
 using Microsoft.EntityFrameworkCore;
+using CentroEventos.Aplicacion;
 
-namespace CentroEventos.Aplicacion
+namespace CentroEventos.Repositorios
 {
     public class CentroEventosContext : DbContext
     {
-        public CentroEventosContext(DbContextOptions<CentroEventosContext> options)
-            : base(options)
+        public CentroEventosContext(){}
+        
+        public CentroEventosContext(DbContextOptions<CentroEventosContext> options) : base(options){}
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            optionsBuilder.UseSqlite("data source=CentroEventos.sqlite");
         }
 
         public DbSet<Persona> Personas { get; set; }

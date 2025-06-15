@@ -1,3 +1,4 @@
+using CentroEventos.UI.Components;
 using CentroEventos.Aplicacion;
 using CentroEventos.Aplicacion.Validaciones;
 using CentroEventos.Repositorios;
@@ -9,9 +10,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using CentroEventos.Aplicacion.CasosUso;
 using CentroEventos.Aplicacion.Servicio;
-
+using CentroEventos.Aplicacion.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
 
 // Configurar servicios
 builder.Services.AddRazorPages();
@@ -25,6 +30,7 @@ builder.Services.AddDbContext<CentroEventosContext>(options =>
 builder.Services.AddScoped<IRepositorioPersona, RepositorioPersona>();
 builder.Services.AddScoped<IRepositorioReserva, RepositorioReserva>();
 builder.Services.AddScoped<IRepositorioEventoDeportivo, RepositorioEventoDeportivo>();
+builder.Services.AddScoped<IRepositorioUsuario, RepositorioUsuario>();
 
 // Casos de uso
 builder.Services.AddScoped<AltaPersonaUseCase>();
@@ -45,26 +51,26 @@ builder.Services.AddScoped<ListadoEventoDeportivoUseCase>();
 builder.Services.AddScoped<ListarEventosConCupoDisponibleUseCase>();
 builder.Services.AddScoped<ListarAsistenciaAEventoUseCase>();
 
+//Servicio Autorizacion
 builder.Services.AddScoped<IServicioAutorizacion, ServicioAutorizacion>();
 
+//Validadores
+builder.Services.AddScoped<IValidadorEventoDeportivo, ValidadorEventoDeportivo>();
+builder.Services.AddScoped<IValidadorPersona, ValidadorPersona>();
+builder.Services.AddScoped<IValidadorReserva, ValidadorReserva>();
 
 var app = builder.Build();
 
-
+// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
-}
-else
-{
-    app.UseDeveloperExceptionPage();
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
 }
 
 app.UseStaticFiles();
-app.UseRouting();
+app.UseAntiforgery();
 
-app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
 
 app.Run();
-

@@ -12,23 +12,20 @@ public class ModificarEventoDeportivoUseCase
     private readonly IRepositorioEventoDeportivo _repositorioEvento;
     private readonly IValidadorEventoDeportivo _validadorEvento;
     private readonly IServicioAutorizacion _autorizacion;
-    private readonly int _idUsuario;
 
     public ModificarEventoDeportivoUseCase(
         IRepositorioEventoDeportivo repositorioEvento,
         IValidadorEventoDeportivo validadorEvento,
-        IServicioAutorizacion autorizacion,
-        int idUsuario)
+        IServicioAutorizacion autorizacion)
     {
         _repositorioEvento = repositorioEvento;
         _validadorEvento = validadorEvento;
         _autorizacion = autorizacion;
-        _idUsuario = idUsuario;
     }
 
-    public void Ejecutar(EventoDeportivo evento)
+    public void Ejecutar(EventoDeportivo evento, int idUsuario)
     {
-        if (!_autorizacion.PoseeElPermiso(_idUsuario, Permiso.EventoModificacion))
+        if (!_autorizacion.PoseeElPermiso(idUsuario, Permiso.EventoModificacion))
             throw new FalloAutorizacionException("No tiene permiso para modificar eventos deportivos");
 
         if (!_repositorioEvento.ExisteEventoPorId(evento.Id))

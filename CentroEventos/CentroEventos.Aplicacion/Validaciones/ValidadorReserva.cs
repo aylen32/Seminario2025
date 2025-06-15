@@ -23,20 +23,17 @@ public class ValidadorReserva : IValidadorReserva
     {
         if (!_personaRepo.ExistePersonaPorId(reserva.PersonaId))
         {
-            _error = "La persona no existe";
-            return false;
+            _error += "La persona no existe";
         }
 
         if (!_eventoRepo.ExisteEventoPorId(reserva.EventoDeportivoId))
         {
-            _error = "El evento deportivo no existe";
-            return false;
+            _error += "El evento deportivo no existe";
         }
 
         if (_reservaRepo.ExisteReservaDuplicada(reserva.PersonaId, reserva.EventoDeportivoId))
         {
-            _error = "Ya existe una reserva para este evento deportivo de esta persona";
-            return false;
+            _error += "Ya existe una reserva para este evento deportivo de esta persona";
         }
 
         var evento = _eventoRepo.ObtenerEvento(reserva.EventoDeportivoId);
@@ -45,13 +42,11 @@ public class ValidadorReserva : IValidadorReserva
             int cantidadReservas = _reservaRepo.ObtenerReservasPorEvento(reserva.EventoDeportivoId).Count();
             if (cantidadReservas >= evento.CupoMaximo)
             {
-                _error = "El evento deportivo no tiene cupo disponible";
-                return false;
+                _error += "El evento deportivo no tiene cupo disponible";
             }
         }
 
-        _error = null;
-        return true;
+        return string.IsNullOrWhiteSpace(_error);
     }
 
     public string? ObtenerError()

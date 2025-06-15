@@ -13,29 +13,25 @@ public class ModificarReservaUseCase
     private readonly IRepositorioReserva _repositorioReserva;
     private readonly IValidadorReserva _validadorReserva;
     private readonly IServicioAutorizacion _autorizacion;
-    private readonly int _idUsuario;
 
-    public ModificarReservaUseCase(IRepositorioReserva repo, IValidadorReserva validador, IServicioAutorizacion autorizacion,
-    int idUsuario)
+    public ModificarReservaUseCase(IRepositorioReserva repo, IValidadorReserva validador, IServicioAutorizacion autorizacion)
     {
         _repositorioReserva = repo;
         _validadorReserva = validador;
         _autorizacion = autorizacion;
-        _idUsuario = idUsuario;
     }
 
-    public void Ejecutar(Reserva reserva)
+    public void Ejecutar(Reserva reserva, int idUsuario)
     {
-        if (!_autorizacion.PoseeElPermiso(_idUsuario, Permiso.ReservaModificacion))
+        if (!_autorizacion.PoseeElPermiso(idUsuario, Permiso.ReservaModificacion))
             throw new FalloAutorizacionException("No tiene permiso para modificar reservas");
 
         if (!_repositorioReserva.ExisteReservaPorId(reserva.Id))
             throw new EntidadNotFoundException($"La reserva con ID {reserva.Id} no existe");
 
         if (!_validadorReserva.Validar(reserva))
-            throw new ValidacionException(_validadorReserva.ObtenerError()!);
+            throw new ValidacionException(_validadorReserva.ObtenerError() ?? "Error desconocido en la validación");
 
         _repositorioReserva.ModificarReserva(reserva.Id, reserva.Estado);
     }
-
 }

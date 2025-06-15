@@ -12,14 +12,12 @@ public class ListarEventosConCupoDisponibleUseCase
     private readonly IRepositorioEventoDeportivo _repositorioEvento;
     private readonly IRepositorioReserva _repositorioReserva;
     private readonly IServicioAutorizacion _autorizacion;
-    private readonly int _idUsuario;
-    public ListarEventosConCupoDisponibleUseCase(IRepositorioEventoDeportivo repositorioEvento, IRepositorioReserva repositorioReserva, IServicioAutorizacion autorizacion,
-    int idUsuario)
+
+    public ListarEventosConCupoDisponibleUseCase(IRepositorioEventoDeportivo repositorioEvento, IRepositorioReserva repositorioReserva, IServicioAutorizacion autorizacion)
     {
         _repositorioEvento = repositorioEvento;
         _repositorioReserva = repositorioReserva;
         _autorizacion = autorizacion;
-        _idUsuario = idUsuario;
     }
 
     public List<EventoDeportivo> ? Ejecutar()

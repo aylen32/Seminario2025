@@ -12,23 +12,20 @@ public class AltaEventoDeportivoUseCase
     private readonly IRepositorioEventoDeportivo _repositorioEvento;
     private readonly IValidadorEventoDeportivo _validadorEvento;
     private readonly IServicioAutorizacion _autorizacion;
-    private readonly int _idUsuario;
 
     public AltaEventoDeportivoUseCase(
         IRepositorioEventoDeportivo repositorioEvento,
         IValidadorEventoDeportivo validadorEvento,
-        IServicioAutorizacion autorizacion,
-        int idUsuario)
+        IServicioAutorizacion autorizacion)
     {
         _repositorioEvento = repositorioEvento;
         _validadorEvento = validadorEvento;
         _autorizacion = autorizacion;
-        _idUsuario = idUsuario;
     }
 
-    public void Ejecutar(EventoDeportivo evento)
+    public void Ejecutar(EventoDeportivo evento, int idUsuario)
     {
-        if (!_autorizacion.PoseeElPermiso(_idUsuario, Permiso.EventoAlta))
+        if (!_autorizacion.PoseeElPermiso(idUsuario, Permiso.EventoAlta))
             throw new FalloAutorizacionException("No tiene permiso para dar de alta eventos deportivos");
 
         if (!_validadorEvento.Validar(evento))
@@ -36,6 +33,4 @@ public class AltaEventoDeportivoUseCase
 
         _repositorioEvento.AgregarEvento(evento);
     }
-}
-
-  
+} 

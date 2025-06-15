@@ -10,17 +10,14 @@ public class ListadoEventoDeportivoUseCase
 {
     private readonly IRepositorioEventoDeportivo _repositorioEventoDeportivo;
     private readonly IServicioAutorizacion _autorizacion;
-    private readonly int _idUsuario;
 
-    public ListadoEventoDeportivoUseCase(IRepositorioEventoDeportivo repositorioEventoDeportivo, IServicioAutorizacion autorizacion,
-    int idUsuario)
+    public ListadoEventoDeportivoUseCase(IRepositorioEventoDeportivo repositorioEventoDeportivo, IServicioAutorizacion autorizacion)
     {
         _repositorioEventoDeportivo = repositorioEventoDeportivo;
-        _autorizacion = autorizacion;
-        _idUsuario = idUsuario;                              
+        _autorizacion = autorizacion;                           
     }
 
-    public IEnumerable<EventoDeportivo> ? Ejecutar()
+    public IEnumerable<EventoDeportivo>? Ejecutar()
     {
         return _repositorioEventoDeportivo.ObtenerTodos();
     }

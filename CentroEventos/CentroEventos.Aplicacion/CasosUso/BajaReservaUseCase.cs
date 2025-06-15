@@ -10,26 +10,22 @@ public class BajaReservaUseCase
 {
     private readonly IRepositorioReserva _repositorioReserva;
     private readonly IServicioAutorizacion _autorizacion;
-    private readonly int _idUsuario;
-   
-    public BajaReservaUseCase(IRepositorioReserva repositorioReserva, IServicioAutorizacion autorizacion,
-    int idUsuario)
+
+    public BajaReservaUseCase(IRepositorioReserva repositorioReserva, IServicioAutorizacion autorizacion)
     {
         _repositorioReserva = repositorioReserva;
         _autorizacion = autorizacion;
-        _idUsuario = idUsuario;
-    }
-    public void Ejecutar(int id)
-    {
-        if (!_autorizacion.PoseeElPermiso(_idUsuario, Permiso.ReservaBaja))
-        {
-            throw new FalloAutorizacionException("No tiene permiso para eliminar reservas");
-        }
-        if (!_repositorioReserva.ExisteReservaPorId(id))
-            {
-                throw new EntidadNotFoundException($"La reserva con ID {id} no existe");
-            }
-        _repositorioReserva.EliminarReserva(id);
     }
 
+    public void Ejecutar(int idReserva, int idUsuario)
+    {
+        if (!_autorizacion.PoseeElPermiso(idUsuario, Permiso.ReservaBaja))
+            throw new FalloAutorizacionException("No tiene permiso para eliminar reservas");
+
+        if (!_repositorioReserva.ExisteReservaPorId(idReserva))
+            throw new EntidadNotFoundException($"La reserva con ID {idReserva} no existe");
+
+        _repositorioReserva.EliminarReserva(idReserva);
+    }
 }
+

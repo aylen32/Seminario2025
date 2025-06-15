@@ -6,7 +6,8 @@ using CentroEventos.Aplicacion.Enumerativos;
 
 public class Reserva
 {
-    public int Id {get;set;}
+    protected Reserva(){}
+    public int Id { get; set; }
     public int PersonaId {get;set;}
     public int EventoDeportivoId {get;set;}
     public DateTime FechaAltaReserva {get;set;}

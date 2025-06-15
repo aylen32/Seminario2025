@@ -5,6 +5,7 @@ using CentroEventos.Aplicacion.Enumerativos;
 
 public class Usuario
 {
+    protected Usuario(){}
     public int Id { get; set; }
 
     public string? Nombre { get; set; }

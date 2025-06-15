@@ -4,7 +4,8 @@ namespace CentroEventos.Aplicacion;
 
 public class EventoDeportivo
 {
-    public int Id {get;set;}
+    protected EventoDeportivo(){}
+    public int Id { get; set; }
     public string Nombre {get;set;}="";
     public string Descripcion {get;set;}="";
     public DateTime FechaHoraInicio {get;set;}

@@ -18,42 +18,35 @@ public class ValidadorPersona : IValidadorPersona
     {
         if (string.IsNullOrWhiteSpace(persona.Nombre))
         {
-            _error = "El Nombre no puede estar vacío";
-            return false;
+            _error += "El Nombre no puede estar vacío";
         }
 
         if (string.IsNullOrWhiteSpace(persona.Apellido))
         {
-            _error = "El Apellido no puede estar vacío";
-            return false;
+            _error += "El Apellido no puede estar vacío";
         }
 
         if (string.IsNullOrWhiteSpace(persona.DNI))
         {
-            _error = "El DNI no puede estar vacío";
-            return false;
+            _error += "El DNI no puede estar vacío";
         }
 
         if (string.IsNullOrWhiteSpace(persona.Mail))
         {
-            _error = "El Email no puede estar vacío";
-            return false;
+            _error += "El Email no puede estar vacío";
         }
 
         if (_personaRepo.ExistePersonaPorDni(persona.DNI))
         {
-            _error = "La persona con este DNI ya está registrada";
-            return false;
+            _error += "La persona con este DNI ya está registrada";
         }
 
         if (_personaRepo.ExistePersonaPorEmail(persona.Mail))
         {
-            _error = "La persona con este Email ya está registrada";
-            return false;
+            _error += "La persona con este Email ya está registrada";
         }
 
-        _error = null;
-        return true;
+        return string.IsNullOrWhiteSpace(_error);
     }
 
     public string? ObtenerError()
