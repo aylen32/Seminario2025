@@ -17,7 +17,7 @@ public class ListadoReservaUseCase
         _autorizacion = autorizacion;
     }
 
-    public IEnumerable<Reserva> ? Ejecutar()
+    public List<Reserva> Ejecutar()
     {
         return _repositorioReserva.ObtenerTodas();
     }

@@ -14,7 +14,7 @@ public class ListarUsuarioUseCase
         _autorizacion = autorizacion;
     }
 
-    public IEnumerable<Usuario>? Ejecutar()
+    public List<Usuario>? Ejecutar()
     {
         return _repositorioUsuario.ObtenerTodos();
     }

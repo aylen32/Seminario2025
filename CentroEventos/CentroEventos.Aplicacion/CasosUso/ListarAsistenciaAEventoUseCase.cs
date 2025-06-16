@@ -23,7 +23,7 @@ public class ListarAsistenciaAEventoUseCase
         _autorizacion = autorizacion;
     }
 
-    public IEnumerable<Persona>? Ejecutar(int id)
+    public List<Persona>? Ejecutar(int id)
     {
         if (!_repositorioEvento.ExisteEventoPorId(id))
             {

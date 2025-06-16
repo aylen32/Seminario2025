@@ -55,7 +55,7 @@ namespace CentroEventos.Repositorios
             return _context.Usuarios.FirstOrDefault(u => u.Id == id);
         }
 
-        public IEnumerable<Usuario> ObtenerTodos()
+        public List<Usuario> ObtenerTodos()
         {
             return _context.Usuarios.ToList();
         }

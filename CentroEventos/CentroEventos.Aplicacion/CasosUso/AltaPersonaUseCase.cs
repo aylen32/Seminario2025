@@ -22,10 +22,11 @@ public class AltaPersonaUseCase
 
   public void Ejecutar(Persona persona, int idUsuario)
   {
-    if (!_autorizacion.PoseeElPermiso(idUsuario, Permiso.UsuarioAlta))
-    {
-        throw new FalloAutorizacionException("No tiene permiso para dar de alta personas");
-    }
+
+    //if (!_autorizacion.PoseeElPermiso(idUsuario, Permiso.UsuarioAlta))
+   // {
+    //  throw new FalloAutorizacionException("No tiene permiso para dar de alta personas");
+   // }
 
     if (!_validadorPersona.Validar(persona))
     {

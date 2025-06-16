@@ -1,0 +1,39 @@
+﻿@page "/ListadoReservas"
+@rendermode InteractiveServer
+@inject ListadoReservaUseCase ListadoReservaUseCase
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>id de la Persona</th>
+      <th>id del Evento Deportivo</th>
+      <th>Fecha de Reservacion</th>
+      <th>Estado</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var reser in _lista)
+    {
+    <tr>
+      <td>@reser.Id</td>
+      <td>@reser.PersonaId</td>
+      <td>@reser.EventoDeportivoId</td>
+      <td>@reser.FechaAltaReserva</td>
+      <td>@reser.Estado</td>
+      <td>
+        <button class="btn btn-primary">Editar</button>
+        <button class="btn btn-danger">Eliminar</button>
+      </td>
+    </tr>
+    }
+  </tbody>
+</table>
+
+@code {
+    List<Reserva> _lista = new List<Reserva>();
+    protected override void OnInitialized()
+    {
+       _lista = ListadoReservaUseCase.Ejecutar();
+    }
+}

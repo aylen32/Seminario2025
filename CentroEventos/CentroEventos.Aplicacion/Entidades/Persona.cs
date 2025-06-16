@@ -4,7 +4,7 @@ namespace CentroEventos.Aplicacion.Entidades;
 
 public class Persona
 {
-    protected Persona(){}
+    public Persona() { }
     public int Id { get; set; }
     public string DNI {get; set;}="";     //Especifica que debe ser de tipo string
     public string Nombre {get;set;}="";

@@ -1,6 +1,8 @@
+using System;
 using CentroEventos.Aplicacion.Entidades;
 using Microsoft.EntityFrameworkCore;
 using CentroEventos.Aplicacion;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CentroEventos.Repositorios
 {
@@ -22,6 +24,15 @@ namespace CentroEventos.Repositorios
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+             // Para que EF Core guarde el DateTime como string en formato ISO 8601
+             var dateTimeConverter = new ValueConverter<DateTime, string>(
+             v => v.ToString("yyyy/MM/dd"),
+             v => DateTime.ParseExact(v, "yyyy/MM/dd", null));
+
+             modelBuilder.Entity<Reserva>()
+            .Property(r => r.FechaAltaReserva)
+            .HasConversion(dateTimeConverter);
+
             modelBuilder.Entity<Usuario>()
                 .Property(u => u.Permisos)
                 .HasConversion<int>(); // guarda los flags como int

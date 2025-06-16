@@ -51,17 +51,17 @@ namespace CentroEventos.Repositorios
             return _context.Reservas.Find(id);
         }
 
-        public IEnumerable<Reserva> ObtenerReservasPorEvento(int eventoId)
+        public List<Reserva> ObtenerReservasPorEvento(int eventoId)
         {
             return _context.Reservas.Where(r => r.EventoDeportivoId == eventoId).ToList();
         }
 
-        public IEnumerable<Reserva> ObtenerReservasPorPersona(int personaId)
+        public List<Reserva> ObtenerReservasPorPersona(int personaId)
         {
             return _context.Reservas.Where(r => r.PersonaId == personaId).ToList();
         }
 
-        public IEnumerable<Reserva> ObtenerTodas()
+        public List<Reserva> ObtenerTodas()
         {
             return _context.Reservas.ToList();
         }

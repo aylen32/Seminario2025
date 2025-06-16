@@ -29,7 +29,7 @@ namespace CentroEventos.Repositorios
             return _context.EventosDeportivos.Find(id);
         }
 
-        public IEnumerable<EventoDeportivo> ObtenerTodos()
+        public List<EventoDeportivo> ObtenerTodos()
         {
             return _context.EventosDeportivos.ToList();
         }

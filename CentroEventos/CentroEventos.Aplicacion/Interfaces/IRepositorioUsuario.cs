@@ -10,7 +10,7 @@ namespace CentroEventos.Aplicacion.Interfaces
         void EliminarUsuario(int id);
         void ModificarUsuario(Usuario usuario);
         Usuario? ObtenerUsuario(int id);
-        IEnumerable<Usuario> ObtenerTodos();
+        List<Usuario> ObtenerTodos();
         bool ExisteUsuarioPorId(int id);
         void AgregarPermiso(int usuarioId, Permiso permiso);
         void EliminarPermiso(int usuarioId, Permiso permiso);
