@@ -52,8 +52,9 @@ builder.Services.AddScoped<ListadoEventoDeportivoUseCase>();
 builder.Services.AddScoped<ListarEventosConCupoDisponibleUseCase>();
 builder.Services.AddScoped<ListarAsistenciaAEventoUseCase>();
 
-//Servicio Autorizacion
+//Servicio Autorizacion y sesion
 builder.Services.AddScoped<IServicioAutorizacion, ServicioAutorizacion>();
+builder.Services.AddScoped<IServicioSesion, ServicioSesion>();
 
 //Validadores
 builder.Services.AddScoped<IValidadorEventoDeportivo, ValidadorEventoDeportivo>();
