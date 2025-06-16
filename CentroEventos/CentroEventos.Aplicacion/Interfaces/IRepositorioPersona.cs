@@ -10,7 +10,7 @@ public interface IRepositorioPersona
     bool ExistePersonaPorDni(string dni);         // Verifica si una persona con el DNI pasado por parametro existe
     bool ExistePersonaPorEmail(string email);     // Verifica si una persona con el email pasado por parametro existe
     Persona ? ObtenerPersona(int id);             // Obtiene una persona con el ID
-    IEnumerable<Persona> ObtenerTodas();          // Obtiene todas las personas (Arreglo)
+    List<Persona> ObtenerTodas();                // Obtiene todas las personas 
     void AgregarPersona(Persona persona);         // Agrega una persona
     void ModificarPersona(Persona persona);       // Modifica una persona
     void EliminarPersona(int id);                 // Elimina una persona buscandolo por su ID

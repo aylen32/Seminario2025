@@ -1,0 +1,37 @@
+﻿@page "/ListadoPersonas"
+@rendermode InteractiveServer
+@inject ListadoPersonasUseCase ListadoPersonasUseCase
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Apellido</th>
+      <th>DNI</th>
+      <th>Telefono</th>
+      <th>Email</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var per in _lista)
+    {
+    <tr>
+      <td>@per.Id</td>
+      <td>@per.Nombre</td>
+      <td>@per.Apellido</td>
+      <td>@per.DNI</td>
+      <td>@per.Telefono</td>
+      <td>@per.Mail</td>
+    </tr>
+    }
+  </tbody>
+</table>
+
+@code {
+    List<Persona> _lista = new List<Persona>();
+    protected override void OnInitialized()
+    {
+       _lista = ListadoPersonasUseCase.Ejecutar();
+    }
+}
