@@ -38,6 +38,7 @@ builder.Services.AddScoped<AltaPersonaUseCase>();
 builder.Services.AddScoped<BajaPersonaUseCase>();
 builder.Services.AddScoped<ModificarPersonaUseCase>();
 builder.Services.AddScoped<ListadoPersonasUseCase>();
+builder.Services.AddScoped<ObtenerPersonaUseCase>();
 
 builder.Services.AddScoped<AltaReservaUseCase>();
 builder.Services.AddScoped<BajaReservaUseCase>();

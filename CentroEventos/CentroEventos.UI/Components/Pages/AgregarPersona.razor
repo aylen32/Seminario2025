@@ -1,8 +1,19 @@
-﻿@page "/AgregarPersona"
+﻿@page "/AgregarPersona/{Id:int?}"
 @rendermode InteractiveServer
 @inject NavigationManager Navegador;
+@inject ModificarPersonaUseCase ModificarPersonaUseCase
+@inject ObtenerPersonaUseCase ObtenerPersonaUseCase
 @inject AltaPersonaUseCase AltaPersonaUseCase
 
+
+@if (_esNuevaPersona)
+{
+  <h3>Agregando un nuevo Cliente</h3>
+}
+else
+{
+  <h3>Modificando a la Persona"@_persona.Nombre"</h3>
+}
 <input placeholder="Nombre" @bind="_persona.Nombre" class="form-control">
 <input placeholder="Apellido" @bind="_persona.Apellido" class="form-control">
 <input placeholder="DNI" @bind="_persona.DNI" class="form-control">
@@ -13,10 +24,31 @@
 
 @code {
   Persona _persona = new Persona();
+  [Parameter] public int? Id { get; set; }
+  bool _esNuevaPersona=true;
+  protected override void OnParametersSet()
+  {
+    if (Id != null)
+    {
+      var per_hallada = ObtenerPersonaUseCase.Ejecutar(Id.Value, 1);
+      if (per_hallada != null)
+      {
+        _persona = per_hallada;
+        _esNuevaPersona=false;
+      }
+    }
+  }
   void Aceptar()
   {
-    AltaPersonaUseCase.Ejecutar(_persona, 1);
+    if (_esNuevaPersona)
+    {
+      AltaPersonaUseCase.Ejecutar(_persona,1);
+    }
+    else
+    {
+      ModificarPersonaUseCase.Ejecutar(_persona,1);
+    }
     _persona = new Persona();
-    Navegador.NavigateTo("listadoclientes");
+    Navegador.NavigateTo("ListadoPersonas");
   }
 }

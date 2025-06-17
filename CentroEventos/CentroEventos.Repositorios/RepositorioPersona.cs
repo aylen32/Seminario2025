@@ -28,7 +28,7 @@ namespace CentroEventos.Repositorios
         {
             var persona = _context.Personas.Find(id);
             if (persona == null)
-                throw new EntidadNotFoundException($"La persona con ID {id} no existe.");
+                throw new EntidadNotFoundException($"La persona con ID {id} no existe");
 
             _context.Personas.Remove(persona);
             _context.SaveChanges();

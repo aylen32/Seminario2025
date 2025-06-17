@@ -9,11 +9,24 @@
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
+<button class="btn btn-danger" @onclick="ConfirmarReseteo">Resetear contador</button>
+<DialogoConfirmacion @ref="dialogo" OnConfirmado="Resetear" />
+
 @code {
     private int currentCount = 0;
 
     private void IncrementCount()
     {
         currentCount++;
+    }
+
+    DialogoConfirmacion dialogo = null!;
+    private void ConfirmarReseteo()
+    {
+      dialogo.Mostrar("¿Está seguro que desea resetear el contador?");
+    }
+    private void Resetear()
+    {
+      currentCount = 0;
     }
 }

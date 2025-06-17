@@ -1,0 +1,8 @@
+thead tr {
+  background-color: green !important;
+  color: white !important;
+}
+
+table {
+  border: 2px solid red !important;
+}

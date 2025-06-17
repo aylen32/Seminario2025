@@ -23,11 +23,11 @@ public class ListarAsistenciaAEventoUseCase
         _autorizacion = autorizacion;
     }
 
-    public List<Persona>? Ejecutar(int id)
+    public List<Persona> Ejecutar(int id)
     {
         if (!_repositorioEvento.ExisteEventoPorId(id))
             {
-                throw new EntidadNotFoundException($"Evento con ID {id} no encontrado.");
+                throw new EntidadNotFoundException($"Evento con ID {id} no encontrado");
             }
         var personas = new List<Persona>();
         foreach (Reserva reserva in _repositorioReserva.ObtenerReservasPorEvento(id))
