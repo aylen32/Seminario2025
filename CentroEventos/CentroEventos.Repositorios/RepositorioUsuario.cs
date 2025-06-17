@@ -40,29 +40,43 @@ namespace CentroEventos.Repositorios
     public void ModificarUsuario(Usuario usuario)
     {
       var existente = _context.Usuarios
-          .Include(u => u.Permisos)
-          .FirstOrDefault(u => u.Id == usuario.Id);
+        .Include(u => u.Permisos)
+        .FirstOrDefault(u => u.Id == usuario.Id);
 
       if (existente == null)
         throw new EntidadNotFoundException($"El usuario con ID {usuario.Id} no existe");
 
+      // Actualizar datos básicos
       existente.Nombre = usuario.Nombre;
       existente.Apellido = usuario.Apellido;
       existente.CorreoElectronico = usuario.CorreoElectronico;
       existente.HashContrasenia = usuario.HashContrasenia;
 
-      existente.Permisos.Clear();
-      foreach (var permiso in usuario.Permisos)
+      // Obtener permisos actuales y nuevos
+      var permisosExistentes = existente.Permisos.ToList();
+      var permisosIdsNuevos = usuario.Permisos.Select(p => p.PermisoId).ToList();
+
+      // Remover permisos que ya no están en la lista nueva
+      foreach (var permisoExistente in permisosExistentes)
       {
-        existente.Permisos.Add(new UsuarioPermiso
+        if (!permisosIdsNuevos.Contains(permisoExistente.PermisoId))
         {
-          UsuarioId = existente.Id,
-          PermisoId = permiso.PermisoId
-        });
+          existente.Permisos.Remove(permisoExistente);
+        }
+      }
+
+      // Agregar permisos nuevos que no estén ya en existente.Permisos
+      foreach (var nuevoPermisoId in permisosIdsNuevos)
+      {
+        if (!permisosExistentes.Any(p => p.PermisoId == nuevoPermisoId))
+        {
+            existente.Permisos.Add(new UsuarioPermiso(existente.Id, nuevoPermisoId));
+        }
       }
 
       _context.SaveChanges();
     }
+
 
     public Usuario? ObtenerUsuario(int id)
     {
@@ -82,8 +96,8 @@ namespace CentroEventos.Repositorios
     public void AgregarPermiso(int usuarioId, Permiso permiso)
     {
       var usuario = _context.Usuarios
-          .Include(u => u.Permisos)
-          .FirstOrDefault(u => u.Id == usuarioId);
+        .Include(u => u.Permisos)
+        .FirstOrDefault(u => u.Id == usuarioId);
 
       if (usuario == null)
         throw new EntidadNotFoundException($"Usuario con ID {usuarioId} no existe");
@@ -92,15 +106,11 @@ namespace CentroEventos.Repositorios
       if (yaTienePermiso)
         throw new OperacionInvalidaException("El usuario ya posee ese permiso");
 
-      var usuarioPermiso = new UsuarioPermiso
-      {
-        UsuarioId = usuarioId,
-        PermisoId = permiso.Id
-      };
-
+      var usuarioPermiso = new UsuarioPermiso(usuarioId, permiso.Id);
       usuario.Permisos.Add(usuarioPermiso);
       _context.SaveChanges();
     }
+
 
     public void EliminarPermiso(int usuarioId, Permiso permiso)
     {

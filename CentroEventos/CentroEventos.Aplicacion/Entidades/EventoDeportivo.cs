@@ -4,7 +4,8 @@ namespace CentroEventos.Aplicacion.Entidades;
 
 public class EventoDeportivo
 {
-    public EventoDeportivo(){}
+    protected EventoDeportivo(){}
+    public static EventoDeportivo CrearNuevo() => new EventoDeportivo();
     public int Id { get; set; }
     public string Nombre {get;set;}="";
     public string Descripcion {get;set;}="";

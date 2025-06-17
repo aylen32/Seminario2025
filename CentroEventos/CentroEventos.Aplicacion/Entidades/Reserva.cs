@@ -6,7 +6,8 @@ using CentroEventos.Aplicacion.Enumerativos;
 
 public class Reserva
 {
-    public Reserva(){}
+    protected Reserva() { }
+    public static Reserva CrearNueva() => new Reserva();
     public int Id { get; set; }
     public int PersonaId {get;set;}
     public int EventoDeportivoId {get;set;}

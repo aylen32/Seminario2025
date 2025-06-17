@@ -4,6 +4,7 @@ namespace CentroEventos.Aplicacion.Entidades;
 
 public class Permiso
 {
+    protected Permiso() {}
     public int Id { get; set; }
     public PermisoTipo Tipo { get; set; }
     public List<UsuarioPermiso> Usuarios { get; set; } = new();
