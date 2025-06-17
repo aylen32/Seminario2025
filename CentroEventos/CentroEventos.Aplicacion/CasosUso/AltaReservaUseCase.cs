@@ -31,7 +31,7 @@ public class AltaReservaUseCase
 
     public void Ejecutar(Reserva reserva, int idUsuario)
     {
-        if (!_autorizacion.PoseeElPermiso(idUsuario, Permiso.ReservaAlta))
+        if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.ReservaAlta))
             throw new FalloAutorizacionException("No tiene permiso para dar de alta reservas");
 
         if (!_validadorReserva.Validar(reserva))

@@ -9,6 +9,5 @@ public interface IServicioSesion
     void IniciarSesion(Usuario usuario);
     void CerrarSesion();
     bool EstaAutenticado { get; }
-
-    Permiso Permisos { get; } 
+    List<PermisoTipo> Permisos { get; } 
 }

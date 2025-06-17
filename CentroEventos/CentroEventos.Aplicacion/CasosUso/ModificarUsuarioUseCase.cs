@@ -21,7 +21,7 @@ private readonly IRepositorioUsuario _repositorioUsuario;
 
     public void Ejecutar(Usuario usuario)
     {
-        if (!_autorizacion.PoseeElPermiso(usuario.Id, Permiso.UsuarioModificacion))
+        if (!_autorizacion.PoseeElPermiso(usuario.Id, PermisoTipo.UsuarioModificacion))
         {
             throw new UnauthorizedAccessException("No tiene permiso para modificar este usuario.");
         }

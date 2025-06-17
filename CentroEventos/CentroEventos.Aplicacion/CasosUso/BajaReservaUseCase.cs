@@ -19,7 +19,7 @@ public class BajaReservaUseCase
 
     public void Ejecutar(int idReserva, int idUsuario)
     {
-        if (!_autorizacion.PoseeElPermiso(idUsuario, Permiso.ReservaBaja))
+        if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.ReservaBaja))
             throw new FalloAutorizacionException("No tiene permiso para eliminar reservas");
 
         if (!_repositorioReserva.ExisteReservaPorId(idReserva))

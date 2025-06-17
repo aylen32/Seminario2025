@@ -7,7 +7,7 @@ namespace CentroEventos.Aplicacion.CasosUso;
 
 public class AltaUsuarioUseCase
 {
-    private readonly IRepositorioUsuario _repositorioUsuario;
+  private readonly IRepositorioUsuario _repositorioUsuario;
   private readonly IValidadorUsuario _validadorUsuario;
   private readonly IServicioAutorizacion _autorizacion;
 
@@ -21,11 +21,10 @@ public class AltaUsuarioUseCase
 
   public void Ejecutar(Usuario usuario)
   {
-   
 
     if (!_validadorUsuario.Validar(usuario))
     {
-        throw new ValidacionException(_validadorUsuario.ObtenerError() ?? "Error desconocido en la validación");
+      throw new ValidacionException(_validadorUsuario.ObtenerError() ?? "Error desconocido en la validación");
     }
 
     _repositorioUsuario.AgregarUsuario(usuario);

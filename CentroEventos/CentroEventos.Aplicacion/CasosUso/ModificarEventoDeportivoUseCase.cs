@@ -26,7 +26,7 @@ public class ModificarEventoDeportivoUseCase
 
     public void Ejecutar(EventoDeportivo evento, int idUsuario)
     {
-        if (!_autorizacion.PoseeElPermiso(idUsuario, Permiso.EventoModificacion))
+        if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.EventoModificacion))
             throw new FalloAutorizacionException("No tiene permiso para modificar eventos deportivos");
 
         if (!_repositorioEvento.ExisteEventoPorId(evento.Id))

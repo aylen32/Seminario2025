@@ -14,5 +14,6 @@ namespace CentroEventos.Aplicacion.Interfaces
         bool ExisteUsuarioPorId(int id);
         void AgregarPermiso(int usuarioId, Permiso permiso);
         void EliminarPermiso(int usuarioId, Permiso permiso);
+        Usuario? ObtenerUsuarioConPermisos(int idUsuario);
     }
 }

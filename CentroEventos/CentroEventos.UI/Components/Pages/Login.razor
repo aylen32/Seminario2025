@@ -96,7 +96,7 @@
             Apellido = modeloRegistro.Apellido,
             CorreoElectronico = modeloRegistro.CorreoElectronico,
             HashContrasenia = hash,
-            Permisos = Permiso.Ninguno
+            Permisos = new List<UsuarioPermiso>()
         };
 
         if (!Validador.Validar(nuevo))
