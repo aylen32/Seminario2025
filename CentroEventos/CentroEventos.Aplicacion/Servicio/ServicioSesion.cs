@@ -10,8 +10,12 @@ namespace CentroEventos.Aplicacion.Servicio
         public Usuario? UsuarioActual => _usuario;
         public bool EstaAutenticado => _usuario!=null;
 
-        public Permiso Permisos => _usuario?.Permisos ?? Permiso.Ninguno;
-
+        public List<PermisoTipo> Permisos =>
+          _usuario?.Permisos?
+          .Where(up => up.Permiso != null)
+          .Select(up => up.Permiso!.Tipo)
+          .ToList() ?? new();
+          
         public void CerrarSesion()
         {
             _usuario = null;

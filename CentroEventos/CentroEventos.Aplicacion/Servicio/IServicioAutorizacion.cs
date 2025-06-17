@@ -4,5 +4,5 @@ using CentroEventos.Aplicacion.Enumerativos;
 
 public interface IServicioAutorizacion
 {
-    bool PoseeElPermiso(int idUsuario, Permiso permiso);
+    bool PoseeElPermiso(int idUsuario, PermisoTipo permisoTipo);
 }

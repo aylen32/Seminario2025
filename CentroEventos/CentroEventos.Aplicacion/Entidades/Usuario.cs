@@ -16,6 +16,5 @@ public class Usuario
 
     public string? HashContrasenia { get; set; }
 
-
-    public Permiso Permisos { get; set; } = Permiso.Ninguno;
+    public List<UsuarioPermiso> Permisos { get; set; } = new();
 }

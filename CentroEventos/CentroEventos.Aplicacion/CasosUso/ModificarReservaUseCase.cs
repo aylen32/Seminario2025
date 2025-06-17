@@ -24,7 +24,7 @@ public class ModificarReservaUseCase
 
     public void Ejecutar(Reserva reserva, int idUsuario)
     {
-        if (!_autorizacion.PoseeElPermiso(idUsuario, Permiso.ReservaModificacion))
+        if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.ReservaModificacion))
             throw new FalloAutorizacionException("No tiene permiso para modificar reservas");
 
         if (!_repositorioReserva.ExisteReservaPorId(reserva.Id))
