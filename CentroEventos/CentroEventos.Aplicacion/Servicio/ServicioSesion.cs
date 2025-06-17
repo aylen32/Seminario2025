@@ -8,7 +8,7 @@ namespace CentroEventos.Aplicacion.Servicio
     {
         private Usuario? _usuario;
         public Usuario? UsuarioActual => _usuario;
-        public bool EstaAutenticado => _usuario!=null;
+        
 
         public List<PermisoTipo> Permisos =>
           _usuario?.Permisos?
@@ -24,7 +24,9 @@ namespace CentroEventos.Aplicacion.Servicio
         public void IniciarSesion(Usuario usuario)
         {
             _usuario = usuario;
+            Console.WriteLine("Sesión iniciada con: " + usuario.Nombre);
         }
+        public bool EstaAutenticado => _usuario != null;
     }
 }
 

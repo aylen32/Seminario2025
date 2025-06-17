@@ -1,9 +1,11 @@
-﻿@page "/"
+﻿@page "/home"
 @using CentroEventos.Aplicacion.Entidades
 @using CentroEventos.Aplicacion.Servicio
+@inject NavigationManager Navigation
 @inject IServicioSesion servicio
 <PageTitle>Home</PageTitle>
-<style>
+
+  <style>
     body {
     background-color: rgb(255, 255, 255);
     
@@ -21,6 +23,13 @@
 <p></p>
 <p></p>
 
+
+@code {
+    protected override void OnInitialized()
+    {
+        Console.WriteLine("Usuario actual: " + servicio.UsuarioActual?.Nombre);
+    }
+}
 <h3>
  ¡Bienvenido,@servicio.UsuarioActual?.Nombre!
 </h3>

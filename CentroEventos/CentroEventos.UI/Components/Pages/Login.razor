@@ -1,4 +1,4 @@
-﻿@page "/login"
+﻿@page "/"
 @rendermode InteractiveServer
 @layout LoginLayout
 @using CentroEventos.UI.Components.Layout
@@ -82,7 +82,7 @@
         if (usuario.HashContrasenia == hashIngresado)
         {
             Sesion.IniciarSesion(usuario);
-            Navigation.NavigateTo("/inicio");
+            Navigation.NavigateTo("/home",  forceLoad: false);
         }
     }
 
@@ -104,7 +104,7 @@
 
         Repositorio.AgregarUsuario(nuevo);
         Sesion.IniciarSesion(nuevo);
-        Navigation.NavigateTo("/inicio");
+        Navigation.NavigateTo("/home",  forceLoad: false);
     }
 
     public class LoginModel
