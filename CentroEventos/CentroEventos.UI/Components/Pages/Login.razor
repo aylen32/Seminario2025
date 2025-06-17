@@ -1,5 +1,4 @@
 ﻿@page "/"
-@rendermode InteractiveServer
 @layout LoginLayout
 @using CentroEventos.UI.Components.Layout
 @using CentroEventos.Aplicacion.Entidades
@@ -32,7 +31,7 @@
 
         @if (modo == "login")
         {
-            <EditForm Model="modeloLogin" OnValidSubmit="IniciarSesion">
+            <EditForm Model="modeloLogin" OnValidSubmit="IniciarSesion" FormName="loginForm">
                 <div class="contenedor-input">
                     <InputText @bind-Value="modeloLogin.Correo" placeholder="Correo" />
                 </div>
@@ -44,7 +43,7 @@
         }
         else
         {
-            <EditForm Model="modeloRegistro" OnValidSubmit="RegistrarUsuario">
+            <EditForm Model="modeloRegistro" OnValidSubmit="RegistrarUsuario"FormName="registroForm">
     <div class="fila-inputs">
         <div class="contenedor-input">
             <InputText @bind-Value="modeloRegistro.Nombre" placeholder="Nombre"/>
