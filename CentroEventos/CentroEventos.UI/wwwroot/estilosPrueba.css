@@ -3,6 +3,15 @@ body {
 background: radial-gradient(circle, rgba(42, 123, 155, 1) 0%, rgba(87, 130, 199, 1) 50%, rgba(83, 237, 227, 1) 100%);
     font-family: "Ubuntu", helvetica;
 }
+.fila-inputs {
+    display: flex;
+    gap: 1rem; /* espacio entre los campos */
+    flex-wrap: wrap; /* para evitar desbordes en pantallas pequeñas */
+}
+
+.fila-inputs .contenedor-input {
+    flex: 1 1 45%; /* cada input ocupa ~45% del ancho del contenedor */
+}
 
 .contenedor-formularios {
     background:rgb(255, 255, 255);
@@ -23,6 +32,7 @@ background: radial-gradient(circle, rgba(42, 123, 155, 1) 0%, rgba(87, 130, 199,
     display: flex;
     justify-content: space-between;
 }
+
 .titulo  {
      font-size: 5.5rem;
     font-weight: bold;
@@ -74,6 +84,10 @@ background: radial-gradient(circle, rgba(42, 123, 155, 1) 0%, rgba(87, 130, 199,
 .contenedor-input {
     position: relative;
     margin-bottom: 40px;
+}
+.contenedor-input2 {
+    position: relative;
+    margin-bottom: 20px;
 }
 
 input {
