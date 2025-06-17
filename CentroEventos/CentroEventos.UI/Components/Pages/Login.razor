@@ -45,25 +45,26 @@
         else
         {
             <EditForm Model="modeloRegistro" OnValidSubmit="RegistrarUsuario">
-                <div class="contenedor-input">
-                    <InputText @bind-Value="modeloRegistro.Nombre" placeholder="Nombre" />
-                </div>
-                <div class="contenedor-input">
-                    <InputText @bind-Value="modeloRegistro.Apellido" placeholder="Apellido" />
-                </div>
-                <div class="contenedor-input">
-                    <InputText @bind-Value="modeloRegistro.CorreoElectronico" placeholder="Correo" />
-                </div>
-                <div class="contenedor-input">
-                    <InputText @bind-Value="modeloRegistro.Contrasenia" placeholder="Contraseña" type="password" />
-                </div>
-                <input type="submit" value="Registrarse" class="button" />
-            </EditForm>
+    <div class="fila-inputs">
+        <div class="contenedor-input">
+            <InputText @bind-Value="modeloRegistro.Nombre" placeholder="Nombre"/>
+        </div>
+        <div class="contenedor-input">
+            <InputText @bind-Value="modeloRegistro.Apellido" placeholder="Apellido" />
+        </div>
+    </div>
+    <div class="contenedor-input">
+        <InputText @bind-Value="modeloRegistro.CorreoElectronico" placeholder="Correo" />
+    </div>
+    <div class="contenedor-input">
+        <InputText @bind-Value="modeloRegistro.Contrasenia" placeholder="Contraseña" type="password" />
+    </div>
+    <input type="submit" value="Registrarse" class="button" />
+</EditForm>
         }
     </div>
 
-
-
+ 
 
 @code {
     private string modo = "login";
