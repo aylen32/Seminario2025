@@ -1,0 +1,43 @@
+﻿@page "/ListadoEventosDeportivos"
+@rendermode InteractiveServer
+@inject ListadoEventoDeportivoUseCase ListadoEventoDeportivoUseCase
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Descripcion</th> 
+      <th>Fecha y Hora de inicio</th>
+      <th>Duracion en horas</th>
+      <th>Cupo maximo de personas</th>
+      <th>Id de responsable</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var even in _lista)
+    {
+    <tr>
+      <td>@even.Id</td>
+      <td>@even.Nombre</td>
+      <td>@even.Descripcion</td>
+      <td>@even.FechaHoraInicio</td>
+      <td>@even.DuracionHoras</td>
+      <td>@even.CupoMaximo</td>
+      <td>@even.ResponsableId</td>
+      <td>
+        <button class="btn btn-primary">Editar</button>
+        <button class="btn btn-danger">Eliminar</button>
+      </td>
+    </tr>
+    }
+  </tbody>
+</table>
+
+@code {
+    List<EventoDeportivo> _lista = new List<EventoDeportivo>();
+    protected override void OnInitialized()
+    {
+       _lista = ListadoEventoDeportivoUseCase.Ejecutar();
+    }
+}

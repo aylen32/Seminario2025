@@ -18,7 +18,7 @@ public class ListadoEventoDeportivoUseCase
         _autorizacion = autorizacion;                           
     }
 
-    public List<EventoDeportivo>? Ejecutar()
+    public List<EventoDeportivo> Ejecutar()
     {
         return _repositorioEventoDeportivo.ObtenerTodos();
     }

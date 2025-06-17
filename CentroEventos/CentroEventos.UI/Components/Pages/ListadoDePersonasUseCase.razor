@@ -1,7 +1,11 @@
-﻿@page "/ListadoPersonas"
+﻿@using CentroEventos.UI.Components
+@page "/ListadoPersonas"
 @rendermode InteractiveServer
 @inject ListadoPersonasUseCase ListadoPersonasUseCase
+@inject BajaPersonaUseCase BajaPersonaUseCase
+@inject NavigationManager Navegador
 
+<DialogoConfirmacion @ref="dialogo" OnConfirmado="Eliminar"/>
 <table class="table">
   <thead>
     <tr>
@@ -24,8 +28,12 @@
       <td>@per.Telefono</td>
       <td>@per.Mail</td>
       <td>
-        <button class="btn btn-primary">Editar</button>
-        <button class="btn btn-danger">Eliminar</button>
+        <button class="btn btn-primary" @onclick="()=>ModificarPersona(per)">
+          Editar
+        </button>
+        <button class="btn btn-danger" @onclick="()=>ConfirmarEliminacion(per)">
+          Eliminar
+        </button>
       </td>
     </tr>
     }
@@ -38,4 +46,27 @@
     {
        _lista = ListadoPersonasUseCase.Ejecutar();
     }
+
+    DialogoConfirmacion dialogo = null!;
+    Persona? _PersonaParaEliminar = null;
+
+   private void ConfirmarEliminacion(Persona per)
+   {
+      _PersonaParaEliminar = per;
+      dialogo.Mostrar($"¿Desea eliminar a {per.Nombre} {per.Apellido}?");
+   }
+
+   private void Eliminar()
+   {
+     if (_PersonaParaEliminar != null)
+     {
+       BajaPersonaUseCase.Ejecutar(_PersonaParaEliminar.Id, 1);
+      _lista = ListadoPersonasUseCase.Ejecutar(); 
+     }
+   }
+
+   void ModificarPersona(Persona per)
+   {
+     Navegador.NavigateTo($"AgregarPersona/{per.Id}");
+   }
 }

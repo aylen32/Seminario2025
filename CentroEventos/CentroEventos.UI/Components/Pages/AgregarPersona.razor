@@ -1,22 +1,80 @@
-﻿@page "/AgregarPersona"
+﻿@page "/AgregarPersona/{Id:int?}"
 @rendermode InteractiveServer
 @inject NavigationManager Navegador;
+@inject ModificarPersonaUseCase ModificarPersonaUseCase
+@inject ObtenerPersonaUseCase ObtenerPersonaUseCase
 @inject AltaPersonaUseCase AltaPersonaUseCase
 
-<input placeholder="Nombre" @bind="_persona.Nombre" class="form-control">
-<input placeholder="Apellido" @bind="_persona.Apellido" class="form-control">
-<input placeholder="DNI" @bind="_persona.DNI" class="form-control">
-<input placeholder="Telefono" @bind="_persona.Telefono" class="form-control">
-<input placeholder="Email" @bind="_persona.Mail" class="form-control">
-<button class="btn btn-primary" @onclick="Aceptar">Aceptar</button>
+@if (_mensajeErrores?.Count > 0)
+{
+    <ul>
+        @foreach (var error in _mensajeErrores)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}
 
+
+
+@if (_esNuevaPersona)
+{
+  <h3>Agregando un nuevo Cliente</h3>
+}
+else
+{
+  <h3>Modificando a la Persona "@_persona.Nombre"</h3>
+}
+
+<input placeholder="Nombre" @bind="_persona.Nombre" class="form-control" />
+<input placeholder="Apellido" @bind="_persona.Apellido" class="form-control" />
+<input placeholder="DNI" @bind="_persona.DNI" class="form-control" />
+<input placeholder="Telefono" @bind="_persona.Telefono" class="form-control" />
+<input placeholder="Email" @bind="_persona.Mail" class="form-control" />
+<button class="btn btn-primary" @onclick="Aceptar">Aceptar</button>
 
 @code {
   Persona _persona = new Persona();
+  [Parameter] public int? Id { get; set; }
+  bool _esNuevaPersona = true;
+  List<string> _mensajeErrores = new();
+
+  protected override void OnParametersSet()
+  {
+    if (Id != null)
+    {
+      var per_hallada = ObtenerPersonaUseCase.Ejecutar(Id.Value, 1);
+      if (per_hallada != null)
+      {
+        _persona = per_hallada;
+        _esNuevaPersona = false;
+      }
+    }
+  }
+
   void Aceptar()
   {
-    AltaPersonaUseCase.Ejecutar(_persona, 1);
-    _persona = new Persona();
-    Navegador.NavigateTo("listadoclientes");
+    _mensajeErrores.Clear();
+
+    try
+    {
+        if (_esNuevaPersona)
+            AltaPersonaUseCase.Ejecutar(_persona, 1);
+        else
+            ModificarPersonaUseCase.Ejecutar(_persona, 1);
+
+        _persona = new Persona();
+        StateHasChanged();
+        Navegador.NavigateTo("ListadoPersonas");
+    }
+
+    catch (CentroEventos.Aplicacion.Excepciones.ValidacionException ex)
+    {
+      var msg = ex.Message;
+      _mensajeErrores = msg
+        .Split(new string[] { ". " }, StringSplitOptions.RemoveEmptyEntries)
+        .Select(s => s.Trim() + ".") 
+        .ToList();
+    }
   }
 }
