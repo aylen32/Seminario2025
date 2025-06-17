@@ -44,7 +44,7 @@ namespace CentroEventos.Repositorios
             existente.Apellido = usuario.Apellido;
             existente.CorreoElectronico = usuario.CorreoElectronico;
             existente.HashContrasenia = usuario.HashContrasenia;
-            existente.Salt = usuario.Salt;
+            //existente.Salt = usuario.Salt;
             existente.Permisos = usuario.Permisos;
 
             _context.SaveChanges();

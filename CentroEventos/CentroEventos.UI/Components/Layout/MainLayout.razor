@@ -1,5 +1,7 @@
 ﻿@inherits LayoutComponentBase
-
+@inject IServicioSesion servicio
+@using CentroEventos.Aplicacion.Servicio
+@inject NavigationManager navegar
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -8,7 +10,9 @@
     <main>
         <div class="top-row px-4">
             <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-            <a> Salir</a>
+           <button type = "button" class="btn btn-link logout-link" @onclick="CerrarSesion">
+                 Salir
+            </button>
         </div>
 
         <article class="content px-4">
@@ -22,3 +26,18 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
+    <p>@mensajeDebug</p>
+
+@code {
+    private string mensajeDebug = "";
+
+    private async Task CerrarSesion()
+    {
+        mensajeDebug = "Cerrando sesión...";
+        servicio.CerrarSesion();
+        navegar.NavigateTo("/login", true);
+    }
+}
+
+}

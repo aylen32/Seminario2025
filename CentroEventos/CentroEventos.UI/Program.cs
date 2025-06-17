@@ -60,6 +60,8 @@ builder.Services.AddScoped<IServicioSesion, ServicioSesion>();
 builder.Services.AddScoped<IValidadorEventoDeportivo, ValidadorEventoDeportivo>();
 builder.Services.AddScoped<IValidadorPersona, ValidadorPersona>();
 builder.Services.AddScoped<IValidadorReserva, ValidadorReserva>();
+builder.Services.AddScoped<IValidadorUsuario, ValidadorUsuario>();
+
 
 var app = builder.Build();
 

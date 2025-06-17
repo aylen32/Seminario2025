@@ -1,0 +1,123 @@
+﻿@page "/login"
+@rendermode InteractiveServer
+@layout LoginLayout
+@using CentroEventos.UI.Components.Layout
+@using CentroEventos.Aplicacion.Entidades
+@using CentroEventos.Aplicacion.Interfaces
+@using CentroEventos.Aplicacion.Validaciones
+@using CentroEventos.Aplicacion.Enumerativos
+@using CentroEventos.Aplicacion.Hash
+@inject IServicioSesion Sesion
+@inject IRepositorioUsuario Repositorio
+@inject IValidadorUsuario Validador
+@inject NavigationManager Navigation
+
+<PageTitle>Iniciar Sesión</PageTitle>
+
+<link href="estilosPrueba.css" rel="stylesheet" />
+<h1 class=" titulo"> Inicio </h1>
+
+
+<!-- Simulación del layout centrado directamente -->
+
+    <div class="contenedor-formularios">
+        <ul class="contenedor-tabs">
+            <li class="@((modo == "login") ? "active" : "")">
+                <a @onclick='() => modo = "login"'>Iniciar Sesión</a>
+            </li>
+            <li class="@((modo == "registro") ? "active" : "")">
+                <a @onclick='() => modo = "registro"'>Registrarse</a>
+            </li>
+        </ul>
+
+        @if (modo == "login")
+        {
+            <EditForm Model="modeloLogin" OnValidSubmit="IniciarSesion">
+                <div class="contenedor-input">
+                    <InputText @bind-Value="modeloLogin.Correo" placeholder="Correo" />
+                </div>
+                <div class="contenedor-input">
+                    <InputText @bind-Value="modeloLogin.Contrasenia" placeholder="Contraseña" type="password" />
+                </div>
+                <input type="submit" value="Ingresar" class="button" />
+            </EditForm>
+        }
+        else
+        {
+            <EditForm Model="modeloRegistro" OnValidSubmit="RegistrarUsuario">
+                <div class="contenedor-input">
+                    <InputText @bind-Value="modeloRegistro.Nombre" placeholder="Nombre" />
+                </div>
+                <div class="contenedor-input">
+                    <InputText @bind-Value="modeloRegistro.Apellido" placeholder="Apellido" />
+                </div>
+                <div class="contenedor-input">
+                    <InputText @bind-Value="modeloRegistro.CorreoElectronico" placeholder="Correo" />
+                </div>
+                <div class="contenedor-input">
+                    <InputText @bind-Value="modeloRegistro.Contrasenia" placeholder="Contraseña" type="password" />
+                </div>
+                <input type="submit" value="Registrarse" class="button" />
+            </EditForm>
+        }
+    </div>
+
+
+
+
+@code {
+    private string modo = "login";
+
+    private LoginModel modeloLogin = new();
+    private RegistroModel modeloRegistro = new();
+
+    void IniciarSesion()
+    {
+        var usuario = Repositorio.ObtenerTodos().FirstOrDefault(u => u.CorreoElectronico == modeloLogin.Correo);
+        if (usuario == null) return;
+
+        var hashIngresado = SHA256Helper.ComputeSHA256(modeloLogin.Contrasenia); // + usuario.Salt si corresponde
+
+        if (usuario.HashContrasenia == hashIngresado)
+        {
+            Sesion.IniciarSesion(usuario);
+            Navigation.NavigateTo("/inicio");
+        }
+    }
+
+    void RegistrarUsuario()
+    {
+        var hash = SHA256Helper.ComputeSHA256(modeloRegistro.Contrasenia); // + salt si usás uno
+
+        var nuevo = new Usuario
+        {
+            Nombre = modeloRegistro.Nombre,
+            Apellido = modeloRegistro.Apellido,
+            CorreoElectronico = modeloRegistro.CorreoElectronico,
+            HashContrasenia = hash,
+            Permisos = Permiso.Ninguno
+        };
+
+        if (!Validador.Validar(nuevo))
+            return;
+
+        Repositorio.AgregarUsuario(nuevo);
+        Sesion.IniciarSesion(nuevo);
+        Navigation.NavigateTo("/inicio");
+    }
+
+    public class LoginModel
+    {
+        public string Correo { get; set; } = "";
+        public string Contrasenia { get; set; } = "";
+    }
+
+    public class RegistroModel
+    {
+        public string Nombre { get; set; } = "";
+        public string Apellido { get; set; } = "";
+        public string CorreoElectronico { get; set; } = "";
+        public string Contrasenia { get; set; } = "";
+    }
+}
+
