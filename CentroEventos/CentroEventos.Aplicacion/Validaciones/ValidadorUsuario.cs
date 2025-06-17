@@ -16,11 +16,25 @@ public class ValidadorUsuario : IValidadorUsuario
     public string? ObtenerError() => _error;
     public bool Validar(Usuario usuario)
     {
+            _error = "";
         if (string.IsNullOrWhiteSpace(usuario.Nombre))
         {
-            _error = "El nombre es obligatorio.";
-            return false;
+            _error += "El nombre es obligatorio.";
+         
         }
-        return true;
+        if (string.IsNullOrWhiteSpace(usuario.Apellido))
+        {
+            _error += "El apellido es obligatorio.";
+        
+        }
+        if (string.IsNullOrWhiteSpace(usuario.CorreoElectronico))
+        {
+            _error += "El Email no puede estar vacío. ";
+        }
+        if (!string.IsNullOrWhiteSpace(_error))
+            _error = _error.TrimEnd('.', ' ');
+
+        return string.IsNullOrWhiteSpace(_error);
+        
     }
 }
