@@ -3,7 +3,7 @@
     cursor: pointer;
     width: 3.5rem;
     height: 2.5rem;
-    color: white;
+    color: rgb(244, 240, 240);
     position: absolute;
     top: 0.5rem;
     right: 1rem;
@@ -97,7 +97,7 @@
 
     .nav-scrollable {
         /* Never collapse the sidebar for wide screens */
-         display: none;
+         display: block;
 
         /* Allow sidebar to scroll for tall menus */
         height: calc(100vh - 3.5rem);

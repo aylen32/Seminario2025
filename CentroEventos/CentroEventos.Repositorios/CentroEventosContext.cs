@@ -8,7 +8,6 @@ namespace CentroEventos.Repositorios
 {
     public class CentroEventosContext : DbContext
     {
-        public CentroEventosContext(){}
         
         public CentroEventosContext(DbContextOptions<CentroEventosContext> options) : base(options){}
 

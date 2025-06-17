@@ -5,6 +5,17 @@
 @inject ObtenerPersonaUseCase ObtenerPersonaUseCase
 @inject AltaPersonaUseCase AltaPersonaUseCase
 
+@if (_mensajeErrores?.Count > 0)
+{
+    <ul>
+        @foreach (var error in _mensajeErrores)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}
+
+
 
 @if (_esNuevaPersona)
 {
@@ -12,20 +23,22 @@
 }
 else
 {
-  <h3>Modificando a la Persona"@_persona.Nombre"</h3>
+  <h3>Modificando a la Persona "@_persona.Nombre"</h3>
 }
-<input placeholder="Nombre" @bind="_persona.Nombre" class="form-control">
-<input placeholder="Apellido" @bind="_persona.Apellido" class="form-control">
-<input placeholder="DNI" @bind="_persona.DNI" class="form-control">
-<input placeholder="Telefono" @bind="_persona.Telefono" class="form-control">
-<input placeholder="Email" @bind="_persona.Mail" class="form-control">
-<button class="btn btn-primary" @onclick="Aceptar">Aceptar</button>
 
+<input placeholder="Nombre" @bind="_persona.Nombre" class="form-control" />
+<input placeholder="Apellido" @bind="_persona.Apellido" class="form-control" />
+<input placeholder="DNI" @bind="_persona.DNI" class="form-control" />
+<input placeholder="Telefono" @bind="_persona.Telefono" class="form-control" />
+<input placeholder="Email" @bind="_persona.Mail" class="form-control" />
+<button class="btn btn-primary" @onclick="Aceptar">Aceptar</button>
 
 @code {
   Persona _persona = new Persona();
   [Parameter] public int? Id { get; set; }
-  bool _esNuevaPersona=true;
+  bool _esNuevaPersona = true;
+  List<string> _mensajeErrores = new();
+
   protected override void OnParametersSet()
   {
     if (Id != null)
@@ -34,21 +47,34 @@ else
       if (per_hallada != null)
       {
         _persona = per_hallada;
-        _esNuevaPersona=false;
+        _esNuevaPersona = false;
       }
     }
   }
+
   void Aceptar()
   {
-    if (_esNuevaPersona)
+    _mensajeErrores.Clear();
+
+    try
     {
-      AltaPersonaUseCase.Ejecutar(_persona,1);
+        if (_esNuevaPersona)
+            AltaPersonaUseCase.Ejecutar(_persona, 1);
+        else
+            ModificarPersonaUseCase.Ejecutar(_persona, 1);
+
+        _persona = new Persona();
+        StateHasChanged();
+        Navegador.NavigateTo("ListadoPersonas");
     }
-    else
+
+    catch (CentroEventos.Aplicacion.Excepciones.ValidacionException ex)
     {
-      ModificarPersonaUseCase.Ejecutar(_persona,1);
+      var msg = ex.Message;
+      _mensajeErrores = msg
+        .Split(new string[] { ". " }, StringSplitOptions.RemoveEmptyEntries)
+        .Select(s => s.Trim() + ".") 
+        .ToList();
     }
-    _persona = new Persona();
-    Navegador.NavigateTo("ListadoPersonas");
   }
 }
