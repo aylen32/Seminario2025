@@ -1,0 +1,25 @@
+using System;
+using CentroEventos.Aplicacion.Interfaces;
+using CentroEventos.Aplicacion.Entidades;
+
+namespace CentroEventos.Aplicacion.CasosUso;
+
+public class ObtenerReservaUseCase
+{
+    private readonly IRepositorioReserva _repositorioReserva;
+    private readonly IServicioAutorizacion _autorizacion;
+
+    public ObtenerReservaUseCase(IRepositorioReserva repo, IServicioAutorizacion autorizacion)
+    {
+        _repositorioReserva = repo;
+        _autorizacion = autorizacion;
+    }
+
+    public Reserva? Ejecutar(int Idreserva, int idUsuario)
+    {
+         //  if (!_autorizacion.PoseeElPermiso(idUsuario, Permiso.UsuarioModificacion))
+        //      throw new FalloAutorizacionException("No tiene permiso para modificar personas");
+        return _repositorioReserva.ObtenerReserva(Idreserva);
+    }
+
+}

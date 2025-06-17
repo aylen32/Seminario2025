@@ -1,0 +1,68 @@
+﻿@page "/AgregarReserva/{Id:int?}"
+@rendermode InteractiveServer
+@inject NavigationManager Navegador;
+@inject ModificarReservaUseCase ModificarReservaUseCase
+@inject ObtenerReservaUseCase ObtenerReservaUseCase
+@inject AltaReservaUseCase AltaReservaUseCase
+
+@if (_mensajeErrores?.Count > 0)
+{
+    <ul>
+        @foreach (var error in _mensajeErrores)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}
+
+<input placeholder="Id de Persona" @bind="_reserva.PersonaId" class="form-control" />
+<input placeholder="Id de Evento Deportivo" @bind="_reserva.EventoDeportivoId" class="form-control" />
+<input placeholder="Fecha de la Reserva" @bind="_reserva.FechaAltaReserva" class="form-control" />
+<input placeholder="Estado de la Reserva" @bind="_reserva.Estado" class="form-control" />
+<button class="btn btn-primary" @onclick="Aceptar">Aceptar</button>
+
+@code {
+  Reserva _reserva = Reserva.CrearNueva();
+  [Parameter] public int? Id { get; set; }
+  bool _esNuevaReserva = true;
+  List<string> _mensajeErrores = new();
+
+  protected override void OnParametersSet()
+  {
+    if (Id != null)
+    {
+      var reser_hallada = ObtenerReservaUseCase.Ejecutar(Id.Value, 1);
+      if (reser_hallada != null)
+      {
+        _reserva = reser_hallada;
+        _esNuevaReserva = false;
+      }
+    }
+  }
+
+  void Aceptar()
+  {
+    _mensajeErrores.Clear();
+
+    try
+    {
+        if (_esNuevaReserva)
+            AltaReservaUseCase.Ejecutar(_reserva, 1);
+        else
+            ModificarReservaUseCase.Ejecutar(_reserva, 1);
+
+        _reserva = Reserva.CrearNueva();
+        StateHasChanged();
+        Navegador.NavigateTo("ListadoReservas");
+    }
+
+    catch (CentroEventos.Aplicacion.Excepciones.ValidacionException ex)
+    {
+      var msg = ex.Message;
+      _mensajeErrores = msg
+        .Split(new string[] { ". " }, StringSplitOptions.RemoveEmptyEntries)
+        .Select(s => s.Trim() + ".") 
+        .ToList();
+    }
+  }
+}

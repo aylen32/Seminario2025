@@ -1,6 +1,11 @@
-﻿@page "/ListadoEventosDeportivos"
+﻿@using CentroEventos.UI.Components
+@page "/ListadoEventosDeportivos"
 @rendermode InteractiveServer
 @inject ListadoEventoDeportivoUseCase ListadoEventoDeportivoUseCase
+@inject BajaEventoDeportivoUseCase BajaEventoDeportivoUseCase
+@inject NavigationManager Navegador
+
+<DialogoConfirmacion @ref="dialogo" OnConfirmado="Eliminar"/>
 
 <table class="table">
   <thead>
@@ -26,8 +31,12 @@
       <td>@even.CupoMaximo</td>
       <td>@even.ResponsableId</td>
       <td>
-        <button class="btn btn-primary">Editar</button>
-        <button class="btn btn-danger">Eliminar</button>
+        <button class="btn btn-primary" @onclick="()=>ModificarEventoDeportivo(even)">
+          Editar
+        </button>
+        <button class="btn btn-danger" @onclick="()=>ConfirmarEliminacion(even)">
+          Eliminar
+        </button>
       </td>
     </tr>
     }
@@ -40,4 +49,27 @@
     {
        _lista = ListadoEventoDeportivoUseCase.Ejecutar();
     }
+
+    DialogoConfirmacion dialogo = null!;
+    EventoDeportivo? _EventoParaEliminar = null;
+
+   private void ConfirmarEliminacion(EventoDeportivo even)
+   {
+      _EventoParaEliminar = even;
+      dialogo.Mostrar($"¿Desea eliminar el evento {even.Nombre}, a cago del responsable con Id: {even.ResponsableId}?");
+   }
+
+   private void Eliminar()
+   {
+     if (_EventoParaEliminar != null)
+     {
+       BajaEventoDeportivoUseCase.Ejecutar(_EventoParaEliminar.Id, 1);
+      _lista = ListadoEventoDeportivoUseCase.Ejecutar(); 
+     }
+   }
+
+   void ModificarEventoDeportivo(EventoDeportivo even)
+   {
+     Navegador.NavigateTo($"AgregarEventoDeportivo/{even.Id}");
+   }
 }

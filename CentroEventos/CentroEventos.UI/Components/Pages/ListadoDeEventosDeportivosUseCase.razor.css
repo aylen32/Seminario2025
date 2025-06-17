@@ -1,8 +1,13 @@
 thead tr {
-  background-color: rgb(186, 216, 103) !important;
+  background-color: rgb(15, 143, 157) !important;
   color: white !important;
 }
 
 table {
-  border: 2px solid rgb(0, 255, 149) !important;
+  border: 2px solid rgba(0, 0, 0, 0.548) !important;
+}
+
+.table td,
+.table th {
+    border: 1px solid black;
 }

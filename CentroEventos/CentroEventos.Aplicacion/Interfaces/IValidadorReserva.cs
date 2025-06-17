@@ -6,6 +6,7 @@ using CentroEventos.Aplicacion.Entidades;
 
 public interface IValidadorReserva
 {
-    bool Validar(Reserva reserva);
+    bool ValidarParaAlta(Reserva reserva);
+    bool ValidarParaModificacion(Reserva reserva);
     string? ObtenerError();
 }
