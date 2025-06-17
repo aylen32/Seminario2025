@@ -5,7 +5,9 @@ using CentroEventos.Aplicacion.Enumerativos;
 
 public class Usuario
 {
-    public Usuario() { }
+    protected Usuario() { }
+    public static Usuario CrearNuevo() => new Usuario();
+
     public int Id { get; set; }
 
     public string? Nombre { get; set; }
@@ -17,4 +19,5 @@ public class Usuario
     public string? HashContrasenia { get; set; }
 
     public List<UsuarioPermiso> Permisos { get; set; } = new();
+    
 }

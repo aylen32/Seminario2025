@@ -88,23 +88,21 @@
 
     void RegistrarUsuario()
     {
-        var hash = SHA256Helper.ComputeSHA256(modeloRegistro.Contrasenia); // + salt si usás uno
+      var hash = SHA256Helper.ComputeSHA256(modeloRegistro.Contrasenia);
 
-        var nuevo = new Usuario
-        {
-            Nombre = modeloRegistro.Nombre,
-            Apellido = modeloRegistro.Apellido,
-            CorreoElectronico = modeloRegistro.CorreoElectronico,
-            HashContrasenia = hash,
-            Permisos = new List<UsuarioPermiso>()
-        };
+      var nuevo = Usuario.CrearNuevo();
+      nuevo.Nombre = modeloRegistro.Nombre;
+      nuevo.Apellido = modeloRegistro.Apellido;
+      nuevo.CorreoElectronico = modeloRegistro.CorreoElectronico;
+      nuevo.HashContrasenia = hash;
+      nuevo.Permisos = new List<UsuarioPermiso>();
 
-        if (!Validador.Validar(nuevo))
-            return;
+      if (!Validador.Validar(nuevo))
+        return;
 
-        Repositorio.AgregarUsuario(nuevo);
-        Sesion.IniciarSesion(nuevo);
-        Navigation.NavigateTo("/inicio");
+      Repositorio.AgregarUsuario(nuevo);
+      Sesion.IniciarSesion(nuevo);
+      Navigation.NavigateTo("/inicio");
     }
 
     public class LoginModel
