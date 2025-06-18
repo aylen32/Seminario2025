@@ -67,6 +67,8 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<CentroEventosContext>();
+
+    //Crea la base si no existe y configura journal_mode=DELETE
     context.ConfigurarJournalModeDelete();
 }
 
