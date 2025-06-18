@@ -1,36 +1,34 @@
 ﻿@page "/home"
-@using CentroEventos.Aplicacion.Entidades
-@using CentroEventos.Aplicacion.Servicio
+@inject IServicioSesion Sesion
 @inject NavigationManager Navigation
-@inject IServicioSesion servicio
-<PageTitle>Home</PageTitle>
 
-  <style>
-    body {
-    background-color: rgb(255, 255, 255);
-    
-  }
-  h1 {
-    color: navy;
-    text-align: center;
-  }
-  h3{
-    color: royalblue;
-    text-align: center;
-  }
-</style>
-<h1>Sistema de Gestión del Centro Deportivo Universitario</h1>
-<p></p>
-<p></p>
-
+@if (!accesoPermitido)
+{
+    <p>Redirigiendo...</p>
+}
+else
+{
+    <h1>Sistema de Gestión del Centro Deportivo Universitario</h1>
+    <h3>¡Bienvenido, @Sesion.UsuarioActual?.Nombre!</h3>
+}
 
 @code {
-    protected override void OnInitialized()
+    private bool accesoPermitido;
+    private bool redirigido = false;
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        Console.WriteLine("Usuario actual: " + servicio.UsuarioActual?.Nombre);
+        if (firstRender && !Sesion.EstaAutenticado && !redirigido)
+        {
+            redirigido = true;
+            Navigation.NavigateTo("/");
+        }
+        else if (firstRender)
+        {
+            accesoPermitido = true;
+            StateHasChanged(); // actualiza el render
+        }
+
+        return Task.CompletedTask;
     }
 }
-<h3>
- ¡Bienvenido,@servicio.UsuarioActual?.Nombre!
-</h3>
-
