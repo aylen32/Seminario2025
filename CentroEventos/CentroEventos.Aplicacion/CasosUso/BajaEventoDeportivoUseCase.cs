@@ -1,12 +1,10 @@
 using System;
 using CentroEventos.Aplicacion.Interfaces;
 using CentroEventos.Aplicacion.Validaciones;
-namespace CentroEventos.Aplicacion.CasosUso;
-
 using CentroEventos.Aplicacion.Excepciones;
 using CentroEventos.Aplicacion.Enumerativos;
 using CentroEventos.Aplicacion.Servicio;
-
+namespace CentroEventos.Aplicacion.CasosUso;
 public class BajaEventoDeportivoUseCase
 {
     private readonly IRepositorioEventoDeportivo _repositorioEventoDeportivo;
@@ -25,8 +23,8 @@ public class BajaEventoDeportivoUseCase
   
     public void Ejecutar(int idEvento, int idUsuario)
     {
-      //  if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.EventoBaja))
-      //      throw new FalloAutorizacionException("No tiene permiso para eliminar eventos");
+        if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.EventoBaja))
+            throw new OperacionInvalidaException("No tiene permiso para eliminar eventos");
 
         if (!_repositorioEventoDeportivo.ExisteEventoPorId(idEvento))
             throw new EntidadNotFoundException($"El evento con ID {idEvento} no existe");
@@ -38,4 +36,3 @@ public class BajaEventoDeportivoUseCase
         _repositorioEventoDeportivo.EliminarEvento(idEvento);
     }
 }
-    

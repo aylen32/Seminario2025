@@ -1,4 +1,5 @@
 namespace CentroEventos.Aplicacion.Enumerativos;
+
 public enum PermisoTipo
 {
     EventoAlta,
@@ -9,5 +10,8 @@ public enum PermisoTipo
     ReservaBaja,
     UsuarioAlta,
     UsuarioModificacion,
-    UsuarioBaja
+    UsuarioBaja,
+    PersonaAlta,
+    PersonaBaja,
+    PersonaModificacion,
 }

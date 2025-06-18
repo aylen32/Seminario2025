@@ -19,8 +19,8 @@ public class BajaReservaUseCase
 
     public void Ejecutar(int idReserva, int idUsuario)
     {
-    //    if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.ReservaBaja))
-      //      throw new FalloAutorizacionException("No tiene permiso para eliminar reservas");
+        if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.ReservaBaja))
+            throw new OperacionInvalidaException("No tiene permiso para eliminar reservas");
 
         if (!_repositorioReserva.ExisteReservaPorId(idReserva))
             throw new EntidadNotFoundException($"La reserva con ID {idReserva} no existe");
@@ -28,4 +28,3 @@ public class BajaReservaUseCase
         _repositorioReserva.EliminarReserva(idReserva);
     }
 }
-

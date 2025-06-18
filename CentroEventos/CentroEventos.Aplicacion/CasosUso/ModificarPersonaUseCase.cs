@@ -6,6 +6,7 @@ using CentroEventos.Aplicacion.Excepciones;
 using CentroEventos.Aplicacion.Interfaces;
 using CentroEventos.Aplicacion.Servicio;
 using CentroEventos.Aplicacion.Entidades;
+using CentroEventos.Aplicacion.Enumerativos;
 
 public class ModificarPersonaUseCase
 {
@@ -22,14 +23,14 @@ public class ModificarPersonaUseCase
 
     public void Ejecutar(Persona persona, int idUsuario)
     {
-        //  if (!_autorizacion.PoseeElPermiso(idUsuario, Permiso.UsuarioModificacion))
-        //      throw new FalloAutorizacionException("No tiene permiso para modificar personas");
-      
-       if (!_repositorioPersona.ExistePersonaPorId(persona.Id))
-         throw new EntidadNotFoundException($"La persona con ID {persona.Id} no existe"); 
+        if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.PersonaModificacion))
+            throw new FalloAutorizacionException("No tiene permiso para modificar personas");
+
+        if (!_repositorioPersona.ExistePersonaPorId(persona.Id))
+            throw new EntidadNotFoundException($"La persona con ID {persona.Id} no existe");
 
         if (!_validadorPersona.Validar(persona))
-                throw new ValidacionException(_validadorPersona.ObtenerError() ?? "Error desconocido en la validación");
+            throw new ValidacionException(_validadorPersona.ObtenerError() ?? "Error desconocido en la validación");
 
         _repositorioPersona.ModificarPersona(persona);
     }

@@ -18,8 +18,6 @@ public class ObtenerPersonaUseCase
 
     public Persona? Ejecutar(int Idpersona, int idUsuario)
     {
-         //  if (!_autorizacion.PoseeElPermiso(idUsuario, Permiso.UsuarioModificacion))
-        //      throw new FalloAutorizacionException("No tiene permiso para modificar personas");
         return _repositorioPersona.ObtenerPersona(Idpersona);
     }
 }

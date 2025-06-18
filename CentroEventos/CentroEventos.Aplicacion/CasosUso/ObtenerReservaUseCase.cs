@@ -18,9 +18,6 @@ public class ObtenerReservaUseCase
 
     public Reserva? Ejecutar(int Idreserva, int idUsuario)
     {
-         //  if (!_autorizacion.PoseeElPermiso(idUsuario, Permiso.UsuarioModificacion))
-        //      throw new FalloAutorizacionException("No tiene permiso para modificar personas");
         return _repositorioReserva.ObtenerReserva(Idreserva);
     }
-
 }

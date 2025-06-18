@@ -26,8 +26,8 @@ public class AltaEventoDeportivoUseCase
 
     public void Ejecutar(EventoDeportivo evento, int idUsuario)
     {
-      //  if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.EventoAlta))
-       //     throw new FalloAutorizacionException("No tiene permiso para dar de alta eventos deportivos");
+        if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.EventoAlta))
+            throw new OperacionInvalidaException("No tiene permiso para dar de alta eventos deportivos");
 
         if (!_validadorEvento.Validar(evento))
             throw new ValidacionException(_validadorEvento.ObtenerError() ?? "Error desconocido en la validación del evento");

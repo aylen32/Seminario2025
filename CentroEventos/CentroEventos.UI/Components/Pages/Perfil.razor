@@ -72,7 +72,7 @@ else
     {
         if (modelo is not null)
         {
-            ModificarUsuarioUseCase.Ejecutar(modelo);
+            ModificarUsuarioUseCase.Ejecutar(modelo, 1);
             Servicio.IniciarSesion(modelo); // Actualiza la sesión
             Navegador.NavigateTo("/home", forceLoad: false); // o quedate en perfil si querés
         }

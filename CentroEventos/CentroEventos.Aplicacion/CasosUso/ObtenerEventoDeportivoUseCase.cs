@@ -18,8 +18,6 @@ public class ObtenerEventoDeportivoUseCase
 
     public EventoDeportivo? Ejecutar(int Idevento, int idUsuario)
     {
-         //  if (!_autorizacion.PoseeElPermiso(idUsuario, Permiso.UsuarioModificacion))
-        //      throw new FalloAutorizacionException("No tiene permiso para modificar personas");
         return _repositorioEvento.ObtenerEvento(Idevento);
     }
 }

@@ -6,31 +6,32 @@ using CentroEventos.Aplicacion.Entidades;
 using CentroEventos.Aplicacion.Enumerativos;
 using CentroEventos.Aplicacion.Interfaces;
 using CentroEventos.Aplicacion.Servicio;
+using CentroEventos.Aplicacion.Excepciones;
 public class ModificarUsuarioUseCase
 {
-private readonly IRepositorioUsuario _repositorioUsuario;
-    private readonly IServicioAutorizacion _autorizacion;
+    private readonly IRepositorioUsuario _repositorio;
     private readonly IValidadorUsuario _validador;
+    private readonly IServicioAutorizacion _autorizacion;
 
-    public ModificarUsuarioUseCase(IRepositorioUsuario repositorioUsuario, IServicioAutorizacion autorizacion, IValidadorUsuario validador)
+    public ModificarUsuarioUseCase(IRepositorioUsuario repositorio, IValidadorUsuario validador, IServicioAutorizacion autorizacion)
     {
-        _repositorioUsuario = repositorioUsuario;
-        _autorizacion = autorizacion;
+        _repositorio = repositorio;
         _validador = validador;
+        _autorizacion = autorizacion;
     }
 
-    public void Ejecutar(Usuario usuario)
+    public void Ejecutar(Usuario usuarioModificado, int idSolicitante)
     {
-        if (!_autorizacion.PoseeElPermiso(usuario.Id, PermisoTipo.UsuarioModificacion))
+        if (!_validador.Validar(usuarioModificado))
+            throw new ValidacionException(_validador.ObtenerError() ?? "Usuario inválido");
+
+        var esModificacionPropia = usuarioModificado.Id == idSolicitante;
+
+        if (!esModificacionPropia && !_autorizacion.TienePermisoDeGestion(idSolicitante))
         {
-            throw new UnauthorizedAccessException("No tiene permiso para modificar este usuario.");
+            throw new OperacionInvalidaException("No tiene permiso para modificar otros usuarios.");
         }
 
-        if (!_validador.Validar(usuario))
-        {
-            throw new ArgumentException(_validador.ObtenerError() ?? "Datos del usuario inválidos.");
-        }
-    
-         _repositorioUsuario.ModificarUsuario(usuario);
+        _repositorio.ModificarUsuario(usuarioModificado);
     }
 }

@@ -1,13 +1,10 @@
 using System;
-
-namespace CentroEventos.Aplicacion.CasosUso;
-
 using CentroEventos.Aplicacion.Excepciones;
 using CentroEventos.Aplicacion.Interfaces;
-using CentroEventos.Aplicacion.Validaciones;
 using CentroEventos.Aplicacion.Enumerativos;
 using CentroEventos.Aplicacion.Servicio;
 using CentroEventos.Aplicacion.Entidades;
+namespace CentroEventos.Aplicacion.CasosUso;
 
 public class ModificarReservaUseCase
 {
@@ -24,19 +21,23 @@ public class ModificarReservaUseCase
 
     public void Ejecutar(Reserva reserva, int idUsuario)
     {
-      // if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.ReservaModificacion))
-      //     throw new FalloAutorizacionException("No tiene permiso para modificar reservas");
+        if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.ReservaModificacion))
+            throw new FalloAutorizacionException("No tiene permiso para modificar reservas");
 
-      var original = _repositorioReserva.ObtenerReserva(reserva.Id);
+        var original = _repositorioReserva.ObtenerReserva(reserva.Id);
 
-      if (original == null)
-        throw new EntidadNotFoundException($"La reserva con ID {reserva.Id} no existe");
+        if (original == null)
+            throw new EntidadNotFoundException($"La reserva con ID {reserva.Id} no existe");
 
-      original.Estado = reserva.Estado;
+        // Validar que el estado sea válido
+        if (!Enum.IsDefined(typeof(EstadoAsistencia), reserva.Estado))
+            throw new OperacionInvalidaException($"El estado '{reserva.Estado}' no es un estado válido");
 
-      if (!_validadorReserva.ValidarParaModificacion(original))
-        throw new ValidacionException(_validadorReserva.ObtenerError()!);
+        original.Estado = reserva.Estado;
 
-      _repositorioReserva.ModificarReserva(original.Id, original.Estado);
+        if (!_validadorReserva.ValidarParaModificacion(original))
+            throw new ValidacionException(_validadorReserva.ObtenerError()!);
+
+        _repositorioReserva.ModificarReserva(original.Id, original.Estado);
     }
 }
