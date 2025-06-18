@@ -24,15 +24,28 @@ public class ModificarReservaUseCase
 
     public void Ejecutar(Reserva reserva, int idUsuario)
     {
-        //if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.ReservaModificacion))
-       //     throw new FalloAutorizacionException("No tiene permiso para modificar reservas");
+      // if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.ReservaModificacion))
+      //     throw new FalloAutorizacionException("No tiene permiso para modificar reservas");
 
-        if (!_repositorioReserva.ExisteReservaPorId(reserva.Id))
-            throw new EntidadNotFoundException($"La reserva con ID {reserva.Id} no existe");
+      var original = _repositorioReserva.ObtenerReserva(reserva.Id);
 
-        if (!_validadorReserva.ValidarParaModificacion(reserva))
-            throw new ValidacionException(_validadorReserva.ObtenerError() ?? "Error desconocido en la validación");
+      if (original == null)
+        throw new EntidadNotFoundException($"La reserva con ID {reserva.Id} no existe");
 
-        _repositorioReserva.ModificarReserva(reserva.Id, reserva.Estado);
+      // Validar que solo el Estado haya cambiado
+      if (reserva.PersonaId != original.PersonaId)
+        throw new ValidacionException("No está permitido modificar el Id de la persona.");
+       if (reserva.EventoDeportivoId != original.EventoDeportivoId)
+        throw new ValidacionException("No está permitido modificar el Id del evento deportivo.");
+       if (reserva.FechaAltaReserva != original.FechaAltaReserva)
+        throw new ValidacionException("No está permitido modificar la fecha de la reserva.");
+
+       // Actualizar solo el estado permitido
+       original.Estado = reserva.Estado;
+
+      if (!_validadorReserva.ValidarParaModificacion(original))
+        throw new ValidacionException(_validadorReserva.ObtenerError()!);
+
+      _repositorioReserva.ModificarReserva(original.Id, original.Estado);
     }
 }

@@ -68,6 +68,6 @@ public class ValidadorReserva : IValidadorReserva
     }
     public string? ObtenerError()
     {
-            return _error;
+        return _error;
     }
 }
