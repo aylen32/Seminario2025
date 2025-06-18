@@ -1,7 +1,11 @@
-﻿@page "/ListadoReservas"
+﻿@using CentroEventos.UI.Components
+@page "/ListadoReservas"
 @rendermode InteractiveServer
 @inject ListadoReservaUseCase ListadoReservaUseCase
+@inject BajaReservaUseCase BajaReservaUseCase
+@inject NavigationManager Navegador
 
+<DialogoConfirmacion @ref="dialogo" OnConfirmado="Eliminar"/>
 <table class="table">
   <thead>
     <tr>
@@ -22,8 +26,12 @@
       <td>@reser.FechaAltaReserva</td>
       <td>@reser.Estado</td>
       <td>
-        <button class="btn btn-primary">Editar</button>
-        <button class="btn btn-danger">Eliminar</button>
+        <button class="btn btn-primary" @onclick="()=>ModificarReserva(reser)">
+          Editar
+        </button>
+        <button class="btn btn-danger" @onclick="()=>ConfirmarEliminacion(reser)">
+          Eliminar
+        </button>
       </td>
     </tr>
     }
@@ -36,4 +44,27 @@
     {
        _lista = ListadoReservaUseCase.Ejecutar();
     }
+
+    DialogoConfirmacion dialogo = null!;
+    Reserva? _ReservaParaEliminar = null;
+
+   private void ConfirmarEliminacion(Reserva reser)
+   {
+      _ReservaParaEliminar = reser;
+      dialogo.Mostrar($"¿Desea eliminar la reserva hecha por la persona con Id: {reser.PersonaId}, en la fecha: {reser.FechaAltaReserva}?");
+   }
+
+   private void Eliminar()
+   {
+     if (_ReservaParaEliminar != null)
+     {
+       BajaReservaUseCase.Ejecutar(_ReservaParaEliminar.Id, 1);
+      _lista = ListadoReservaUseCase.Ejecutar(); 
+     }
+   }
+
+   void ModificarReserva(Reserva reser)
+   {
+     Navegador.NavigateTo($"AgregarReserva/{reser.Id}");
+   }
 }

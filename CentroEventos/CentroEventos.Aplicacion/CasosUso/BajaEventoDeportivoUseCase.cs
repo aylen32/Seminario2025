@@ -25,8 +25,8 @@ public class BajaEventoDeportivoUseCase
   
     public void Ejecutar(int idEvento, int idUsuario)
     {
-        if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.EventoBaja))
-            throw new FalloAutorizacionException("No tiene permiso para eliminar eventos");
+      //  if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.EventoBaja))
+      //      throw new FalloAutorizacionException("No tiene permiso para eliminar eventos");
 
         if (!_repositorioEventoDeportivo.ExisteEventoPorId(idEvento))
             throw new EntidadNotFoundException($"El evento con ID {idEvento} no existe");

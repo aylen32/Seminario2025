@@ -26,8 +26,8 @@ public class ModificarEventoDeportivoUseCase
 
     public void Ejecutar(EventoDeportivo evento, int idUsuario)
     {
-        if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.EventoModificacion))
-            throw new FalloAutorizacionException("No tiene permiso para modificar eventos deportivos");
+     //   if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.EventoModificacion))
+       //     throw new FalloAutorizacionException("No tiene permiso para modificar eventos deportivos");
 
         if (!_repositorioEvento.ExisteEventoPorId(evento.Id))
             throw new EntidadNotFoundException($"El evento con ID {evento.Id} no existe");

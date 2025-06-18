@@ -4,11 +4,6 @@ using CentroEventos.Aplicacion.Validaciones;
 using CentroEventos.Aplicacion.Interfaces;
 using CentroEventos.Repositorios;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using CentroEventos.Aplicacion.CasosUso;
 using CentroEventos.Aplicacion.Servicio;
 
@@ -44,6 +39,7 @@ builder.Services.AddScoped<AltaReservaUseCase>();
 builder.Services.AddScoped<BajaReservaUseCase>();
 builder.Services.AddScoped<ModificarReservaUseCase>();
 builder.Services.AddScoped<ListadoReservaUseCase>();
+builder.Services.AddScoped<ObtenerReservaUseCase>();
 
 builder.Services.AddScoped<AltaEventoDeportivoUseCase>();
 builder.Services.AddScoped<BajaEventoDeportivoUseCase>();
