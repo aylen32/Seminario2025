@@ -6,7 +6,6 @@ using CentroEventos.Aplicacion.Enumerativos;
 using CentroEventos.Aplicacion.Entidades;
 using CentroEventos.Aplicacion.Interfaces;
 
-
 namespace CentroEventos.Repositorios
 {
     public class RepositorioReserva : IRepositorioReserva

@@ -4,7 +4,7 @@ using CentroEventos.Aplicacion.Validaciones;
 using CentroEventos.Aplicacion.Excepciones;
 using CentroEventos.Aplicacion.Enumerativos;
 using CentroEventos.Aplicacion.Entidades;
-using CentroEventos.Aplicacion;
+using CentroEventos.Aplicacion.Servicio;
 
 public class AltaPersonaUseCase
 {

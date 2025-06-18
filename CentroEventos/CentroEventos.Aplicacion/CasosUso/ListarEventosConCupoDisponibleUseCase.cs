@@ -1,24 +1,17 @@
 using System;
-
-namespace CentroEventos.Aplicacion.CasosUso;
 using CentroEventos.Aplicacion.Interfaces;
-using CentroEventos.Aplicacion.Validaciones;
-using CentroEventos.Aplicacion.Excepciones;
-using CentroEventos.Aplicacion.Enumerativos;
-using CentroEventos.Aplicacion.Servicio;
 using CentroEventos.Aplicacion.Entidades;
+namespace CentroEventos.Aplicacion.CasosUso;
 
 public class ListarEventosConCupoDisponibleUseCase
 {
     private readonly IRepositorioEventoDeportivo _repositorioEvento;
     private readonly IRepositorioReserva _repositorioReserva;
-    private readonly IServicioAutorizacion _autorizacion;
 
-    public ListarEventosConCupoDisponibleUseCase(IRepositorioEventoDeportivo repositorioEvento, IRepositorioReserva repositorioReserva, IServicioAutorizacion autorizacion)
+    public ListarEventosConCupoDisponibleUseCase(IRepositorioEventoDeportivo repositorioEvento, IRepositorioReserva repositorioReserva)
     {
         _repositorioEvento = repositorioEvento;
         _repositorioReserva = repositorioReserva;
-        _autorizacion = autorizacion;
     }
 
     public List<EventoDeportivo> ? Ejecutar()

@@ -16,6 +16,15 @@
     </ul>
 }
 
+@if (_esNuevaReserva)
+{
+  <h3>Agregando una Nueva Reserva</h3>
+}
+else
+{
+  <h3>Modificando la Reserva de la fecha: "@_reserva.FechaAltaReserva"</h3>
+}
+
 <input placeholder="Id de Persona" @bind="_reserva.PersonaId" class="form-control"readonly="@(!_esNuevaReserva)" />
 <input placeholder="Id de Evento Deportivo" @bind="_reserva.EventoDeportivoId" class="form-control"readonly="@(!_esNuevaReserva)" />
 <input placeholder="Fecha de la Reserva" @bind="_reserva.FechaAltaReserva" class="form-control"readonly="@(!_esNuevaReserva)" />

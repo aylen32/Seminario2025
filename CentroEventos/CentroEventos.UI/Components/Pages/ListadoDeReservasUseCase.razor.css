@@ -11,3 +11,23 @@ table {
 .table th {
     border: 1px solid black;
 }
+
+.boton-personalizado-editar {
+  background-color: #3728a7;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 50px; /* separación hacia la derecha */
+}
+
+.boton-personalizado-eliminar {
+  background-color: #b80718;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: -120px;
+}

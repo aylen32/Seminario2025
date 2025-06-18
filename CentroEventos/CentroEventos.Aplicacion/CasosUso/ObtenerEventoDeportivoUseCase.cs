@@ -1,6 +1,7 @@
 using System;
 using CentroEventos.Aplicacion.Entidades;
 using CentroEventos.Aplicacion.Interfaces;
+using CentroEventos.Aplicacion.Servicio;
 
 namespace CentroEventos.Aplicacion.CasosUso;
 

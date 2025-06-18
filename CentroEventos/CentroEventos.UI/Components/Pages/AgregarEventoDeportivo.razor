@@ -15,6 +15,15 @@
     </ul>
 }
 
+@if (_esNuevoEvento)
+{
+  <h3>Agregando un Nuevo Evento Deportivo</h3>
+}
+else
+{
+  <h3>Modificando El Evento "@_evento.Nombre"</h3>
+}
+
 <input placeholder="Nombre" @bind="_evento.Nombre" class="form-control" />
 <input placeholder="Descripcion" @bind="_evento.Descripcion" class="form-control"/>
 <input placeholder="Fecha y hora de inicio" @bind="_evento.FechaHoraInicio" class="form-control"/>

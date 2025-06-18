@@ -1,26 +1,22 @@
 using System;
+using CentroEventos.Aplicacion.Interfaces;
+using CentroEventos.Aplicacion.Excepciones;
+using CentroEventos.Aplicacion.Enumerativos;
+using CentroEventos.Aplicacion.Entidades;
 
 namespace CentroEventos.Aplicacion.CasosUso;
 
-using CentroEventos.Aplicacion.Interfaces;
-using CentroEventos.Aplicacion.Excepciones;
-using CentroEventos.Aplicacion.Validaciones;
-using CentroEventos.Aplicacion.Enumerativos;
-using CentroEventos.Aplicacion.Servicio;
-using CentroEventos.Aplicacion.Entidades;
 public class ListarAsistenciaAEventoUseCase
 {
     private readonly IRepositorioEventoDeportivo _repositorioEvento;
     private readonly IRepositorioPersona _repositorioPersona;
     private readonly IRepositorioReserva _repositorioReserva;
-    private readonly IServicioAutorizacion _autorizacion;
 
-    public ListarAsistenciaAEventoUseCase(IRepositorioEventoDeportivo repositorioEvento, IRepositorioPersona repositorioPersona, IRepositorioReserva repositorioReserva, IServicioAutorizacion autorizacion)
+    public ListarAsistenciaAEventoUseCase(IRepositorioEventoDeportivo repositorioEvento, IRepositorioPersona repositorioPersona, IRepositorioReserva repositorioReserva)
     {
         _repositorioEvento = repositorioEvento;
         _repositorioPersona = repositorioPersona;
         _repositorioReserva = repositorioReserva;
-        _autorizacion = autorizacion;
     }
 
     public List<Persona> Ejecutar(int id)

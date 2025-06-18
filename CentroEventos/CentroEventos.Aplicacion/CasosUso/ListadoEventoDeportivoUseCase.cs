@@ -10,12 +10,10 @@ using CentroEventos.Aplicacion.Entidades;
 public class ListadoEventoDeportivoUseCase
 {
     private readonly IRepositorioEventoDeportivo _repositorioEventoDeportivo;
-    private readonly IServicioAutorizacion _autorizacion;
 
-    public ListadoEventoDeportivoUseCase(IRepositorioEventoDeportivo repositorioEventoDeportivo, IServicioAutorizacion autorizacion)
+    public ListadoEventoDeportivoUseCase(IRepositorioEventoDeportivo repositorioEventoDeportivo)
     {
-        _repositorioEventoDeportivo = repositorioEventoDeportivo;
-        _autorizacion = autorizacion;                           
+        _repositorioEventoDeportivo = repositorioEventoDeportivo;                          
     }
 
     public List<EventoDeportivo> Ejecutar()

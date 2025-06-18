@@ -9,4 +9,3 @@ public interface IValidadorEventoDeportivo
     bool Validar(EventoDeportivo evento);
     string? ObtenerError();
 }
-

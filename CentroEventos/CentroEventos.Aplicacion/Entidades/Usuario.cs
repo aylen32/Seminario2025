@@ -1,7 +1,6 @@
 using System;
 
 namespace CentroEventos.Aplicacion.Entidades;
-using CentroEventos.Aplicacion.Enumerativos;
 
 public class Usuario
 {
@@ -18,6 +17,5 @@ public class Usuario
 
     public string? HashContrasenia { get; set; }
 
-    public List<UsuarioPermiso> Permisos { get; set; } = new();
-    
+    public List<UsuarioPermiso> Permisos { get; set; } = new(); 
 }

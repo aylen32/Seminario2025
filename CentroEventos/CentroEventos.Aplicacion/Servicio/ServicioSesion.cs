@@ -29,5 +29,3 @@ namespace CentroEventos.Aplicacion.Servicio
         public bool EstaAutenticado => _usuario != null;
     }
 }
-
-

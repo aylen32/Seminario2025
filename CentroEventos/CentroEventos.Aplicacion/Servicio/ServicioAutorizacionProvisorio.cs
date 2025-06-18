@@ -1,5 +1,3 @@
-using CentroEventos.Aplicacion.Entidades;
-using CentroEventos.Aplicacion.Excepciones;
 using CentroEventos.Aplicacion.Enumerativos;
 using CentroEventos.Aplicacion.Interfaces;
 

@@ -1,9 +1,8 @@
 using System;
-using CentroEventos.Aplicacion.Excepciones;
 using CentroEventos.Aplicacion.Interfaces;
 using CentroEventos.Aplicacion.Entidades;
 
-namespace CentroEventos.Aplicacion.Validaciones;                      
+namespace CentroEventos.Aplicacion.Validaciones;
 
 public class ValidadorPersona : IValidadorPersona
 {
@@ -19,7 +18,7 @@ public class ValidadorPersona : IValidadorPersona
     public bool Validar(Persona persona)
     {
         _error = "";
-        
+
         if (string.IsNullOrWhiteSpace(persona.Nombre))
         {
             _error += "El Nombre no puede estar vacío. ";
@@ -40,21 +39,21 @@ public class ValidadorPersona : IValidadorPersona
             _error += "El Email no puede estar vacío. ";
         }
 
-        if (_personaRepo.ExistePersonaPorDni(persona.DNI))
+        if (_personaRepo.ExistePersonaPorDni(persona.DNI, persona.Id))
         {
-            _error += "La persona  con este DNI ya está registrada. ";
+            _error += "La persona con este DNI ya está registrada. ";
         }
 
-        if (_personaRepo.ExistePersonaPorEmail(persona.Mail))
+        if (_personaRepo.ExistePersonaPorEmail(persona.Mail, persona.Id))
         {
-            _error += "La persona  con este Email ya está registrada. ";
+            _error += "La persona con este Email ya está registrada. ";
         }
+
         if (!string.IsNullOrWhiteSpace(_error))
             _error = _error.TrimEnd('.', ' ');
 
         return string.IsNullOrWhiteSpace(_error);
     }
-
     public string? ObtenerError()
     {
         return _error;

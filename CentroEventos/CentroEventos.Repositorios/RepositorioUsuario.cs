@@ -3,9 +3,7 @@ using System.Linq;
 using CentroEventos.Aplicacion.Entidades;
 using CentroEventos.Aplicacion.Excepciones;
 using CentroEventos.Aplicacion.Interfaces;
-using CentroEventos.Aplicacion.Enumerativos;
 using Microsoft.EntityFrameworkCore;
-using CentroEventos.Aplicacion;
 
 namespace CentroEventos.Repositorios
 {

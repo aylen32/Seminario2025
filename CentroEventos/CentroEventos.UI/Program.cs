@@ -1,5 +1,4 @@
 using CentroEventos.UI.Components;
-using CentroEventos.Aplicacion;
 using CentroEventos.Aplicacion.Validaciones;
 using CentroEventos.Aplicacion.Interfaces;
 using CentroEventos.Repositorios;
@@ -62,6 +61,13 @@ builder.Services.AddScoped<IValidadorUsuario, ValidadorUsuario>();
 
 
 var app = builder.Build();
+
+// Configurar journal_mode=DELETE en SQLite
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<CentroEventosContext>();
+    context.ConfigurarJournalModeDelete();
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

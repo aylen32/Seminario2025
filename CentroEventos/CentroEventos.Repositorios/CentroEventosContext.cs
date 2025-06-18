@@ -64,5 +64,21 @@ namespace CentroEventos.Repositorios
 
             base.OnModelCreating(modelBuilder);
         }
+
+        // Método para asegurar la base y configurar journal_mode=DELETE
+        public void ConfigurarJournalModeDelete()
+        {
+            // Asegura que la base de datos exista
+            Database.EnsureCreated();
+
+            var connection = Database.GetDbConnection();
+            connection.Open();
+
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = "PRAGMA journal_mode=DELETE;";
+                command.ExecuteNonQuery();
+            }
+        }
     }
 }

@@ -34,7 +34,6 @@ public class ValidadorUsuario : IValidadorUsuario
         if (!string.IsNullOrWhiteSpace(_error))
             _error = _error.TrimEnd('.', ' ');
 
-        return string.IsNullOrWhiteSpace(_error);
-        
+        return string.IsNullOrWhiteSpace(_error);     
     }
 }

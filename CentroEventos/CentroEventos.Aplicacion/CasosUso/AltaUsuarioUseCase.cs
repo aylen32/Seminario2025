@@ -1,6 +1,6 @@
 using System;
 using CentroEventos.Aplicacion.Interfaces;
-using CentroEventos.Aplicacion.Validaciones;
+using CentroEventos.Aplicacion.Servicio;
 using CentroEventos.Aplicacion.Entidades;
 using CentroEventos.Aplicacion.Excepciones;
 namespace CentroEventos.Aplicacion.CasosUso;

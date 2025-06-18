@@ -6,15 +6,13 @@ namespace CentroEventos.Aplicacion.CasosUso;
 public class ListadoPersonasUseCase
 {
     private readonly IRepositorioPersona _repositorioPersona;
-    private readonly IServicioAutorizacion _autorizacion;
-    public ListadoPersonasUseCase(IRepositorioPersona repositorioPersona, IServicioAutorizacion autorizacion)
+    public ListadoPersonasUseCase(IRepositorioPersona repositorioPersona)
     {
         _repositorioPersona = repositorioPersona;
-        _autorizacion = autorizacion;
     }
 
     public List<Persona> Ejecutar()
     {
-        return _repositorioPersona.ObtenerTodas(); // Obtener la lista de personas del repositorio
+        return _repositorioPersona.ObtenerTodas(); 
     }
 }

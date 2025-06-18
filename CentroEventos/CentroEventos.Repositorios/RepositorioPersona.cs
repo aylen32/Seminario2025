@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CentroEventos.Aplicacion;
 using CentroEventos.Aplicacion.Excepciones;
 using CentroEventos.Aplicacion.Interfaces;
 using CentroEventos.Aplicacion.Entidades;
-using CentroEventos.Aplicacion.Validaciones;
 
 namespace CentroEventos.Repositorios
 {
@@ -64,14 +62,24 @@ namespace CentroEventos.Repositorios
             return _context.Personas.Any(p => p.Id == id);
         }
 
-        public bool ExistePersonaPorDni(string dni)
+        public bool ExistePersonaPorDni(string dni, int? idExcluir = null)
         {
-            return _context.Personas.Any(p => p.DNI == dni);
+          var query = _context.Personas.Where(p => p.DNI == dni);
+          if (idExcluir.HasValue)
+          {
+            query = query.Where(p => p.Id != idExcluir.Value);
+          }
+          return query.Any();
         }
 
-        public bool ExistePersonaPorEmail(string email)
+        public bool ExistePersonaPorEmail(string email, int? idExcluir = null)
         {
-            return _context.Personas.Any(p => p.Mail == email);
+           var query = _context.Personas.Where(p => p.Mail == email);
+           if (idExcluir.HasValue)
+           {
+             query = query.Where(p => p.Id != idExcluir.Value);
+           }
+           return query.Any();
         }
     }
 }

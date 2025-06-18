@@ -7,11 +7,9 @@ namespace CentroEventos.Aplicacion.CasosUso;
 public class ListarUsuarioUseCase
 {
     private readonly IRepositorioUsuario _repositorioUsuario;
-    private readonly IServicioAutorizacion _autorizacion;
-    public ListarUsuarioUseCase(IRepositorioUsuario repositorioUsuario, IServicioAutorizacion autorizacion)
+    public ListarUsuarioUseCase(IRepositorioUsuario repositorioUsuario)
     {
         _repositorioUsuario = repositorioUsuario;
-        _autorizacion = autorizacion;
     }
 
     public List<Usuario> Ejecutar()
