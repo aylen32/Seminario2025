@@ -45,6 +45,7 @@ builder.Services.AddScoped<AltaEventoDeportivoUseCase>();
 builder.Services.AddScoped<BajaEventoDeportivoUseCase>();
 builder.Services.AddScoped<ModificarEventoDeportivoUseCase>();
 builder.Services.AddScoped<ListadoEventoDeportivoUseCase>();
+builder.Services.AddScoped<ObtenerEventoDeportivoUseCase>();
 
 builder.Services.AddScoped<ListarEventosConCupoDisponibleUseCase>();
 builder.Services.AddScoped<ListarAsistenciaAEventoUseCase>();

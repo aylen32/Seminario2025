@@ -1,4 +1,5 @@
-﻿@page "/AgregarReserva/{Id:int?}"
+﻿@using CentroEventos.Aplicacion.Excepciones
+@page "/AgregarReserva/{Id:int?}"
 @rendermode InteractiveServer
 @inject NavigationManager Navegador;
 @inject ModificarReservaUseCase ModificarReservaUseCase
@@ -16,8 +17,8 @@
 }
 
 <input placeholder="Id de Persona" @bind="_reserva.PersonaId" class="form-control"readonly="@(!_esNuevaReserva)" />
-<input placeholder="Id de Evento Deportivo" @bind="_reserva.EventoDeportivoId" class="form-control" readonly="@(!_esNuevaReserva)"/>
-<input placeholder="Fecha de la Reserva" @bind="_reserva.FechaAltaReserva" class="form-control" readonly="@(!_esNuevaReserva)"/>
+<input placeholder="Id de Evento Deportivo" @bind="_reserva.EventoDeportivoId" class="form-control"readonly="@(!_esNuevaReserva)" />
+<input placeholder="Fecha de la Reserva" @bind="_reserva.FechaAltaReserva" class="form-control"readonly="@(!_esNuevaReserva)" />
 <input placeholder="Estado de la Reserva" @bind="_reserva.Estado" class="form-control" />
 <button class="btn btn-primary" @onclick="Aceptar">Aceptar</button>
 
@@ -42,27 +43,29 @@
 
   void Aceptar()
   {
-    _mensajeErrores.Clear();
-
-    try
-    {
+      _mensajeErrores.Clear();
+      try
+      {
         if (_esNuevaReserva)
-            AltaReservaUseCase.Ejecutar(_reserva, 1);
+          AltaReservaUseCase.Ejecutar(_reserva, 1);
         else
-            ModificarReservaUseCase.Ejecutar(_reserva, 1);
+          ModificarReservaUseCase.Ejecutar(_reserva, 1);
 
         _reserva = Reserva.CrearNueva();
         StateHasChanged();
         Navegador.NavigateTo("ListadoReservas");
-    }
-
-    catch (CentroEventos.Aplicacion.Excepciones.ValidacionException ex)
-    {
-      var msg = ex.Message;
-      _mensajeErrores = msg
+      }
+      catch (ValidacionException ex)
+      {
+        var msg = ex.Message;
+         _mensajeErrores = msg
         .Split(new string[] { ". " }, StringSplitOptions.RemoveEmptyEntries)
-        .Select(s => s.Trim() + ".") 
+        .Select(s => s.Trim() + ".")
         .ToList();
-    }
+      }
+      catch (OperacionInvalidaException ex)
+      {
+         _mensajeErrores.Add(ex.Message);
+      }
   }
 }

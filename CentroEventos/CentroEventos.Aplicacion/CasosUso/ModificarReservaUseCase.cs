@@ -32,16 +32,7 @@ public class ModificarReservaUseCase
       if (original == null)
         throw new EntidadNotFoundException($"La reserva con ID {reserva.Id} no existe");
 
-      // Validar que solo el Estado haya cambiado
-      if (reserva.PersonaId != original.PersonaId)
-        throw new ValidacionException("No está permitido modificar el Id de la persona.");
-       if (reserva.EventoDeportivoId != original.EventoDeportivoId)
-        throw new ValidacionException("No está permitido modificar el Id del evento deportivo.");
-       if (reserva.FechaAltaReserva != original.FechaAltaReserva)
-        throw new ValidacionException("No está permitido modificar la fecha de la reserva.");
-
-       // Actualizar solo el estado permitido
-       original.Estado = reserva.Estado;
+      original.Estado = reserva.Estado;
 
       if (!_validadorReserva.ValidarParaModificacion(original))
         throw new ValidacionException(_validadorReserva.ObtenerError()!);
