@@ -1,40 +1,80 @@
 @page "/perfil"
 
-@inject NavigationManager Navegador;
-@inject IServicioSesion Servicio;
-@using CentroEventos.Aplicacion.Entidades;
+@inject NavigationManager Navegador
+@inject IServicioSesion Servicio
 @inject ModificarUsuarioUseCase ModificarUsuarioUseCase
 
-<style>
-      h1{
-        color: navy;
-        text-align: center;
-      }
-      h3{
-        color: lightseagreen;
-        text-align: center;
-      }
-    </style>
+@using CentroEventos.Aplicacion.Entidades
+
 <h1>¡Hola, @Servicio.UsuarioActual?.Nombre!</h1>
-<div>
-    <h3>Informació del usuario</h3>
+<br>
+<h4>Modificar la información de usuario: </h4>
+<style>
+    h1{
+        color: darkblue;
+        text-align: center;
+    }
+    h4{
+        color: lightseagreen;
+        text-align: left;
+    }
+</style>
+@if (modelo != null)
+{
+    <EditForm Model="modelo" OnValidSubmit="GuardarCambios">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-</div>
-<table class="table">
-  <thead>
-    <tr>
-      
-      <th>Nombre</th>
-      <th>Apellido</th>
-      <th>Correo</th>
-    </tr>
-  </thead>
-  <tbody>
-    <td>@Servicio.UsuarioActual?.Nombre</td>
-    <td>@Servicio.UsuarioActual?.Apellido</td>
-    <td>@Servicio.UsuarioActual?.CorreoElectronico</td>
-  </tbody>
-</table>
+        <div class="mb-3">
+            <label>Nombre:</label>
+            <InputText class="form-control" @bind-Value="modelo.Nombre" />
+        </div>
 
+        <div class="mb-3">
+            <label>Apellido:</label>
+            <InputText class="form-control" @bind-Value="modelo.Apellido" />
+        </div>
 
+        <div class="mb-3">
+            <label>Correo electrónico:</label>
+            <InputText class="form-control" @bind-Value="modelo.CorreoElectronico" />
+        </div>
 
+        <button class="btn btn-primary" type="submit">Guardar cambios</button>
+    </EditForm>
+}
+else
+{
+    <p>Cargando datos del usuario...</p>
+}
+
+@code {
+    private Usuario? modelo;
+
+    protected override void OnInitialized()
+    {
+        // Clonamos el usuario actual para editar sobre la copia
+        if (Servicio.UsuarioActual is not null)
+        {
+            modelo = Usuario.CrearNuevo();
+            {
+                modelo.Id = Servicio.UsuarioActual.Id;
+                modelo.Nombre = Servicio.UsuarioActual.Nombre;
+                modelo.Apellido = Servicio.UsuarioActual.Apellido;
+                modelo.CorreoElectronico = Servicio.UsuarioActual.CorreoElectronico;
+                modelo.HashContrasenia = Servicio.UsuarioActual.HashContrasenia;
+                modelo.Permisos = Servicio.UsuarioActual.Permisos;
+            };
+        }
+    }
+
+    private void GuardarCambios()
+    {
+        if (modelo is not null)
+        {
+            ModificarUsuarioUseCase.Ejecutar(modelo);
+            Servicio.IniciarSesion(modelo); // Actualiza la sesión
+            Navegador.NavigateTo("/home", forceLoad: false); // o quedate en perfil si querés
+        }
+    }
+}
