@@ -1,5 +1,70 @@
-﻿<h3>AgregarEventoDeportivo</h3>
+﻿@page "/AgregarEventoDeportivo/{Id:int?}"
+@rendermode InteractiveServer
+@inject NavigationManager Navegador;
+@inject ModificarEventoDeportivoUseCase ModificarEventoDeportivoUseCase
+@inject ObtenerEventoDeportivoUseCase ObtenerEventoDeportivoUseCase
+@inject AltaEventoDeportivoUseCase AltaEventoDeportivoUseCase
+
+@if (_mensajeErrores?.Count > 0)
+{
+    <ul>
+        @foreach (var error in _mensajeErrores)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}
+
+<input placeholder="Nombre" @bind="_evento.Nombre" class="form-control" />
+<input placeholder="Descripcion" @bind="_evento.Descripcion" class="form-control"/>
+<input placeholder="Fecha y hora de inicio" @bind="_evento.FechaHoraInicio" class="form-control"/>
+<input placeholder="Duracion en horas" @bind="_evento.DuracionHoras" class="form-control" />
+<input placeholder="Cupo maximo de participantes" @bind="_evento.CupoMaximo" class="form-control" />
+<input placeholder="Id del responsable" @bind="_evento.ResponsableId" class="form-control" readonly="@(!_esNuevoEvento)"/>
+<button class="btn btn-primary" @onclick="Aceptar">Aceptar</button>
 
 @code {
+  EventoDeportivo _evento = EventoDeportivo.CrearNuevo();
+  [Parameter] public int? Id { get; set; }
+  bool _esNuevoEvento = true;
+  List<string> _mensajeErrores = new();
 
+  protected override void OnParametersSet()
+  {
+    if (Id != null)
+    {
+      var even_hallado = ObtenerEventoDeportivoUseCase.Ejecutar(Id.Value, 1);
+      if (even_hallado != null)
+      {
+        _evento = even_hallado;
+        _esNuevoEvento = false;
+      }
+    }
+  }
+
+  void Aceptar()
+  {
+    _mensajeErrores.Clear();
+
+    try
+    {
+        if (_esNuevoEvento)
+            AltaEventoDeportivoUseCase.Ejecutar(_evento, 1);
+        else
+            ModificarEventoDeportivoUseCase.Ejecutar(_evento, 1);
+
+        _evento = EventoDeportivo.CrearNuevo();
+        StateHasChanged();
+        Navegador.NavigateTo("ListadoEventosDeportivos");
+    }
+
+    catch (CentroEventos.Aplicacion.Excepciones.ValidacionException ex)
+    {
+      var msg = ex.Message;
+      _mensajeErrores = msg
+        .Split(new string[] { ". " }, StringSplitOptions.RemoveEmptyEntries)
+        .Select(s => s.Trim() + ".") 
+        .ToList();
+    }
+  }
 }

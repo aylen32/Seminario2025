@@ -1,4 +1,5 @@
 ﻿@using CentroEventos.UI.Components
+@using CentroEventos.Aplicacion.Excepciones
 @page "/ListadoReservas"
 @rendermode InteractiveServer
 @inject ListadoReservaUseCase ListadoReservaUseCase
@@ -6,6 +7,17 @@
 @inject NavigationManager Navegador
 
 <DialogoConfirmacion @ref="dialogo" OnConfirmado="Eliminar"/>
+
+@if (_errores.Count > 0)
+{
+    <ul>
+        @foreach (var error in _errores)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}
+
 <table class="table">
   <thead>
     <tr>
@@ -40,6 +52,8 @@
 
 @code {
     List<Reserva> _lista = new List<Reserva>();
+    List<string> _errores = new();
+
     protected override void OnInitialized()
     {
        _lista = ListadoReservaUseCase.Ejecutar();
@@ -54,14 +68,31 @@
       dialogo.Mostrar($"¿Desea eliminar la reserva hecha por la persona con Id: {reser.PersonaId}, en la fecha: {reser.FechaAltaReserva}?");
    }
 
-   private void Eliminar()
-   {
-     if (_ReservaParaEliminar != null)
-     {
-       BajaReservaUseCase.Ejecutar(_ReservaParaEliminar.Id, 1);
-      _lista = ListadoReservaUseCase.Ejecutar(); 
-     }
-   }
+  private void Eliminar()
+  {
+    _errores.Clear();
+
+    try
+    {
+        if (_ReservaParaEliminar != null)
+        {
+            BajaReservaUseCase.Ejecutar(_ReservaParaEliminar.Id, 1);
+            _lista = ListadoReservaUseCase.Ejecutar();
+        }
+    }
+    catch (OperacionInvalidaException ex)
+    {
+        _errores.Add(ex.Message);
+    }
+    catch (ValidacionException ex)
+    {
+        _errores = ex.Message
+            .Split(new string[] { ". " }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(s => s.Trim() + ".")
+            .ToList();
+    }
+  }
+  
 
    void ModificarReserva(Reserva reser)
    {
