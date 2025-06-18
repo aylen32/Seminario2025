@@ -1,5 +1,7 @@
 ﻿@page "/AgregarPersona/{Id:int?}"
 @rendermode InteractiveServer
+@using CentroEventos.Aplicacion.Servicio
+@inject IServicioSesion Servicio
 @inject NavigationManager Navegador;
 @inject ModificarPersonaUseCase ModificarPersonaUseCase
 @inject ObtenerPersonaUseCase ObtenerPersonaUseCase
@@ -41,7 +43,7 @@ else
   {
     if (Id != null)
     {
-      var per_hallada = ObtenerPersonaUseCase.Ejecutar(Id.Value, 1);
+      var per_hallada = ObtenerPersonaUseCase.Ejecutar(Id.Value, @Servicio.UsuarioActual!.Id);
       if (per_hallada != null)
       {
         _persona = per_hallada;
@@ -57,9 +59,9 @@ else
     try
     {
         if (_esNuevaPersona)
-            AltaPersonaUseCase.Ejecutar(_persona, 1);
+            AltaPersonaUseCase.Ejecutar(_persona, @Servicio.UsuarioActual!.Id);
         else
-            ModificarPersonaUseCase.Ejecutar(_persona, 1);
+            ModificarPersonaUseCase.Ejecutar(_persona, @Servicio.UsuarioActual!.Id);
 
         _persona = Persona.CrearNueva();
         StateHasChanged();

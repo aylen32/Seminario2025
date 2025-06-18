@@ -1,5 +1,7 @@
 ﻿@page "/AgregarEventoDeportivo/{Id:int?}"
 @rendermode InteractiveServer
+@using CentroEventos.Aplicacion.Servicio
+@inject IServicioSesion Servicio
 @inject NavigationManager Navegador;
 @inject ModificarEventoDeportivoUseCase ModificarEventoDeportivoUseCase
 @inject ObtenerEventoDeportivoUseCase ObtenerEventoDeportivoUseCase
@@ -42,7 +44,7 @@ else
   {
     if (Id != null)
     {
-      var even_hallado = ObtenerEventoDeportivoUseCase.Ejecutar(Id.Value, 1);
+      var even_hallado = ObtenerEventoDeportivoUseCase.Ejecutar(Id.Value, @Servicio.UsuarioActual!.Id);
       if (even_hallado != null)
       {
         _evento = even_hallado;
@@ -58,9 +60,9 @@ else
     try
     {
         if (_esNuevoEvento)
-            AltaEventoDeportivoUseCase.Ejecutar(_evento, 1);
+            AltaEventoDeportivoUseCase.Ejecutar(_evento, @Servicio.UsuarioActual!.Id);
         else
-            ModificarEventoDeportivoUseCase.Ejecutar(_evento, 1);
+            ModificarEventoDeportivoUseCase.Ejecutar(_evento,@Servicio.UsuarioActual!.Id);
 
         _evento = EventoDeportivo.CrearNuevo();
         StateHasChanged();

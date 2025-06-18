@@ -1,7 +1,9 @@
 ﻿@using CentroEventos.UI.Components
 @using CentroEventos.Aplicacion.Excepciones
+@using CentroEventos.Aplicacion.Servicio
 @page "/ListadoReservas"
 @rendermode InteractiveServer
+@inject IServicioSesion Servicio
 @inject ListadoReservaUseCase ListadoReservaUseCase
 @inject BajaReservaUseCase BajaReservaUseCase
 @inject NavigationManager Navegador
@@ -76,7 +78,7 @@
     {
         if (_ReservaParaEliminar != null)
         {
-            BajaReservaUseCase.Ejecutar(_ReservaParaEliminar.Id, 1);
+            BajaReservaUseCase.Ejecutar(_ReservaParaEliminar.Id, @Servicio.UsuarioActual!.Id);
             _lista = ListadoReservaUseCase.Ejecutar();
         }
     }

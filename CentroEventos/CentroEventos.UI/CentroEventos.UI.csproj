@@ -6,12 +6,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="CentroEventos.sqlite">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

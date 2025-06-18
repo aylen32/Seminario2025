@@ -1,8 +1,10 @@
 ﻿@using CentroEventos.UI.Components
 @using CentroEventos.Aplicacion.Excepciones
+@using CentroEventos.Aplicacion.Servicio
 @page "/ListadoEventosDeportivos"
 @rendermode InteractiveServer
 @inject ListadoEventoDeportivoUseCase ListadoEventoDeportivoUseCase
+@inject IServicioSesion Servicio
 @inject BajaEventoDeportivoUseCase BajaEventoDeportivoUseCase
 @inject NavigationManager Navegador
 
@@ -80,7 +82,7 @@
     {
         try
         {
-            BajaEventoDeportivoUseCase.Ejecutar(_EventoParaEliminar.Id, 1);
+            BajaEventoDeportivoUseCase.Ejecutar(_EventoParaEliminar.Id, @Servicio.UsuarioActual!.Id);
             _lista = ListadoEventoDeportivoUseCase.Ejecutar();
         }
         catch (OperacionInvalidaException ex)
@@ -93,8 +95,7 @@
         }
     }
   }
-   void ModificarEventoDeportivo(EventoDeportivo even)
-   {
-     Navegador.NavigateTo($"AgregarEventoDeportivo/{even.Id}");
+   void ModificarEventoDeportivo(EventoDeportivo even){
+   Navegador.NavigateTo($"AgregarEventoDeportivo/{even.Id}"); 
    }
 }

@@ -24,11 +24,11 @@ public class AltaUsuarioUseCase
             throw new ValidacionException(_validador.ObtenerError() ?? "Usuario inválido");
 
         // Si no es el primer usuario, verificar permisos del solicitante
-        if (_repositorio.CantidadUsuariosRegistrados() > 0 &&
+        /*if (_repositorio.CantidadUsuariosRegistrados() > 0 &&
             !_autorizacion.TienePermisoDeGestion(idSolicitante))
         {
             throw new OperacionInvalidaException("No tiene permiso para dar de alta usuarios.");
-        }
+        }*/
 
         _repositorio.AgregarUsuario(usuario);
 

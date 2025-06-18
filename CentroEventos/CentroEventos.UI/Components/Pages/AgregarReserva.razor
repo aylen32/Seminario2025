@@ -1,7 +1,9 @@
 ﻿@using CentroEventos.Aplicacion.Excepciones
+@using CentroEventos.Aplicacion.Servicio
 @page "/AgregarReserva/{Id:int?}"
 @rendermode InteractiveServer
 @inject NavigationManager Navegador;
+@inject IServicioSesion Servicio
 @inject ModificarReservaUseCase ModificarReservaUseCase
 @inject ObtenerReservaUseCase ObtenerReservaUseCase
 @inject AltaReservaUseCase AltaReservaUseCase
@@ -41,7 +43,7 @@ else
   {
     if (Id != null)
     {
-      var reser_hallada = ObtenerReservaUseCase.Ejecutar(Id.Value, 1);
+      var reser_hallada = ObtenerReservaUseCase.Ejecutar(Id.Value, @Servicio.UsuarioActual!.Id);
       if (reser_hallada != null)
       {
         _reserva = reser_hallada;
@@ -56,9 +58,9 @@ else
       try
       {
         if (_esNuevaReserva)
-          AltaReservaUseCase.Ejecutar(_reserva, 1);
+          AltaReservaUseCase.Ejecutar(_reserva, @Servicio.UsuarioActual!.Id);
         else
-          ModificarReservaUseCase.Ejecutar(_reserva, 1);
+          ModificarReservaUseCase.Ejecutar(_reserva, @Servicio.UsuarioActual!.Id);
 
         _reserva = Reserva.CrearNueva();
         StateHasChanged();

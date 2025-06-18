@@ -1,5 +1,7 @@
 ﻿@using CentroEventos.UI.Components
+@using CentroEventos.Aplicacion.Servicio
 @page "/ListadoPersonas"
+@inject IServicioSesion Servicio
 @rendermode InteractiveServer
 @inject ListadoPersonasUseCase ListadoPersonasUseCase
 @inject BajaPersonaUseCase BajaPersonaUseCase
@@ -60,7 +62,7 @@
    {
      if (_PersonaParaEliminar != null)
      {
-       BajaPersonaUseCase.Ejecutar(_PersonaParaEliminar.Id, 1);
+       BajaPersonaUseCase.Ejecutar(_PersonaParaEliminar.Id, @Servicio.UsuarioActual!.Id);
       _lista = ListadoPersonasUseCase.Ejecutar(); 
      }
    }
