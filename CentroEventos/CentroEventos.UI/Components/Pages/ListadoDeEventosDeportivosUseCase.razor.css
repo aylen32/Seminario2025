@@ -19,7 +19,10 @@ table {
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  margin-right: 50px; /* separación hacia la derecha */
+  margin-right: 10px; /* separación hacia la derecha */
+  display: inline-block;
+  margin-right: 8px;
+  min-width: 70px;
 }
 
 .boton-personalizado-eliminar {
@@ -29,6 +32,9 @@ table {
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  margin-right: -30px;
-  margin-left: -10px;
+  margin-right: -49px;
+  margin-left: -5px;
+  display: inline-block;
+  margin-right: 8px;
+  min-width: 60px;
 }
