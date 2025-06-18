@@ -48,6 +48,7 @@ builder.Services.AddScoped<ObtenerEventoDeportivoUseCase>();
 
 builder.Services.AddScoped<ListarEventosConCupoDisponibleUseCase>();
 builder.Services.AddScoped<ListarAsistenciaAEventoUseCase>();
+builder.Services.AddScoped<ModificarUsuarioUseCase>();
 
 //Servicio Autorizacion y sesion
 builder.Services.AddScoped<IServicioAutorizacion, ServicioAutorizacion>();
