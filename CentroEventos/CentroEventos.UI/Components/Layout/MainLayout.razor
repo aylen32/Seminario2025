@@ -9,7 +9,7 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            <a href="#" class="navbar-brand"@onclick="IrPerfil">Perfil</a>
            <a href="#" class="navbar-brand" @onclick="CerrarSesion">Salir</a>
         </div>
 
@@ -34,6 +34,9 @@
     {
        servicio.CerrarSesion();
         navegar.NavigateTo("/", false);
+    }
+    private void IrPerfil(){
+        navegar.NavigateTo("/perfil",false);
     }
 }
 

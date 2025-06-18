@@ -1,0 +1,40 @@
+@page "/perfil"
+
+@inject NavigationManager Navegador;
+@inject IServicioSesion Servicio;
+@using CentroEventos.Aplicacion.Entidades;
+@inject ModificarUsuarioUseCase ModificarUsuarioUseCase
+
+<style>
+      h1{
+        color: navy;
+        text-align: center;
+      }
+      h3{
+        color: lightseagreen;
+        text-align: center;
+      }
+    </style>
+<h1>¡Hola, @Servicio.UsuarioActual?.Nombre!</h1>
+<div>
+    <h3>Informació del usuario</h3>
+
+</div>
+<table class="table">
+  <thead>
+    <tr>
+      
+      <th>Nombre</th>
+      <th>Apellido</th>
+      <th>Correo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <td>@Servicio.UsuarioActual?.Nombre</td>
+    <td>@Servicio.UsuarioActual?.Apellido</td>
+    <td>@Servicio.UsuarioActual?.CorreoElectronico</td>
+  </tbody>
+</table>
+
+
+
