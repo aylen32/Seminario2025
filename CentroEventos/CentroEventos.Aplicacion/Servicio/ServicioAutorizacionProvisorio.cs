@@ -14,12 +14,16 @@ namespace CentroEventos.Aplicacion.Servicio
 
     public bool PoseeElPermiso(int idUsuario, PermisoTipo permisoTipo)
     {
-        var usuario = _repositorioUsuario.ObtenerUsuarioConPermisos(idUsuario);
-        if (usuario == null || usuario.Permisos == null)
-            return false;
+      if (EsAdministrador(idUsuario))
+        return true;
 
-        return usuario.Permisos.Any(up => up.Permiso != null && up.Permiso.Tipo == permisoTipo);
+      var usuario = _repositorioUsuario.ObtenerUsuarioConPermisos(idUsuario);
+      if (usuario == null || usuario.Permisos == null)
+        return false;
+
+      return usuario.Permisos.Any(up => up.Permiso != null && up.Permiso.Tipo == permisoTipo);
     }
+
 
     public bool EsAdministrador(int idUsuario)
     {
