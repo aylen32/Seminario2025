@@ -11,13 +11,6 @@
 @using CentroEventos.Aplicacion.Hash
 @using CentroEventos.Aplicacion.Excepciones
 
-@if (!string.IsNullOrEmpty(mensajeError))
-{
-    <div class="alert alert-danger text-center">
-        @mensajeError
-    </div>
-}
-
 <div class="container py-4">
     <div class="header text-center">
         <h1>Administración de Usuarios</h1>
@@ -55,15 +48,28 @@
             {
                 <div>
                     <h3 class="section-title">Información del Usuario</h3>
+
+                    @if (_mensajeErrores?.Count > 0)
+                    {
+                        <div class="error-container alert alert-danger mt-2">
+                            <strong>Se encontraron los siguientes errores:</strong>
+                            <ul class="error-list mb-0">
+                                @foreach (var error in _mensajeErrores)
+                                {
+                                    <li class="error-item">@error</li>
+                                }
+                            </ul>
+                        </div>
+                    }
                     
                     <div class="form-container">
-                        <EditForm Model="modelo" OnValidSubmit="GuardarCambios">
+                        <EditForm Model="modelo" OnValidSubmit="ConfirmarModificacion">
                             <DataAnnotationsValidator />
                             <ValidationSummary />
                             
                             <div class="mb-3">
                                 <label class="form-label">Nombre:</label>
-                                <InputText class="form-control" @bind-Value="modelo.Nombre" />
+                                <InputText class="form-control" @bind-Value="modelo!.Nombre" />
                             </div>
                             
                             <div class="mb-3">
@@ -82,20 +88,24 @@
                                        class="form-control" 
                                        placeholder="Dejar en blanco para no cambiar"
                                        @bind="nuevaCon" />
-                                
                             </div>
-                            @if(ServicioSesion.UsuarioActual!.Permisos.Any(p=>p.Permiso?.Tipo==PermisoTipo.UsuarioModificacion)){
-                                <button class="btn btn-primary" type="submit">Guardar cambios</button> 
-                            }else{
-                                 <button disabled>Guardar cambios</button> 
-                            }
-                            @if(ServicioSesion.UsuarioActual!.Permisos.Any(p=>p.Permiso?.Tipo==PermisoTipo.UsuarioBaja)){
-                                 <button class="btn btn-danger" type="button" @onclick="EliminarUsuario">Eliminar Usuario</button>
-                            }else{
-                                 <button disabled>Eliminar Usuario</button> 
-                            }
 
-                           
+                            @if (ServicioSesion.UsuarioActual!.Permisos.Any(p => p.Permiso?.Tipo == PermisoTipo.UsuarioModificacion))
+                            {
+                                <button class="btn btn-primary" type="submit">Guardar cambios</button>
+                            }
+                            else
+                            {
+                                <button disabled>Guardar cambios</button>
+                            }
+                            @if (ServicioSesion.UsuarioActual!.Permisos.Any(p => p.Permiso?.Tipo == PermisoTipo.UsuarioBaja))
+                            {
+                                <button class="btn btn-danger ms-2" type="button" @onclick="MostrarDialogoConfirmacionEliminar">Eliminar Usuario</button>
+                            }
+                            else
+                            {
+                                <button disabled class="ms-2">Eliminar Usuario</button>
+                            }
                         </EditForm>
                     </div>
                     
@@ -124,15 +134,18 @@
     </div>
 </div>
 
+<DialogoConfirmacion @ref="dialogoConfirmacion" OnConfirmado="EliminarUsuarioConfirmado" />
+
 @code {
-    bool tieneAcceso = false;
-    bool yaRedirigio = false;
+    private bool tieneAcceso = false;
+    private bool yaRedirigio = false;
     private Usuario? modelo;
     private string? nuevaCon;
+    private List<string>? _mensajeErrores = new();
     List<Usuario> usuarios = new();
     Usuario? usuarioSeleccionado;
     HashSet<PermisoTipo> permisosSeleccionados = new();
-    private string? mensajeError;
+    private DialogoConfirmacion dialogoConfirmacion = null!;
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -175,61 +188,88 @@
         {
             modelo = Usuario.CrearNuevo();
             {
-               modelo.Id = @usuarioSeleccionado!.Id;
-                modelo.Nombre = @usuarioSeleccionado!.Nombre;
-                modelo.Apellido =  @usuarioSeleccionado!.Apellido;
-                modelo.CorreoElectronico = @usuarioSeleccionado!.CorreoElectronico;
-                modelo.HashContrasenia =  @usuarioSeleccionado!.HashContrasenia;
-                modelo.Permisos =  @usuarioSeleccionado!.Permisos;
+                modelo.Id = usuarioSeleccionado.Id;
+                modelo.Nombre = usuarioSeleccionado.Nombre;
+                modelo.Apellido = usuarioSeleccionado.Apellido;
+                modelo.CorreoElectronico = usuarioSeleccionado.CorreoElectronico;
+                modelo.HashContrasenia = usuarioSeleccionado.HashContrasenia;
+                modelo.Permisos = usuarioSeleccionado.Permisos;
             };
         }
+        _mensajeErrores = new List<string>();
     }
 
-    private void GuardarCambios()
+    private void MostrarDialogoConfirmacionEliminar()
     {
-        if (modelo is not null)
-        {
-            // Actualizar contraseña solo si se ingresó un valor
-            if (!string.IsNullOrWhiteSpace(nuevaCon))
-            {
-                modelo.HashContrasenia = SHA256Helper.ComputeSHA256(nuevaCon);
-            }
+        _mensajeErrores = new List<string>();
+        dialogoConfirmacion.Mostrar($"¿Desea eliminar al usuario {usuarioSeleccionado?.Nombre} {usuarioSeleccionado?.Apellido}?");
+    }
 
-            ModificarUsuarioUseCase.Ejecutar(modelo, ServicioSesion.UsuarioActual!.Id);
-            
-            // Mostrar mensaje de éxito o actualizar UI según sea necesario
+    private void EliminarUsuarioConfirmado()
+    {
+        if (usuarioSeleccionado == null || ServicioSesion.UsuarioActual == null)
+            return;
+
+        try
+        {
+            BajaUsuarioUseCase.Ejecutar(usuarioSeleccionado.Id, ServicioSesion.UsuarioActual.Id);
+            usuarios = ListarUsuariosUseCase.Ejecutar();
+            usuarioSeleccionado = null;
+            modelo = null;
+            nuevaCon = null;
+            permisosSeleccionados.Clear();
+            _mensajeErrores = new List<string>();
+        }
+        catch (OperacionInvalidaException ex)
+        {
+            _mensajeErrores = ParsearErrores(ex.Message);
+        }
+        catch (EntidadNotFoundException ex)
+        {
+            _mensajeErrores = ParsearErrores(ex.Message);
+        }
+        catch (Exception)
+        {
+            _mensajeErrores = new List<string>() { "Ocurrió un error inesperado al eliminar el usuario." };
+        }
+        finally
+        {
+            StateHasChanged();
         }
     }
-    private void EliminarUsuario()
+
+    private void ConfirmarModificacion()
     {
-      mensajeError = null;
-
-      if (usuarioSeleccionado == null || ServicioSesion.UsuarioActual == null)
-        return;
-
-      try
-      {
-        BajaUsuarioUseCase.Ejecutar(usuarioSeleccionado.Id, ServicioSesion.UsuarioActual.Id);
-
-        usuarios = ListarUsuariosUseCase.Ejecutar();
-
-        usuarioSeleccionado = null;
-        modelo = null;
-        nuevaCon = null;
-        permisosSeleccionados.Clear();
-      }
-      catch (OperacionInvalidaException ex)
-      {
-        mensajeError = ex.Message;
-      }
-      catch (EntidadNotFoundException ex)
-      {
-        mensajeError = ex.Message;
-      }
-      catch (Exception)
-      {
-        mensajeError = "Ocurrió un error inesperado al eliminar el usuario.";
-      }
+        _mensajeErrores = new List<string>();
+        try
+        {
+            if (modelo != null)
+            {
+                if (!string.IsNullOrWhiteSpace(nuevaCon))
+                {
+                    modelo.HashContrasenia = SHA256Helper.ComputeSHA256(nuevaCon);
+                }
+                ModificarUsuarioUseCase.Ejecutar(modelo, ServicioSesion.UsuarioActual!.Id);
+                // No mostramos mensaje de éxito, solo limpiamos errores
+                _mensajeErrores = new List<string>();
+            }
+        }
+        catch (ValidacionException ex)
+        {
+            _mensajeErrores = ParsearErrores(ex.Message);
+        }
+        catch (OperacionInvalidaException ex)
+        {
+            _mensajeErrores = ParsearErrores(ex.Message);
+        }
+        catch (Exception)
+        {
+            _mensajeErrores = new List<string>() { "Ocurrió un error inesperado al modificar el usuario." };
+        }
+        finally
+        {
+            StateHasChanged();
+        }
     }
 
     void AlternarPermiso(PermisoTipo tipo)
@@ -249,9 +289,23 @@
 
             ActualizarPermisosUseCase.Ejecutar(idAdministrador, usuarioSeleccionado.Id, listaPermisos);
 
-            // Actualizar usuario seleccionado después de guardar cambios
             usuarioSeleccionado = usuarios.First(u => u.Id == usuarioSeleccionado.Id);
             StateHasChanged();
         }
+    }
+
+    private List<string> ParsearErrores(string mensaje)
+    {
+        var lista = new List<string>();
+        var mensajes = mensaje.Split('.', StringSplitOptions.RemoveEmptyEntries);
+        foreach (var msg in mensajes)
+        {
+            var texto = msg.Trim();
+            if (!string.IsNullOrEmpty(texto))
+            {
+                lista.Add(texto + ".");
+            }
+        }
+        return lista;
     }
 }
