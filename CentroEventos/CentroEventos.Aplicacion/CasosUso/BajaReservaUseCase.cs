@@ -1,10 +1,8 @@
-using System;
 using CentroEventos.Aplicacion.Interfaces;
-using CentroEventos.Aplicacion.Validaciones;
 using CentroEventos.Aplicacion.Enumerativos;
 using CentroEventos.Aplicacion.Servicio;
-namespace CentroEventos.Aplicacion.CasosUso;
 using CentroEventos.Aplicacion.Excepciones;
+namespace CentroEventos.Aplicacion.CasosUso;
 
 public class BajaReservaUseCase
 {
@@ -25,6 +23,8 @@ public class BajaReservaUseCase
         if (!_repositorioReserva.ExisteReservaPorId(idReserva))
             throw new EntidadNotFoundException($"La reserva con ID {idReserva} no existe");
 
-        _repositorioReserva.EliminarReserva(idReserva);
+        bool eliminado = _repositorioReserva.EliminarReserva(idReserva);
+        if (!eliminado)
+          throw new EntidadNotFoundException($"La reserva con ID {idReserva} no existe");
     }
 }

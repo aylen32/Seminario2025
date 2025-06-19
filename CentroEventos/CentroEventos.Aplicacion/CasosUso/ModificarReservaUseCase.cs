@@ -1,4 +1,3 @@
-using System;
 using CentroEventos.Aplicacion.Excepciones;
 using CentroEventos.Aplicacion.Interfaces;
 using CentroEventos.Aplicacion.Enumerativos;
@@ -22,22 +21,30 @@ public class ModificarReservaUseCase
     public void Ejecutar(Reserva reserva, int idUsuario)
     {
         if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.ReservaModificacion))
-            throw new FalloAutorizacionException("No tiene permiso para modificar reservas");
+            throw new FalloAutorizacionException("No tenés permiso para modificar reservas.");
 
         var original = _repositorioReserva.ObtenerReserva(reserva.Id);
 
         if (original == null)
-            throw new EntidadNotFoundException($"La reserva con ID {reserva.Id} no existe");
+            throw new EntidadNotFoundException($"La reserva con ID {reserva.Id} no existe.");
 
-        // Validar que el estado sea válido
+        // Validar que el nuevo estado sea válido
         if (!Enum.IsDefined(typeof(EstadoAsistencia), reserva.Estado))
-            throw new OperacionInvalidaException($"El estado '{reserva.Estado}' no es un estado válido");
+            throw new OperacionInvalidaException($"El estado '{reserva.Estado}' no es válido.");
 
-        original.Estado = reserva.Estado;
+        // Clonar temporalmente para validación sin afectar el original
+        var nueva = Reserva.CrearNueva();
+        nueva.Id = original.Id;
+        nueva.PersonaId = original.PersonaId;
+        nueva.EventoDeportivoId = original.EventoDeportivoId;
+        nueva.Estado = reserva.Estado;
 
-        if (!_validadorReserva.ValidarParaModificacion(original))
+        if (!_validadorReserva.ValidarParaModificacion(nueva))
             throw new ValidacionException(_validadorReserva.ObtenerError()!);
 
-        _repositorioReserva.ModificarReserva(original.Id, original.Estado);
+        // Aplicar el cambio si pasó la validación
+        bool modificado = _repositorioReserva.ModificarReserva(original.Id, reserva.Estado);
+        if (!modificado)
+          throw new OperacionInvalidaException("No se pudo modificar la reserva, inténtelo nuevamente.");
     }
 }

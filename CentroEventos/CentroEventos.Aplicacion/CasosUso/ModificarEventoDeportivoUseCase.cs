@@ -1,13 +1,9 @@
-using System;
-
-namespace CentroEventos.Aplicacion.CasosUso;
 using CentroEventos.Aplicacion.Interfaces;
-using CentroEventos.Aplicacion.Validaciones;
 using CentroEventos.Aplicacion.Excepciones;
 using CentroEventos.Aplicacion.Servicio;
 using CentroEventos.Aplicacion.Enumerativos;
 using CentroEventos.Aplicacion.Entidades;
-
+namespace CentroEventos.Aplicacion.CasosUso;
 public class ModificarEventoDeportivoUseCase
 {
     private readonly IRepositorioEventoDeportivo _repositorioEvento;
@@ -29,8 +25,12 @@ public class ModificarEventoDeportivoUseCase
         if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.EventoModificacion))
             throw new OperacionInvalidaException("No tiene permiso para modificar eventos deportivos");
 
-        if (!_repositorioEvento.ExisteEventoPorId(evento.Id))
+        var eventoOriginal = _repositorioEvento.ObtenerEvento(evento.Id);
+        if (eventoOriginal == null)
             throw new EntidadNotFoundException($"El evento con ID {evento.Id} no existe");
+
+        if (eventoOriginal.FechaHoraInicio < DateTime.Now)
+            throw new OperacionInvalidaException("No se puede modificar un evento deportivo que ya ocurrió");
 
         if (!_validadorEvento.Validar(evento))
             throw new ValidacionException(_validadorEvento.ObtenerError() ?? "Error desconocido en la validación del evento");

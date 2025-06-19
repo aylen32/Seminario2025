@@ -2,39 +2,41 @@
 @rendermode InteractiveServer
 @using CentroEventos.Aplicacion.Servicio
 @inject IServicioSesion Servicio
-@inject NavigationManager Navegador;
+@inject NavigationManager Navegador
 @inject ModificarPersonaUseCase ModificarPersonaUseCase
 @inject ObtenerPersonaUseCase ObtenerPersonaUseCase
 @inject AltaPersonaUseCase AltaPersonaUseCase
-@if(!accesoPermitido){
-  <p>
-    Redirigiendo...
-  </p>
+
+@if (!accesoPermitido)
+{
+    <p>Redirigiendo...</p>
 }
 
 @if (_mensajeErrores?.Count > 0)
 {
-    <ul>
-        @foreach (var error in _mensajeErrores)
-        {
-            <li>@error</li>
-        }
-    </ul>
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in _mensajeErrores)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
 }
- <style>
-    h3{
-      color: darkblue;
+
+<style>
+    h3 {
+        color: darkblue;
     }
-  </style>
+</style>
 
 @if (_esNuevaPersona)
 {
-  <h3>Agregando una Nueva Persona</h3>
+    <h3>Agregando una Nueva Persona</h3>
 }
 else
 {
-  <h3>Modificando a la Persona "@_persona.Nombre"</h3>
- 
+    <h3>Modificando a la Persona "@_persona.Nombre"</h3>
 }
 
 <div class="mb-3">
@@ -67,68 +69,72 @@ else
     Aceptar
 </button>
 
-
 @code {
-  
     private bool accesoPermitido;
     private bool redirigido = false;
 
-    protected override Task OnAfterRenderAsync(bool firstRender)
+    Persona _persona = Persona.CrearNueva();
+    [Parameter] public int? Id { get; set; }
+    bool _esNuevaPersona = true;
+    List<string> _mensajeErrores = new();
+
+    protected override void OnAfterRender(bool firstRender)
     {
-        if (firstRender && !Servicio.EstaAutenticado && !redirigido)
+        if (firstRender)
         {
-            redirigido = true;
-            Navegador.NavigateTo("/");
+            if (!Servicio.EstaAutenticado && !redirigido)
+            {
+                redirigido = true;
+                Navegador.NavigateTo("/");
+            }
+            else
+            {
+                accesoPermitido = true;
+                StateHasChanged();
+            }
         }
-        else if (firstRender)
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (Id != null)
         {
-            accesoPermitido = true;
-            StateHasChanged(); // actualiza el render
+            var per_hallada = ObtenerPersonaUseCase.Ejecutar(Id.Value);
+            if (per_hallada != null)
+            {
+                _persona = per_hallada;
+                _esNuevaPersona = false;
+            }
         }
-
-        return Task.CompletedTask;
     }
-  Persona _persona = Persona.CrearNueva();
-  [Parameter] public int? Id { get; set; }
-  bool _esNuevaPersona = true;
-  List<string> _mensajeErrores = new();
 
-  protected override void OnParametersSet()
-  {
-    if (Id != null)
+    void Aceptar()
     {
-      var per_hallada = ObtenerPersonaUseCase.Ejecutar(Id.Value, @Servicio.UsuarioActual!.Id);
-      if (per_hallada != null)
-      {
-        _persona = per_hallada;
-        _esNuevaPersona = false;
-      }
+        _mensajeErrores.Clear();
+
+        try
+        {
+            if (_esNuevaPersona)
+                AltaPersonaUseCase.Ejecutar(_persona);
+            else
+                ModificarPersonaUseCase.Ejecutar(_persona);
+
+            _persona = Persona.CrearNueva();
+            Navegador.NavigateTo("ListadoPersonas");
+        }
+        catch (CentroEventos.Aplicacion.Excepciones.ValidacionException ex)
+        {
+            _mensajeErrores = ex.Message
+                .Split(new string[] { ". " }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => s.Trim() + ".")
+                .ToList();
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            // Para errores no previstos
+            _mensajeErrores = new List<string> { "Ocurrió un error inesperado: " + ex.Message };
+            StateHasChanged();
+        }
     }
-  }
-
-  void Aceptar()
-  {
-    _mensajeErrores.Clear();
-
-    try
-    {
-        if (_esNuevaPersona)
-            AltaPersonaUseCase.Ejecutar(_persona, @Servicio.UsuarioActual!.Id);
-        else
-            ModificarPersonaUseCase.Ejecutar(_persona, @Servicio.UsuarioActual!.Id);
-
-        _persona = Persona.CrearNueva();
-        StateHasChanged();
-        Navegador.NavigateTo("ListadoPersonas");
-    }
-
-    catch (CentroEventos.Aplicacion.Excepciones.ValidacionException ex)
-    {
-      var msg = ex.Message;
-      _mensajeErrores = msg
-        .Split(new string[] { ". " }, StringSplitOptions.RemoveEmptyEntries)
-        .Select(s => s.Trim() + ".") 
-        .ToList();
-    }
-  }
 }

@@ -1,0 +1,114 @@
+﻿@page "/ListadoUsuarios"
+@inject IServicioSesion ServicioSesion
+@inject IServicioAutorizacion ServicioAutorizacion
+@inject ListadoUsuarioUseCase ListarUsuariosUseCase
+@inject ActualizarPermisosUsuarioUseCase ActualizarPermisosUseCase
+@inject NavigationManager Navegador
+@using CentroEventos.Aplicacion.Entidades
+@using CentroEventos.Aplicacion.Enumerativos
+
+<h3>Administración de Permisos</h3>
+
+@if (!tieneAcceso)
+{
+    <p>Redirigiendo...</p>
+}
+else if (usuarios == null)
+{
+    <p>Cargando usuarios...</p>
+}
+else
+{
+    <select @onchange="AlSeleccionarUsuario">
+        <option disabled selected>-- Seleccionar usuario --</option>
+        @foreach (var u in usuarios)
+        {
+            <option value="@u.Id">@u.Nombre @u.Apellido (@u.CorreoElectronico)</option>
+        }
+    </select>
+
+    @if (usuarioSeleccionado != null)
+    {
+        <h4>Permisos de @usuarioSeleccionado.Nombre @usuarioSeleccionado.Apellido</h4>
+        @foreach (var tipo in Enum.GetValues<PermisoTipo>())
+        {
+            <label>
+                <input type="checkbox"
+                       checked="@permisosSeleccionados.Contains(tipo)"
+                       @onchange="() => AlternarPermiso(tipo)" />
+                @tipo
+            </label><br />
+        }
+        <button class="button" @onclick="GuardarPermisos">Guardar Cambios</button>
+    }
+}
+
+@code {
+    bool tieneAcceso = false;
+    bool yaRedirigio = false;
+
+    List<Usuario> usuarios = new();
+    Usuario? usuarioSeleccionado;
+    HashSet<PermisoTipo> permisosSeleccionados = new();
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (!ServicioSesion.EstaAutenticado || !ServicioAutorizacion.EsAdministrador(ServicioSesion.UsuarioActual!.Id))
+            {
+                if (!yaRedirigio)
+                {
+                    yaRedirigio = true;
+                    Navegador.NavigateTo("/");
+                }
+            }
+            else
+            {
+                tieneAcceso = true;
+                StateHasChanged();
+            }
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        usuarios = ListarUsuariosUseCase.Ejecutar();
+    }
+
+    void AlSeleccionarUsuario(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int idUsuario))
+        {
+            usuarioSeleccionado = usuarios.FirstOrDefault(u => u.Id == idUsuario);
+
+            permisosSeleccionados = usuarioSeleccionado?.Permisos
+                .Where(p => p.Permiso != null)
+                .Select(p => p.Permiso!.Tipo)
+                .ToHashSet() ?? new HashSet<PermisoTipo>();
+        }
+    }
+
+    void AlternarPermiso(PermisoTipo tipo)
+    {
+        if (permisosSeleccionados.Contains(tipo))
+            permisosSeleccionados.Remove(tipo);
+        else
+            permisosSeleccionados.Add(tipo);
+    }
+
+    void GuardarPermisos()
+    {
+        if (usuarioSeleccionado != null)
+        {
+            int idAdministrador = ServicioSesion.UsuarioActual!.Id;
+            var listaPermisos = permisosSeleccionados.ToList();
+
+            ActualizarPermisosUseCase.Ejecutar(idAdministrador, usuarioSeleccionado.Id, listaPermisos);
+
+            // Recargar usuario para actualizar permisos
+            usuarioSeleccionado = usuarios.First(u => u.Id == usuarioSeleccionado.Id);
+            StateHasChanged();
+        }
+    }
+}

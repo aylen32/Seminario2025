@@ -1,4 +1,3 @@
-using System;
 using CentroEventos.Aplicacion.Interfaces;
 using CentroEventos.Aplicacion.Entidades;
 using CentroEventos.Aplicacion.Excepciones;
@@ -9,13 +8,11 @@ public class AltaUsuarioUseCase
 {
     private readonly IRepositorioUsuario _repositorio;
     private readonly IValidadorUsuario _validador;
-    private readonly IServicioAutorizacion _autorizacion;
 
-    public AltaUsuarioUseCase(IRepositorioUsuario repositorio, IValidadorUsuario validador, IServicioAutorizacion autorizacion)
+    public AltaUsuarioUseCase(IRepositorioUsuario repositorio, IValidadorUsuario validador)
     {
         _repositorio = repositorio;
         _validador = validador;
-        _autorizacion = autorizacion;
     }
 
     public void Ejecutar(Usuario usuario)

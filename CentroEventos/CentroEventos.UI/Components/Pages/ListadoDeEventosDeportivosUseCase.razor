@@ -8,21 +8,20 @@
 @inject BajaEventoDeportivoUseCase BajaEventoDeportivoUseCase
 @inject NavigationManager Navegador
 
-<DialogoConfirmacion @ref="dialogo" OnConfirmado="Eliminar"/>
+<DialogoConfirmacion @ref="dialogo" OnConfirmado="ConfirmarEliminacionEvento"/>
 @if (!accesoPermitido)
 {
     <p>Redirigiendo...</p>
 }
-@if (_mensajeErrores.Count > 0)
+@if (_mensajesDeError.Count > 0)
 {
     <div class="alert alert-danger">
-        @foreach (var error in _mensajeErrores)
+        @foreach (var error in _mensajesDeError)
         {
             <div>@error</div>
         }
     </div>
 }
-
 
 <table class="table">
   <thead>
@@ -34,24 +33,25 @@
       <th>Duracion (horas)</th>
       <th>Cupo maximo</th>
       <th>Id de responsable</th>
+      <th>Acciones</th>
     </tr>
   </thead>
   <tbody>
-    @foreach (var even in _lista)
+    @foreach (var evento in _listaEventos)
     {
     <tr>
-      <td>@even.Id</td>
-      <td>@even.Nombre</td>
-      <td>@even.Descripcion</td>
-      <td>@even.FechaHoraInicio</td>
-      <td>@even.DuracionHoras</td>
-      <td>@even.CupoMaximo</td>
-      <td>@even.ResponsableId</td>
+      <td>@evento.Id</td>
+      <td>@evento.Nombre</td>
+      <td>@evento.Descripcion</td>
+      <td>@evento.FechaHoraInicio</td>
+      <td>@evento.DuracionHoras</td>
+      <td>@evento.CupoMaximo</td>
+      <td>@evento.ResponsableId</td>
       <td>
-        <button class="boton-personalizado-editar" @onclick="()=>ModificarEventoDeportivo(even)">
+        <button class="boton-personalizado-editar" @onclick="() => NavegarAEditarEvento(evento)">
           Editar
         </button>
-        <button class="boton-personalizado-eliminar" @onclick="()=>ConfirmarEliminacion(even)">
+        <button class="boton-personalizado-eliminar" @onclick="() => MostrarDialogoConfirmacion(evento)">
           Eliminar
         </button>
       </td>
@@ -61,62 +61,83 @@
 </table>
 
 @code {
-  private bool accesoPermitido;
+    private bool accesoPermitido;
     private bool redirigido = false;
+    private List<EventoDeportivo> _listaEventos = new List<EventoDeportivo>();
+    private List<string> _mensajesDeError = new List<string>();
+    private DialogoConfirmacion dialogo = null!;
+    private EventoDeportivo? _eventoSeleccionadoParaEliminar = null;
 
-    protected override Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnAfterRender(bool firstRender)
     {
-        if (firstRender && !Servicio.EstaAutenticado && !redirigido)
+        if (firstRender)
         {
-            redirigido = true;
-            Navegador.NavigateTo("/");
+            if (!Servicio.EstaAutenticado && !redirigido)
+            {
+                redirigido = true;
+                Navegador.NavigateTo("/");
+            }
+            else
+            {
+                accesoPermitido = true;
+                EstadoActualizar();
+            }
         }
-        else if (firstRender)
-        {
-            accesoPermitido = true;
-            StateHasChanged(); // actualiza el render
-        }
-
-        return Task.CompletedTask;
     }
-    List<EventoDeportivo> _lista = new List<EventoDeportivo>();
-    List<string> _mensajeErrores = new();
+
     protected override void OnInitialized()
     {
-       _lista = ListadoEventoDeportivoUseCase.Ejecutar();
+        CargarListaDeEventos();
     }
 
-    DialogoConfirmacion dialogo = null!;
-    EventoDeportivo? _EventoParaEliminar = null;
-
-   private void ConfirmarEliminacion(EventoDeportivo even)
-   {
-      _EventoParaEliminar = even;
-      dialogo.Mostrar($"¿Desea eliminar el evento {even.Nombre}, a cargo del responsable con Id: {even.ResponsableId}?");
-   }
-
-  private void Eliminar()
-  {
-    _mensajeErrores.Clear();
-
-    if (_EventoParaEliminar != null)
+    private void CargarListaDeEventos()
     {
+        _listaEventos = ListadoEventoDeportivoUseCase.Ejecutar();
+    }
+
+    private void MostrarDialogoConfirmacion(EventoDeportivo evento)
+    {
+        _eventoSeleccionadoParaEliminar = evento;
+        dialogo.Mostrar($"¿Desea eliminar el evento '{evento.Nombre}', a cargo del responsable con Id: {evento.ResponsableId}?");
+    }
+
+    private void ConfirmarEliminacionEvento()
+    {
+        _mensajesDeError.Clear();
+
+        if (_eventoSeleccionadoParaEliminar == null)
+            return;
+
         try
         {
-            BajaEventoDeportivoUseCase.Ejecutar(_EventoParaEliminar.Id, @Servicio.UsuarioActual!.Id);
-            _lista = ListadoEventoDeportivoUseCase.Ejecutar();
+            BajaEventoDeportivoUseCase.Ejecutar(_eventoSeleccionadoParaEliminar.Id, Servicio.UsuarioActual!.Id);
+            CargarListaDeEventos();
         }
         catch (OperacionInvalidaException ex)
         {
-            _mensajeErrores.Add(ex.Message);
+            _mensajesDeError.Add(ex.Message);
+        }
+        catch (EntidadNotFoundException ex)
+        {
+            _mensajesDeError.Add(ex.Message);
         }
         catch (Exception)
         {
-            _mensajeErrores.Add("Ocurrió un error inesperado al intentar eliminar el evento.");
+            _mensajesDeError.Add("Ocurrió un error inesperado al intentar eliminar el evento.");
+        }
+        finally
+        {
+            EstadoActualizar();
         }
     }
-  }
-   void ModificarEventoDeportivo(EventoDeportivo even){
-   Navegador.NavigateTo($"AgregarEventoDeportivo/{even.Id}"); 
-   }
+
+    private void NavegarAEditarEvento(EventoDeportivo evento)
+    {
+        Navegador.NavigateTo($"AgregarEventoDeportivo/{evento.Id}");
+    }
+
+    private void EstadoActualizar()
+    {
+        InvokeAsync(StateHasChanged);
+    }
 }

@@ -22,6 +22,13 @@ public class BajaUsuarioUseCase
         if (!_autorizacion.TienePermisoDeGestion(idSolicitante))
             throw new OperacionInvalidaException("No tiene permiso para eliminar usuarios.");
 
+        if (idUsuarioAEliminar == 1)
+            throw new OperacionInvalidaException("No se puede eliminar al administrador principal.");
+
+        var usuario = _repositorio.ObtenerUsuario(idUsuarioAEliminar);
+        if (usuario == null)
+            throw new EntidadNotFoundException("El usuario no existe.");
+
         _repositorio.EliminarUsuario(idUsuarioAEliminar);
     }
 }

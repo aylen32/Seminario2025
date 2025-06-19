@@ -30,6 +30,8 @@ builder.Services.AddScoped<IRepositorioUsuario, RepositorioUsuario>();
 
 // Casos de uso
 builder.Services.AddScoped<AltaUsuarioUseCase>();
+builder.Services.AddScoped<ActualizarPermisosUsuarioUseCase>();
+builder.Services.AddScoped<ListadoUsuarioUseCase>();
 
 builder.Services.AddScoped<AltaPersonaUseCase>();
 builder.Services.AddScoped<BajaPersonaUseCase>();

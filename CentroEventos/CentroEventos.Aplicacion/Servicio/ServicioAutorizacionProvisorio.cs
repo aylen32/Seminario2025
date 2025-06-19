@@ -33,7 +33,6 @@ namespace CentroEventos.Aplicacion.Servicio
     {
         var permisosGestion = new[]
         {
-            PermisoTipo.UsuarioAlta,
             PermisoTipo.UsuarioBaja,
             PermisoTipo.UsuarioModificacion,
             PermisoTipo.EventoAlta,

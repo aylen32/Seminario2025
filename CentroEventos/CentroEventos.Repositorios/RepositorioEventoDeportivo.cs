@@ -1,68 +1,68 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CentroEventos.Aplicacion.Excepciones;
 using CentroEventos.Aplicacion.Entidades;
 using CentroEventos.Aplicacion.Interfaces;
 
-namespace CentroEventos.Repositorios
+namespace CentroEventos.Repositorios;
+
+public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
 {
-    public class RepositorioEventoDeportivo : IRepositorioEventoDeportivo
+    private readonly CentroEventosContext _context;
+
+    public RepositorioEventoDeportivo(CentroEventosContext context)
     {
-        private readonly CentroEventosContext _context;
+        _context = context;
+    }
 
-        public RepositorioEventoDeportivo(CentroEventosContext context)
-        {
-            _context = context;
-        }
+    public bool ExisteEventoPorId(int id)
+    {
+        return _context.EventosDeportivos.Any(e => e.Id == id);
+    }
 
-        public bool ExisteEventoPorId(int id)
-        {
-            return _context.EventosDeportivos.Any(e => e.Id == id);
-        }
+    public EventoDeportivo? ObtenerEvento(int id)
+    {
+        return _context.EventosDeportivos.Find(id);
+    }
 
-        public EventoDeportivo? ObtenerEvento(int id)
-        {
-            return _context.EventosDeportivos.Find(id);
-        }
+    public List<EventoDeportivo> ObtenerTodos()
+    {
+        return _context.EventosDeportivos.ToList();
+    }
 
-        public List<EventoDeportivo> ObtenerTodos()
-        {
-            return _context.EventosDeportivos.ToList();
-        }
+    public void AgregarEvento(EventoDeportivo evento)
+    {
+        if (evento == null) 
+            return; 
 
-        public void AgregarEvento(EventoDeportivo evento)
-        {
-            if (evento == null)
-                throw new ArgumentNullException(nameof(evento));
-            
-            _context.EventosDeportivos.Add(evento);
-            _context.SaveChanges();
-        }
+        _context.EventosDeportivos.Add(evento);
+        _context.SaveChanges();
+    }
 
-        public void ModificarEvento(int id, string nombre, string descripcion, DateTime fecha, double duracion, int cupo)
-        {
-            var evento = _context.EventosDeportivos.Find(id);
-            if (evento == null)
-                throw new EntidadNotFoundException($"El evento con ID {id} no existe");
+    public bool ModificarEvento(int id, string nombre, string descripcion, DateTime fecha, double duracion, int cupo)
+    {
+        var evento = _context.EventosDeportivos.Find(id);
+        if (evento == null)
+            return false;
 
-            evento.Nombre = nombre;
-            evento.Descripcion = descripcion;
-            evento.FechaHoraInicio = fecha;
-            evento.DuracionHoras = duracion;
-            evento.CupoMaximo = cupo;
+        evento.Nombre = nombre;
+        evento.Descripcion = descripcion;
+        evento.FechaHoraInicio = fecha;
+        evento.DuracionHoras = duracion;
+        evento.CupoMaximo = cupo;
 
-            _context.SaveChanges();
-        }
+        _context.SaveChanges();
+        return true;
+    }
 
-        public void EliminarEvento(int id)
-        {
-            var evento = _context.EventosDeportivos.Find(id);
-            if (evento == null)
-                throw new EntidadNotFoundException($"El evento con ID {id} no existe");
+    public bool EliminarEvento(int id)
+    {
+        var evento = _context.EventosDeportivos.Find(id);
+        if (evento == null)
+            return false;
 
-            _context.EventosDeportivos.Remove(evento);
-            _context.SaveChanges();
-        }
+        _context.EventosDeportivos.Remove(evento);
+        _context.SaveChanges();
+        return true;
     }
 }

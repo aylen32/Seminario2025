@@ -1,7 +1,5 @@
-using System;
 using CentroEventos.Aplicacion.Interfaces;
 using CentroEventos.Aplicacion.Servicio;
-using CentroEventos.Aplicacion.Validaciones;
 using CentroEventos.Aplicacion.Enumerativos;
 using CentroEventos.Aplicacion.Excepciones;
 using CentroEventos.Aplicacion.Entidades;
@@ -15,8 +13,6 @@ public class AltaReservaUseCase
 
     public AltaReservaUseCase(
         IRepositorioReserva reservaRepo,
-        IRepositorioPersona personaRepo,
-        IRepositorioEventoDeportivo eventoRepo,
         IValidadorReserva validadorReserva,
         IServicioAutorizacion autorizacion)
     {

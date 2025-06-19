@@ -1,16 +1,26 @@
 ﻿@using CentroEventos.UI.Components
 @using CentroEventos.Aplicacion.Servicio
+@using CentroEventos.Aplicacion.Excepciones
 @page "/ListadoPersonas"
 @inject IServicioSesion Servicio
-@rendermode InteractiveServer
 @inject ListadoPersonasUseCase ListadoPersonasUseCase
 @inject BajaPersonaUseCase BajaPersonaUseCase
 @inject NavigationManager Navegador
+
 @if (!accesoPermitido)
 {
     <p>Redirigiendo...</p>
 }
-<DialogoConfirmacion @ref="dialogo" OnConfirmado="Eliminar"/>
+
+@if (!string.IsNullOrEmpty(mensajeError))
+{
+    <div class="alert alert-danger" role="alert">
+        @mensajeError
+    </div>
+}
+
+<DialogoConfirmacion @ref="dialogo" OnConfirmado="EliminarPersonaConfirmada"/>
+
 <table class="table">
   <thead>
     <tr>
@@ -20,6 +30,7 @@
       <th>DNI</th>
       <th>Telefono</th>
       <th>Email</th>
+      <th>Acciones</th>
     </tr>
   </thead>
   <tbody>
@@ -33,10 +44,10 @@
       <td>@per.Telefono</td>
       <td>@per.Mail</td>
       <td>
-        <button class="boton-personalizado-editar" @onclick="()=>ModificarPersona(per)">
+        <button class="boton-personalizado-editar" @onclick="() => NavegarAEditarPersona(per)">
           Editar
         </button>
-        <button class="boton-personalizado-eliminar" @onclick="()=>ConfirmarEliminacion(per)">
+        <button class="boton-personalizado-eliminar" @onclick="() => MostrarDialogoConfirmacionEliminacion(per)">
           Eliminar
         </button>
       </td>
@@ -49,48 +60,77 @@
     private bool accesoPermitido;
     private bool redirigido = false;
 
-    protected override Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender && !Servicio.EstaAutenticado && !redirigido)
-        {
-            redirigido = true;
-            Navegador.NavigateTo("/");
-        }
-        else if (firstRender)
-        {
-            accesoPermitido = true;
-            StateHasChanged(); // actualiza el render
-        }
-
-        return Task.CompletedTask;
-    }
+    private string? mensajeError;
 
     List<Persona> _lista = new List<Persona>();
-    protected override void OnInitialized()
+    DialogoConfirmacion dialogo = null!;
+    Persona? _personaParaEliminar = null;
+
+    protected override void OnAfterRender(bool primerRender)
     {
-       _lista = ListadoPersonasUseCase.Ejecutar();
+        if (primerRender)
+        {
+            if (!Servicio.EstaAutenticado && !redirigido)
+            {
+                redirigido = true;
+                Navegador.NavigateTo("/");
+            }
+            else
+            {
+                accesoPermitido = true;
+                StateHasChanged();
+            }
+        }
     }
 
-    DialogoConfirmacion dialogo = null!;
-    Persona? _PersonaParaEliminar = null;
+    protected override void OnInitialized()
+    {
+        ActualizarListadoPersonas();
+    }
 
-   private void ConfirmarEliminacion(Persona per)
-   {
-      _PersonaParaEliminar = per;
-      dialogo.Mostrar($"¿Desea eliminar a {per.Nombre} {per.Apellido}?");
-   }
+    private void ActualizarListadoPersonas()
+    {
+        _lista = ListadoPersonasUseCase.Ejecutar();
+    }
 
-   private void Eliminar()
-   {
-     if (_PersonaParaEliminar != null)
-     {
-       BajaPersonaUseCase.Ejecutar(_PersonaParaEliminar.Id, @Servicio.UsuarioActual!.Id);
-      _lista = ListadoPersonasUseCase.Ejecutar(); 
-     }
-   }
+    private void MostrarDialogoConfirmacionEliminacion(Persona persona)
+    {
+        _personaParaEliminar = persona;
+        mensajeError = null;
+        dialogo.Mostrar($"¿Desea eliminar a {persona.Nombre} {persona.Apellido}?");
+    }
 
-   void ModificarPersona(Persona per)
-   {
-     Navegador.NavigateTo($"AgregarPersona/{per.Id}");
-   }
+    private void EliminarPersonaConfirmada()
+    {
+        if (_personaParaEliminar == null)
+            return;
+
+        try
+        {
+            BajaPersonaUseCase.Ejecutar(_personaParaEliminar.Id);
+            mensajeError = null;
+            ActualizarListadoPersonas();
+            StateHasChanged();
+        }
+        catch (OperacionInvalidaException ex)
+        {
+            mensajeError = ex.Message;
+            StateHasChanged();
+        }
+        catch (EntidadNotFoundException ex)
+        {
+            mensajeError = ex.Message;
+            StateHasChanged();
+        }
+        catch (Exception)
+        {
+            mensajeError = "Ocurrió un error inesperado al intentar eliminar la persona.";
+            StateHasChanged();
+        }
+    }
+
+    private void NavegarAEditarPersona(Persona persona)
+    {
+        Navegador.NavigateTo($"AgregarPersona/{persona.Id}");
+    }
 }

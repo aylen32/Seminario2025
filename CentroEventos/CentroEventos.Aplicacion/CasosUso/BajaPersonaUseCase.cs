@@ -1,49 +1,49 @@
-using System;
-
-namespace CentroEventos.Aplicacion.CasosUso;
 using CentroEventos.Aplicacion.Interfaces;
-using CentroEventos.Aplicacion.Validaciones;
 using CentroEventos.Aplicacion.Excepciones;
-using CentroEventos.Aplicacion.Enumerativos;
-using CentroEventos.Aplicacion.Servicio;
-
+namespace CentroEventos.Aplicacion.CasosUso;
 public class BajaPersonaUseCase
 {
     private readonly IRepositorioPersona _repositorioPersona;
     private readonly IRepositorioReserva _repositorioReserva;
     private readonly IRepositorioEventoDeportivo _repositorioEventoDeportivo;
-    private readonly IServicioAutorizacion _autorizacion;
 
     public BajaPersonaUseCase(
         IRepositorioPersona repositorioPersona, 
         IRepositorioReserva repositorioReserva, 
-        IRepositorioEventoDeportivo repositorioEventoDeportivo, 
-        IServicioAutorizacion autorizacion)
+        IRepositorioEventoDeportivo repositorioEventoDeportivo)
     {
-        _repositorioReserva = repositorioReserva;
         _repositorioPersona = repositorioPersona;
+        _repositorioReserva = repositorioReserva;
         _repositorioEventoDeportivo = repositorioEventoDeportivo;
-        _autorizacion = autorizacion;
     }
 
-    public void Ejecutar(int idPersona, int idUsuario)
+    public void Ejecutar(int idPersona)
     {
-        if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.UsuarioBaja))
-            throw new OperacionInvalidaException("No tiene permiso para eliminar personas");
-
+        // Validar existencia
         if (!_repositorioPersona.ExistePersonaPorId(idPersona))
-            throw new EntidadNotFoundException($"La persona con ID {idPersona} no existe");
-
-        var eventos = _repositorioEventoDeportivo.ObtenerTodos();
-        foreach (var evento in eventos)
         {
-            if (evento.ResponsableId == idPersona)
-                throw new OperacionInvalidaException("No se puede eliminar la persona porque es responsable de al menos un evento");
+            throw new EntidadNotFoundException($"La persona con ID {idPersona} no existe.");
         }
 
-        var reservas = _repositorioReserva.ObtenerReservasPorPersona(idPersona);
-        if (reservas.Any())
-            throw new OperacionInvalidaException("No se puede eliminar la persona porque tiene reservas asociadas");
+        // Validar que no sea responsable de eventos
+        var esResponsable = _repositorioEventoDeportivo
+            .ObtenerTodos()
+            .Any(ev => ev.ResponsableId == idPersona);
+
+        if (esResponsable)
+        {
+            throw new OperacionInvalidaException("No se puede eliminar la persona porque es responsable de al menos un evento.");
+        }
+
+        // Validar que no tenga reservas asociadas
+        var tieneReservas = _repositorioReserva
+            .ObtenerReservasPorPersona(idPersona)
+            .Any();
+
+        if (tieneReservas)
+        {
+            throw new OperacionInvalidaException("No se puede eliminar la persona porque tiene reservas asociadas.");
+        }
 
         _repositorioPersona.EliminarPersona(idPersona);
     }

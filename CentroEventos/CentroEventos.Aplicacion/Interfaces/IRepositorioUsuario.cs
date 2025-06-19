@@ -18,5 +18,6 @@ namespace CentroEventos.Aplicacion.Interfaces
         void AsignarPermisos(int usuarioId, List<UsuarioPermiso> permisos);
         int CantidadUsuariosRegistrados();
         List<Permiso> ObtenerTodosLosPermisos();
+        List<Usuario> ObtenerTodosConPermisos();
     }
 }

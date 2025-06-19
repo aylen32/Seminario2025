@@ -7,119 +7,137 @@
 @inject ListadoReservaUseCase ListadoReservaUseCase
 @inject BajaReservaUseCase BajaReservaUseCase
 @inject NavigationManager Navegador
-@if (!accesoPermitido)
-{
-  <p>Redirigiendo...</p>
-}
-<DialogoConfirmacion @ref="dialogo" OnConfirmado="Eliminar"/>
 
-@if (_errores.Count > 0)
+@if (!_usuarioAutenticado)
 {
-    <ul>
-        @foreach (var error in _errores)
-        {
-            <li>@error</li>
-        }
-    </ul>
+    <p>Redirigiendo...</p>
+}
+
+<DialogoConfirmacion @ref="dialogoConfirmacion" OnConfirmado="EliminarReservaConfirmada" />
+
+@if (_mensajesError.Count > 0)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var mensaje in _mensajesError)
+            {
+                <li>@mensaje</li>
+            }
+        </ul>
+    </div>
 }
 
 <table class="table">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>id de la Persona</th>
-      <th>id del Evento Deportivo</th>
-      <th>Fecha de Reservacion</th>
-      <th>Estado</th>
-    </tr>
-  </thead>
-  <tbody>
-    @foreach (var reser in _lista)
-    {
-    <tr>
-      <td>@reser.Id</td>
-      <td>@reser.PersonaId</td>
-      <td>@reser.EventoDeportivoId</td>
-      <td>@reser.FechaAltaReserva</td>
-      <td>@reser.Estado</td>
-      <td>
-        <button class="boton-personalizado-editar" @onclick="()=>ModificarReserva(reser)">
-          Editar
-        </button>
-        <button class="boton-personalizado-eliminar" @onclick="()=>ConfirmarEliminacion(reser)">
-          Eliminar
-        </button>
-      </td>
-    </tr>
-    }
-  </tbody>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>ID Persona</th>
+            <th>ID Evento</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var reserva in _reservas)
+        {
+            <tr>
+                <td>@reserva.Id</td>
+                <td>@reserva.PersonaId</td>
+                <td>@reserva.EventoDeportivoId</td>
+                <td>@reserva.FechaAltaReserva</td>
+                <td>@reserva.Estado</td>
+                <td>
+                    <button class="boton-personalizado-editar" @onclick="@(() => IrAPaginaModificarReserva(reserva))">
+                        Editar
+                    </button>
+                    <button class="boton-personalizado-eliminar" @onclick="@(() => PedirConfirmacionEliminacion(reserva))">
+                        Eliminar
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>
 
 @code {
+    private bool _usuarioAutenticado;
+    private bool _yaRedirigido = false;
 
-    private bool accesoPermitido;
-    private bool redirigido = false;
+    private List<Reserva> _reservas = new();
+    private List<string> _mensajesError = new();
+    private DialogoConfirmacion dialogoConfirmacion = null!;
+    private Reserva? _reservaSeleccionada = null;
 
-    protected override Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnAfterRender(bool primerRender)
     {
-        if (firstRender && !Servicio.EstaAutenticado && !redirigido)
+        if (primerRender)
         {
-            redirigido = true;
-            Navegador.NavigateTo("/");
-        }
-        else if (firstRender)
-        {
-            accesoPermitido = true;
-            StateHasChanged(); // actualiza el render
-        }
-
-        return Task.CompletedTask;
-    }
-    List<Reserva> _lista = new List<Reserva>();
-    List<string> _errores = new();
-
-    protected override void OnInitialized()
-    {
-       _lista = ListadoReservaUseCase.Ejecutar();
-    }
-
-    DialogoConfirmacion dialogo = null!;
-    Reserva? _ReservaParaEliminar = null;
-
-   private void ConfirmarEliminacion(Reserva reser)
-   {
-      _ReservaParaEliminar = reser;
-      dialogo.Mostrar($"¿Desea eliminar la reserva hecha por la persona con Id: {reser.PersonaId}, en la fecha: {reser.FechaAltaReserva}?");
-   }
-
-  private void Eliminar()
-  {
-    _errores.Clear();
-
-    try
-    {
-        if (_ReservaParaEliminar != null)
-        {
-            BajaReservaUseCase.Ejecutar(_ReservaParaEliminar.Id, @Servicio.UsuarioActual!.Id);
-            _lista = ListadoReservaUseCase.Ejecutar();
+            if (!Servicio.EstaAutenticado && !_yaRedirigido)
+            {
+                _yaRedirigido = true;
+                Navegador.NavigateTo("/");
+            }
+            else
+            {
+                _usuarioAutenticado = true;
+                RefrescarListadoReservas();
+                StateHasChanged();
+            }
         }
     }
-    catch (OperacionInvalidaException ex)
-    {
-        _errores.Add(ex.Message);
-    }
-    catch (ValidacionException ex)
-    {
-        _errores = ex.Message
-            .Split(new string[] { ". " }, StringSplitOptions.RemoveEmptyEntries)
-            .Select(s => s.Trim() + ".")
-            .ToList();
-    }
-  }
-  
 
-   void ModificarReserva(Reserva reser)
-   {
-     Navegador.NavigateTo($"AgregarReserva/{reser.Id}");
-   }
+    private void RefrescarListadoReservas()
+    {
+        _reservas = ListadoReservaUseCase.Ejecutar();
+    }
+
+    private void PedirConfirmacionEliminacion(Reserva reserva)
+    {
+        _mensajesError.Clear();
+        _reservaSeleccionada = reserva;
+        dialogoConfirmacion.Mostrar($"¿Desea eliminar la reserva de la persona ID {reserva.PersonaId} para el evento ID {reserva.EventoDeportivoId}?");
+    }
+
+    private void EliminarReservaConfirmada()
+    {
+        _mensajesError.Clear();
+
+        try
+        {
+            if (_reservaSeleccionada != null)
+            {
+                BajaReservaUseCase.Ejecutar(_reservaSeleccionada.Id, Servicio.UsuarioActual!.Id);
+                RefrescarListadoReservas();
+            }
+        }
+        catch (FalloAutorizacionException ex)
+        {
+            _mensajesError.Add(ex.Message);
+        }
+        catch (OperacionInvalidaException ex)
+        {
+            _mensajesError.Add(ex.Message);
+        }
+        catch (EntidadNotFoundException ex)
+        {
+            _mensajesError.Add(ex.Message);
+        }
+        catch (ValidacionException ex)
+        {
+            _mensajesError = ex.Message
+                .Split(new[] { ". " }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(m => m.Trim() + ".")
+                .ToList();
+        }
+        catch (Exception ex)
+        {
+            _mensajesError.Add("Ocurrió un error inesperado: " + ex.Message);
+        }
+    }
+
+    private void IrAPaginaModificarReserva(Reserva reserva)
+    {
+        Navegador.NavigateTo($"AgregarReserva/{reserva.Id}");
+    }
 }

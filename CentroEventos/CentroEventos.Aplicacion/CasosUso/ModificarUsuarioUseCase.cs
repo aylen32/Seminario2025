@@ -1,12 +1,8 @@
-using System;
-
-namespace CentroEventos.Aplicacion.CasosUso;
-
 using CentroEventos.Aplicacion.Entidades;
-using CentroEventos.Aplicacion.Enumerativos;
 using CentroEventos.Aplicacion.Interfaces;
 using CentroEventos.Aplicacion.Servicio;
 using CentroEventos.Aplicacion.Excepciones;
+namespace CentroEventos.Aplicacion.CasosUso;
 public class ModificarUsuarioUseCase
 {
     private readonly IRepositorioUsuario _repositorio;

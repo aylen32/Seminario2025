@@ -2,37 +2,41 @@
 @using CentroEventos.Aplicacion.Servicio
 @page "/AgregarReserva/{Id:int?}"
 @rendermode InteractiveServer
+
 @inject NavigationManager Navegador;
 @inject IServicioSesion Servicio
 @inject ModificarReservaUseCase ModificarReservaUseCase
 @inject ObtenerReservaUseCase ObtenerReservaUseCase
 @inject AltaReservaUseCase AltaReservaUseCase
-@if(!accesoPermitido){
-  <p>
-    Redirigiendo...
-  </p>
-}
-@if (_mensajeErrores?.Count > 0)
+
+@if (!_usuarioAutenticado)
 {
-    <ul>
-        @foreach (var error in _mensajeErrores)
-        {
-            <li>@error</li>
-        }
-    </ul>
+    <p>Redirigiendo...</p>
 }
+
+@if (_errores.Count > 0)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in _errores)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}
+
 <style>
-  h3{
-    color:darkblue;
-  }
+  h3 { color: darkblue; }
 </style>
+
 @if (_esNuevaReserva)
 {
-  <h3>Agregando una Nueva Reserva</h3>
+    <h3>Agregando una Nueva Reserva</h3>
 }
 else
 {
-  <h3>Modificando la Reserva de la fecha: "@_reserva.FechaAltaReserva"</h3>
+    <h3>Modificando la Reserva creada el: @_reserva.FechaAltaReserva</h3>
 }
 
 <div class="mb-3">
@@ -47,7 +51,7 @@ else
 
 <div class="mb-3">
     <label>Fecha de la Reserva:</label>
-    <input placeholder="Fecha de la Reserva" @bind="_reserva.FechaAltaReserva" class="form-control" readonly="@(!_esNuevaReserva)" />
+    <input placeholder="Fecha de la Reserva" @bind="_reserva.FechaAltaReserva" class="form-control" readonly />
 </div>
 
 <div class="mb-3">
@@ -66,75 +70,92 @@ else
     }
 </div>
 
-<button class="btn btn-primary" @onclick="Aceptar">
+<button class="btn btn-primary" @onclick="AceptarFormulario">
     <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 4px;">add_circle</span>
     Aceptar
 </button>
 
-
 @code {
-    
-    private bool accesoPermitido;
-    private bool redirigido = false;
+    private bool _usuarioAutenticado;
+    private bool _redirigido = false;
 
-    protected override Task OnAfterRenderAsync(bool firstRender)
+    Reserva _reserva = Reserva.CrearNueva();
+    [Parameter] public int? Id { get; set; }
+
+    bool _esNuevaReserva = true;
+    List<string> _errores = new();
+
+    protected override void OnAfterRender(bool primerRender)
     {
-        if (firstRender && !Servicio.EstaAutenticado && !redirigido)
+        if (primerRender)
         {
-            redirigido = true;
-            Navegador.NavigateTo("/");
+            if (!Servicio.EstaAutenticado && !_redirigido)
+            {
+                _redirigido = true;
+                Navegador.NavigateTo("/");
+            }
+            else
+            {
+                _usuarioAutenticado = true;
+                CargarReservaSiExiste();
+                StateHasChanged();
+            }
         }
-        else if (firstRender)
-        {
-            accesoPermitido = true;
-            StateHasChanged(); // actualiza el render
-        }
-
-        return Task.CompletedTask;
     }
-  Reserva _reserva = Reserva.CrearNueva();
-  [Parameter] public int? Id { get; set; }
-  bool _esNuevaReserva = true;
-  List<string> _mensajeErrores = new();
 
-  protected override void OnParametersSet()
-  {
-    if (Id != null)
+    private void CargarReservaSiExiste()
     {
-      var reser_hallada = ObtenerReservaUseCase.Ejecutar(Id.Value, @Servicio.UsuarioActual!.Id);
-      if (reser_hallada != null)
-      {
-        _reserva = reser_hallada;
-        _esNuevaReserva = false;
-      }
+        if (Id != null)
+        {
+            var encontrada = ObtenerReservaUseCase.Ejecutar(Id.Value);
+            if (encontrada != null)
+            {
+                _reserva = encontrada;
+                _esNuevaReserva = false;
+            }
+        }
     }
-  }
 
-  void Aceptar()
-  {
-      _mensajeErrores.Clear();
-      try
-      {
-        if (_esNuevaReserva)
-          AltaReservaUseCase.Ejecutar(_reserva, @Servicio.UsuarioActual!.Id);
-        else
-          ModificarReservaUseCase.Ejecutar(_reserva, @Servicio.UsuarioActual!.Id);
+    private void AceptarFormulario()
+    {
+        _errores.Clear();
 
-        _reserva = Reserva.CrearNueva();
-        StateHasChanged();
-        Navegador.NavigateTo("ListadoReservas");
-      }
-      catch (ValidacionException ex)
-      {
-        var msg = ex.Message;
-         _mensajeErrores = msg
-        .Split(new string[] { ". " }, StringSplitOptions.RemoveEmptyEntries)
-        .Select(s => s.Trim() + ".")
-        .ToList();
-      }
-      catch (OperacionInvalidaException ex)
-      {
-         _mensajeErrores.Add(ex.Message);
-      }
-  }
+        try
+        {
+            if (_esNuevaReserva)
+            {
+                AltaReservaUseCase.Ejecutar(_reserva, Servicio.UsuarioActual!.Id);
+            }
+            else
+            {
+                ModificarReservaUseCase.Ejecutar(_reserva, Servicio.UsuarioActual!.Id);
+            }
+
+            _reserva = Reserva.CrearNueva();
+            Navegador.NavigateTo("ListadoReservas");
+        }
+        catch (ValidacionException ex)
+        {
+            _errores = ex.Message
+                .Split(new[] { ". " }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(m => m.Trim() + ".")
+                .ToList();
+        }
+        catch (OperacionInvalidaException ex)
+        {
+            _errores.Add(ex.Message);
+        }
+        catch (FalloAutorizacionException ex)
+        {
+            _errores.Add(ex.Message);
+        }
+        catch (EntidadNotFoundException ex)
+        {
+            _errores.Add(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _errores.Add("Error inesperado: " + ex.Message);
+        }
+    }
 }

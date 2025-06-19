@@ -4,16 +4,16 @@ using CentroEventos.Aplicacion.Interfaces;
 
 namespace CentroEventos.Aplicacion.CasosUso;
 
-public class ListarUsuarioUseCase
+public class ListadoUsuarioUseCase
 {
     private readonly IRepositorioUsuario _repositorioUsuario;
-    public ListarUsuarioUseCase(IRepositorioUsuario repositorioUsuario)
+    public ListadoUsuarioUseCase(IRepositorioUsuario repositorioUsuario)
     {
         _repositorioUsuario = repositorioUsuario;
     }
 
     public List<Usuario> Ejecutar()
     {
-        return _repositorioUsuario.ObtenerTodos();
+        return _repositorioUsuario.ObtenerTodosConPermisos();
     }
 }
