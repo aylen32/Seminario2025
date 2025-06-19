@@ -32,7 +32,8 @@ builder.Services.AddScoped<IRepositorioUsuario, RepositorioUsuario>();
 builder.Services.AddScoped<AltaUsuarioUseCase>();
 builder.Services.AddScoped<ActualizarPermisosUsuarioUseCase>();
 builder.Services.AddScoped<ListadoUsuarioUseCase>();
-
+builder.Services.AddScoped<ModificarUsuarioUseCase>();
+builder.Services.AddScoped<BajaUsuarioUseCase>();
 builder.Services.AddScoped<AltaPersonaUseCase>();
 builder.Services.AddScoped<BajaPersonaUseCase>();
 builder.Services.AddScoped<ModificarPersonaUseCase>();
@@ -53,7 +54,7 @@ builder.Services.AddScoped<ObtenerEventoDeportivoUseCase>();
 
 builder.Services.AddScoped<ListarEventosConCupoDisponibleUseCase>();
 builder.Services.AddScoped<ListarAsistenciaAEventoUseCase>();
-builder.Services.AddScoped<ModificarUsuarioUseCase>();
+
 
 //Servicio Autorizacion y sesion
 builder.Services.AddScoped<IServicioAutorizacion, ServicioAutorizacionProvisorio>();

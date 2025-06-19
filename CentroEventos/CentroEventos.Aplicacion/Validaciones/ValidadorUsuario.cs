@@ -31,6 +31,10 @@ public class ValidadorUsuario : IValidadorUsuario
         {
             _error += "El Email no puede estar vacío. ";
         }
+        if (string.IsNullOrWhiteSpace(usuario.HashContrasenia))
+        {
+            _error += "La constraseña no puede estar en blanco. ";
+        }
         if (!string.IsNullOrWhiteSpace(_error))
             _error = _error.TrimEnd('.', ' ');
 

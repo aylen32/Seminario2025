@@ -1,0 +1,95 @@
+ 
+        .card-container {
+            background: var(--light-bg);
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .main-title {
+            color: darkblue;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid;
+        }
+        
+        
+        
+        .sub-title {
+            color: lightseagreen;
+            font-weight: 500;
+            margin: 1rem 0 0.5rem;
+        }
+        
+        .user-select {
+            background-color: white;
+            border: 2px solid var(--primary-light);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+        }
+        
+        
+     
+        
+        .permissions-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .permission-item {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .permission-item:last-child {
+            border-bottom: none;
+        }
+        
+        .loading-message {
+            color: var(--primary-light);
+            font-style: italic;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .password-field {
+            position: relative;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 38px;
+            cursor: pointer;
+            color: #777;
+        }
+        
+        .status-message {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        
+        .status-loading {
+            background-color: #e6f7ff;
+            color: var(--primary-light);
+        }
+        
+        .status-error {
+            background-color: #fff2f0;
+            color: #ff4d4f;
+        }

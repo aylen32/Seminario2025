@@ -105,6 +105,7 @@
 
     void RegistrarUsuario()
     {
+    
       var hash = SHA256Helper.ComputeSHA256(modeloRegistro.Contrasenia);
 
       var nuevo = Usuario.CrearNuevo();
@@ -114,8 +115,7 @@
       nuevo.HashContrasenia = hash;
       nuevo.Permisos = new List<UsuarioPermiso>();
 
-      if (!Validador.Validar(nuevo))
-        return;
+      
 
         AltaUsuarioUseCase.Ejecutar(nuevo);
         Sesion.IniciarSesion(nuevo);

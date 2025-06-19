@@ -1,4 +1,11 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using CentroEventos.Aplicacion.Servicio
+@using CentroEventos.Aplicacion.Entidades
+@using CentroEventos.Aplicacion.Enumerativos
+@using System.Linq
+@inject IServicioSesion Servicio
+@inject IRepositorioUsuario RepositorioUsuario
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="/home">CentroEventos.UI</a>
     </div>
@@ -49,12 +56,19 @@
             <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Agregar Evento Deportivo
           </NavLink>
         </div>
-
-        <div class="nav-item px-3">
-          <NavLink class="nav-link" href="ListadoUsuarios">
-            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Listado de Usuarios
-          </NavLink>
-        </div>
+ 
+        @if(@Servicio.UsuarioActual!=null){
+           @if ((@Servicio.UsuarioActual.Permisos.Any(up=> up.Permiso?.Tipo==PermisoTipo.UsuarioModificacion))||  (@Servicio.UsuarioActual!.Permisos.Any(up => up.Permiso?.Tipo==PermisoTipo.UsuarioBaja))){
+           <div class="nav-item px-3">
+              <NavLink class="nav-link" href="ListadoUsuarios">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Listado de Usuarios
+              </NavLink>
+           </div>
+          }
+       
+        }
+       
 
     </nav>
 </div>
+

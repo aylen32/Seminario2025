@@ -1,6 +1,9 @@
 @page "/perfil"
 @using CentroEventos.Aplicacion.Servicio
+@using CentroEventos.Aplicacion.Hash
+@using CentroEventos.Repositorios
 @inject IServicioSesion Servicio
+@inject IRepositorioUsuario repositorioUsuario
 @inject NavigationManager Navegador
 @inject IServicioSesion Servicio
 @inject ModificarUsuarioUseCase ModificarUsuarioUseCase
@@ -44,7 +47,10 @@
             <label>Correo electrónico:</label>
             <InputText class="form-control" @bind-Value="modelo.CorreoElectronico" />
         </div>
-
+        <div class="mb-3">
+            <label>Contraseña:</label>
+            <input placeholder="Nueva Contraseña"class="form-control"@bind="nuevaCon">
+        </div>
         <button class="btn btn-primary" type="submit">Guardar cambios</button>
     </EditForm>
 }
@@ -55,10 +61,10 @@ else
 <br>
 <h4>Permisos asignados</h4>
 
-@if (Servicio.UsuarioActual?.Permisos?.Count > 0)
+@if (modelo?.Permisos?.Count > 0)
 {
     <ul class="list-unstyled">
-        @foreach (var permiso in Servicio.UsuarioActual.Permisos)
+        @foreach (var permiso in modelo.Permisos)
         {
             <li class="mb-1">
                 <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 6px;">
@@ -90,17 +96,26 @@ else
         else if (firstRender)
         {
             accesoPermitido = true;
-            StateHasChanged(); // actualiza el render
+            StateHasChanged(); // actualiza el render(?)
         }
 
         return Task.CompletedTask;
     }
     private Usuario? modelo;
+    private string? nuevaCon;
 
     protected override void OnInitialized()
     {
-        // Clonamos el usuario actual para editar sobre la copia
-        if (Servicio.UsuarioActual is not null)
+        
+       
+        var actualizado = repositorioUsuario.ObtenerUsuario(Servicio.UsuarioActual!.Id);
+        if (actualizado != null)
+        {
+            Servicio.IniciarSesion(actualizado);
+        }
+        
+          
+        if (actualizado is not null)
         {
             modelo = Usuario.CrearNuevo();
             {
@@ -116,11 +131,16 @@ else
 
     private void GuardarCambios()
     {
+        var hash="";
         if (modelo is not null)
         {
+            if(nuevaCon is not null){
+                hash = SHA256Helper.ComputeSHA256(nuevaCon);
+               modelo.HashContrasenia=hash;
+            }
             ModificarUsuarioUseCase.Ejecutar(modelo, Servicio.UsuarioActual!.Id);
-            Servicio.IniciarSesion(modelo); // Actualiza la sesión
-            Navegador.NavigateTo("/home", forceLoad: false); // o quedate en perfil si querés
+            Servicio.IniciarSesion(modelo);
+            Navegador.NavigateTo("/home", forceLoad: false); 
         }
     }
 }
