@@ -10,55 +10,74 @@
 
 @if (!_usuarioAutenticado)
 {
-    <p>Redirigiendo...</p>
+    <div class="status-loading">
+        <p>Redirigiendo...</p>
+    </div>
 }
 
 <DialogoConfirmacion @ref="dialogoConfirmacion" OnConfirmado="EliminarReservaConfirmada" />
 
 @if (_mensajesError.Count > 0)
 {
-    <div class="alert alert-danger">
+    <div class="error-list">
         <ul>
             @foreach (var mensaje in _mensajesError)
             {
-                <li>@mensaje</li>
+                <li class="error-item">@mensaje</li>
             }
         </ul>
     </div>
 }
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>ID Persona</th>
-            <th>ID Evento</th>
-            <th>Fecha</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var reserva in _reservas)
-        {
-            <tr>
-                <td>@reserva.Id</td>
-                <td>@reserva.PersonaId</td>
-                <td>@reserva.EventoDeportivoId</td>
-                <td>@reserva.FechaAltaReserva</td>
-                <td>@reserva.Estado</td>
-                <td>
-                    <button class="boton-personalizado-editar" @onclick="@(() => IrAPaginaModificarReserva(reserva))">
-                        Editar
-                    </button>
-                    <button class="boton-personalizado-eliminar" @onclick="@(() => PedirConfirmacionEliminacion(reserva))">
-                        Eliminar
-                    </button>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="reservas-container">
+    <div class="reservas-header">
+        <h1>Listado de Reservas</h1>
+        <p>Gestión de reservas realizadas por usuarios</p>
+    </div>
+
+    <div class="reservas-card">
+        <div class="table-container">
+            <table class="reservas-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>ID Persona</th>
+                        <th>ID Evento</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var reserva in _reservas)
+                    {
+                        <tr>
+                            <td>@reserva.Id</td>
+                            <td>@reserva.PersonaId</td>
+                            <td>@reserva.EventoDeportivoId</td>
+                            <td>@reserva.FechaAltaReserva.ToString("dd/MM/yyyy")</td>
+                            <td>@reserva.Estado</td>
+                            <td class="actions-cell">
+                                <button class="action-btn edit-btn" @onclick="@(() => IrAPaginaModificarReserva(reserva))">
+                                    Editar
+                                </button>
+                                <button class="action-btn delete-btn" @onclick="@(() => PedirConfirmacionEliminacion(reserva))">
+                                    Eliminar
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                    @if (_reservas.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="6" class="no-reservas">No hay reservas registradas.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 @code {
     private bool _usuarioAutenticado;

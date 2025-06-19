@@ -1,33 +1,222 @@
-thead tr {
-  background-color: rgb(15, 143, 157) !important;
-  color: white !important;
+.reservas-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-table {
-  border: 2px solid rgba(0, 0, 0, 0.548) !important;
+.reservas-header {
+    background: linear-gradient(135deg, #0F8F9D, #0a6c76);
+    color: white;
+    padding: 20px;
+    border-radius: 10px 10px 0 0;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.table td,
-.table th {
-    border: 1px solid black;
+.reservas-header h1 {
+    font-size: 2.2rem;
+    margin-bottom: 10px;
 }
 
-.boton-personalizado-editar {
-  background-color: #3728a7;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-right: 50px; /* separación hacia la derecha */
+.reservas-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
 }
 
-.boton-personalizado-eliminar {
-  background-color: #b80718;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-right: -120px;
+.reservas-card {
+    background: white;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+.table-container {
+    overflow-x: auto;
+    padding: 15px;
+}
+
+.reservas-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 1000px;
+}
+
+.reservas-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.reservas-table thead tr {
+    background: #0F8F9D;
+    color: white;
+    font-weight: 600;
+    font-size: 1.05rem;
+}
+
+.reservas-table th {
+    padding: 16px 15px;
+    text-align: left;
+    position: relative;
+}
+
+.reservas-table th:after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 60%;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.reservas-table th:last-child:after {
+    display: none;
+}
+
+.reservas-table tbody tr {
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #E0E0E0;
+}
+
+.reservas-table tbody tr:nth-child(even) {
+    background-color: #F8F9FA;
+}
+
+.reservas-table tbody tr:hover {
+    background-color: rgba(15, 143, 157, 0.05);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+}
+
+.reservas-table td {
+    padding: 14px 15px;
+    color: #333333;
+    position: relative;
+}
+
+.reservas-table td:after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 60%;
+    width: 1px;
+    background: #E0E0E0;
+}
+
+.reservas-table td:last-child:after {
+    display: none;
+}
+
+.actions-cell {
+    display: flex;
+    gap: 10px;
+}
+
+.action-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.action-btn:active {
+    transform: translateY(0);
+}
+
+.edit-btn {
+    background-color: #2C3E50;
+    color: white;
+}
+
+.edit-btn:hover {
+    background-color: #1a2530;
+}
+
+.delete-btn {
+    background-color: #E74C3C;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #c0392b;
+}
+
+.status-loading {
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    font-weight: 500;
+    background-color: rgba(52, 152, 219, 0.15);
+    color: #2C3E50;
+    text-align: center;
+}
+
+.error-list {
+    padding: 15px;
+    background-color: rgba(231, 76, 60, 0.1);
+    border-radius: 8px;
+    margin: 15px 0;
+    border-left: 4px solid #E74C3C;
+}
+
+.error-item {
+    padding: 8px 0;
+    color: #c0392b;
+}
+
+.no-reservas {
+    text-align: center;
+    padding: 20px;
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .reservas-container {
+        padding: 10px;
+    }
+    
+    .reservas-header {
+        padding: 15px;
+    }
+    
+    .reservas-header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .action-btn {
+        min-width: 70px;
+        padding: 6px 12px;
+        font-size: 0.9rem;
+    }
+    
+    .table-container {
+        padding: 5px;
+    }
+    
+    .reservas-table th,
+    .reservas-table td {
+        padding: 10px 8px;
+        font-size: 0.9rem;
+    }
 }
