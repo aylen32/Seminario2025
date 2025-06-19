@@ -1,0 +1,139 @@
+body {
+    background: #2A7B9B;
+background: radial-gradient(circle, rgba(42, 123, 155, 1) 0%, rgba(87, 130, 199, 1) 50%, rgba(83, 237, 227, 1) 100%);
+    font-family: "Ubuntu", helvetica;
+}
+.fila-inputs {
+    display: flex;
+    gap: 1rem; /* espacio entre los campos */
+    flex-wrap: wrap; 
+}
+
+.fila-inputs .contenedor-input {
+    flex: 1 1 45%; /* cada input ocupa ~45% del ancho del contenedor */
+}
+
+.contenedor-formularios {
+    background:rgb(255, 255, 255);
+    padding: 30px 60px;
+    max-width: 800px;
+    min-height: 400px;
+    margin: 40px auto;
+    border-radius: 4px;
+    box-shadow: 0 4px 10px 4px rgba(19, 35, 47, 0.3);
+      display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.contenedor-tabs {
+    list-style: none;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.titulo  {
+     font-size: 5.5rem;
+    font-weight: bold;
+    color: #ffffff; /* Color oscuro */
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 1.5rem;
+    position: relative;
+    padding-bottom: 0.5rem;
+    text-align: center;
+}
+
+.titulo-destacado::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(to right, #3498db, #2ecc71);
+    border-radius: 2px;
+}
+.contenedor-tabs li {
+    width: 60%;
+    text-align: center;
+}
+
+.contenedor-tabs li a {
+    display: block;
+    padding: 15px;
+    background: rgba(206, 231, 227, 0.25);
+    color: #a0b3b0;
+    font-size: 20px;
+    text-decoration: none;
+    transition: 0.5s ease;
+   
+}
+
+.contenedor-tabs .active a {
+    background:royalblue;
+    color: white;
+}
+
+.contenedor-tabs li a:hover {
+    background: #159c94;
+    color: white;
+}
+
+.contenedor-input {
+    position: relative;
+    margin-bottom: 40px;
+}
+.contenedor-input2 {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+input {
+    font-size: 22px;
+    width: 100%;
+    padding: 5px 10px;
+    background: none;
+    border: 1px solid #a0b3b0;
+    border-radius: 5px;
+    color: rgb(0, 0, 0);
+    transition: 0.5s ease;
+}
+.logout-link {
+    background: none;
+    border: none;
+    color: #0366d6;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    font: inherit; /* Hereda la fuente del contenedor */
+}
+
+.logout-link:hover {
+    text-decoration: underline;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+input:focus {
+    outline: none;
+    border-color: #1ab188;
+}
+
+.button {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    white-space: nowrap;   /* ❗ Evita que el texto se divida en dos líneas */
+    text-align: center;
+    font-size: 1.2rem; 
+    font-size: 2rem;
+    background:royalblue;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.5s ease;
+}
+
+.button:hover {
+    background: #159c94;
+}

@@ -8,59 +8,82 @@
 @inject BajaEventoDeportivoUseCase BajaEventoDeportivoUseCase
 @inject NavigationManager Navegador
 
-<DialogoConfirmacion @ref="dialogo" OnConfirmado="ConfirmarEliminacionEvento"/>
-@if (!accesoPermitido)
-{
-    <p>Redirigiendo...</p>
-}
-@if (_mensajesDeError.Count > 0)
-{
-    <div class="alert alert-danger">
-        @foreach (var error in _mensajesDeError)
-        {
-            <div>@error</div>
-        }
-    </div>
-}
-
-<table class="table">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Nombre</th>
-      <th>Descripcion</th> 
-      <th>Fecha y Hora de inicio</th>
-      <th>Duracion (horas)</th>
-      <th>Cupo maximo</th>
-      <th>Id de responsable</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    @foreach (var evento in _listaEventos)
+<div class="eventos-container">
+    <DialogoConfirmacion @ref="dialogo" OnConfirmado="ConfirmarEliminacionEvento"/>
+    
+    @if (!accesoPermitido)
     {
-    <tr>
-      <td>@evento.Id</td>
-      <td>@evento.Nombre</td>
-      <td>@evento.Descripcion</td>
-      <td>@evento.FechaHoraInicio</td>
-      <td>@evento.DuracionHoras</td>
-      <td>@evento.CupoMaximo</td>
-      <td>@evento.ResponsableId</td>
-      <td>
-        <button class="boton-personalizado-editar" @onclick="() => NavegarAEditarEvento(evento)">
-          Editar
-        </button>
-        <button class="boton-personalizado-eliminar" @onclick="() => MostrarDialogoConfirmacion(evento)">
-          Eliminar
-        </button>
-      </td>
-    </tr>
+        <p class="status-loading">Redirigiendo...</p>
     }
-  </tbody>
-</table>
+    
+    <div class="eventos-header">
+        <h1>Listado de Eventos Deportivos</h1>
+        <p>Administra todos los eventos deportivos del sistema</p>
+    </div>
+    
+    @if (_mensajesDeError.Count > 0)
+    {
+        <div class="error-list">
+            @foreach (var error in _mensajesDeError)
+            {
+                <div class="error-item">@error</div>
+            }
+        </div>
+    }
+
+    <div class="eventos-card">
+        <div class="table-container">
+            <table class="eventos-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Fecha y Hora de inicio</th>
+                        <th>Duración (horas)</th>
+                        <th>Cupo máximo</th>
+                        <th>ID Responsable</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (_listaEventos.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="8" class="no-events">No se encontraron eventos deportivos</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var evento in _listaEventos)
+                        {
+                            <tr>
+                                <td>@evento.Id</td>
+                                <td>@evento.Nombre</td>
+                                <td>@evento.Descripcion</td>
+                                <td>@evento.FechaHoraInicio.ToString("g")</td>
+                                <td>@evento.DuracionHoras</td>
+                                <td>@evento.CupoMaximo</td>
+                                <td>@evento.ResponsableId</td>
+                                <td class="actions-cell">
+                                    <button class="action-btn edit-btn" @onclick="() => NavegarAEditarEvento(evento)">
+                                        Editar
+                                    </button>
+                                    <button class="action-btn delete-btn" @onclick="() => MostrarDialogoConfirmacion(evento)">
+                                        Eliminar
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 @code {
+    // El código C# permanece igual que en tu componente original
     private bool accesoPermitido;
     private bool redirigido = false;
     private List<EventoDeportivo> _listaEventos = new List<EventoDeportivo>();
