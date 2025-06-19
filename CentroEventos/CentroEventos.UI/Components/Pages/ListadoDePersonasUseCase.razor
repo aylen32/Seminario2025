@@ -21,40 +21,60 @@
 
 <DialogoConfirmacion @ref="dialogo" OnConfirmado="EliminarPersonaConfirmada"/>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Nombre</th>
-      <th>Apellido</th>
-      <th>DNI</th>
-      <th>Telefono</th>
-      <th>Email</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    @foreach (var per in _lista)
-    {
-    <tr>
-      <td>@per.Id</td>
-      <td>@per.Nombre</td>
-      <td>@per.Apellido</td>
-      <td>@per.DNI</td>
-      <td>@per.Telefono</td>
-      <td>@per.Mail</td>
-      <td>
-        <button class="boton-personalizado-editar" @onclick="() => NavegarAEditarPersona(per)">
-          Editar
-        </button>
-        <button class="boton-personalizado-eliminar" @onclick="() => MostrarDialogoConfirmacionEliminacion(per)">
-          Eliminar
-        </button>
-      </td>
-    </tr>
-    }
-  </tbody>
-</table>
+<div class="personas-container">
+  <div class="personas-header">
+    <h1>Listado de Personas</h1>
+    <p>Gestión de personas registradas</p>
+  </div>
+
+  <div class="personas-card">
+    <div class="table-container">
+      <table class="personas-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>DNI</th>
+            <th>Telefono</th>
+            <th>Email</th>
+            <th>Acciones</th>
+          </tr>
+        </thead> 
+        <tbody>
+        @if (_lista.Count == 0)
+        {
+          <tr>
+            <td colspan="8" class="no-personas">No hay personas registradas</td>
+          </tr>
+        }
+        else
+        {
+          @foreach (var per in _lista)
+          {
+          <tr>
+            <td>@per.Id</td>
+            <td>@per.Nombre</td>
+            <td>@per.Apellido</td>
+            <td>@per.DNI</td>
+            <td>@per.Telefono</td>
+            <td>@per.Mail</td>
+            <td class="actions-cell">
+              <button class="action-btn edit-btn" @onclick="() => NavegarAEditarPersona(per)">
+                Editar
+              </button>
+              <button class="action-btn delete-btn" @onclick="() => MostrarDialogoConfirmacionEliminacion(per)">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+          }
+        }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
 @code {
     private bool accesoPermitido;

@@ -9,6 +9,15 @@
 @using CentroEventos.Aplicacion.Entidades
 @using CentroEventos.Aplicacion.Enumerativos
 @using CentroEventos.Aplicacion.Hash
+@using CentroEventos.Aplicacion.Excepciones
+
+@if (!string.IsNullOrEmpty(mensajeError))
+{
+    <div class="alert alert-danger text-center">
+        @mensajeError
+    </div>
+}
+
 <div class="container py-4">
     <div class="header text-center">
         <h1>Administración de Usuarios</h1>
@@ -123,6 +132,7 @@
     List<Usuario> usuarios = new();
     Usuario? usuarioSeleccionado;
     HashSet<PermisoTipo> permisosSeleccionados = new();
+    private string? mensajeError;
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -190,31 +200,38 @@
             // Mostrar mensaje de éxito o actualizar UI según sea necesario
         }
     }
-     private async Task EliminarUsuario()
+    private void EliminarUsuario()
     {
-        if (usuarioSeleccionado == null || ServicioSesion.UsuarioActual == null)
-            return;
+      mensajeError = null;
 
-        try
-        {
-            BajaUsuarioUseCase.Ejecutar(usuarioSeleccionado.Id, @ServicioSesion.UsuarioActual.Id);
-            
-            usuarios = ListarUsuariosUseCase.Ejecutar();
-            
-            
-            usuarioSeleccionado = null;
-            modelo = null;
-            nuevaCon = null;
-            permisosSeleccionados.Clear();
-           
-            
-        }
-        catch (Exception ex)
-        {
-            
-          
-        }
+      if (usuarioSeleccionado == null || ServicioSesion.UsuarioActual == null)
+        return;
+
+      try
+      {
+        BajaUsuarioUseCase.Ejecutar(usuarioSeleccionado.Id, ServicioSesion.UsuarioActual.Id);
+
+        usuarios = ListarUsuariosUseCase.Ejecutar();
+
+        usuarioSeleccionado = null;
+        modelo = null;
+        nuevaCon = null;
+        permisosSeleccionados.Clear();
+      }
+      catch (OperacionInvalidaException ex)
+      {
+        mensajeError = ex.Message;
+      }
+      catch (EntidadNotFoundException ex)
+      {
+        mensajeError = ex.Message;
+      }
+      catch (Exception)
+      {
+        mensajeError = "Ocurrió un error inesperado al eliminar el usuario.";
+      }
     }
+
     void AlternarPermiso(PermisoTipo tipo)
     {
         if (permisosSeleccionados.Contains(tipo))
