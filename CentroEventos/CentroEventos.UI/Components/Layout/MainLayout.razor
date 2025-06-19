@@ -2,6 +2,8 @@
 @inject IServicioSesion servicio
 @using CentroEventos.Aplicacion.Servicio
 @inject NavigationManager navegar
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -9,8 +11,16 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="#" class="navbar-brand"@onclick="IrPerfil">Perfil</a>
-           <a href="#" class="navbar-brand" @onclick="CerrarSesion">Salir</a>
+          
+            <button class="btn btn-primary m-2"@onclick="IrPerfil">
+             <span class="material-symbols-outlined" style="vertical-align: middle"margin-right: 4px;>person</span>   
+                    Perfil
+           </button>
+
+            <button class="btn btn-primary"@onclick="CerrarSesion">
+             <span class="material-symbols-outlined" style="vertical-align: middle"margin-right: 4px;">logout</span>   
+                    Salir   
+           </button>
         </div>
 
         <article class="content px-4">

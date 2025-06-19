@@ -1,11 +1,15 @@
 @page "/perfil"
-
+@using CentroEventos.Aplicacion.Servicio
+@inject IServicioSesion Servicio
 @inject NavigationManager Navegador
 @inject IServicioSesion Servicio
 @inject ModificarUsuarioUseCase ModificarUsuarioUseCase
 
 @using CentroEventos.Aplicacion.Entidades
-
+@if (!accesoPermitido)
+{
+  <p>Redirigiendo...</p>
+}
 <h1>¡Hola, @Servicio.UsuarioActual?.Nombre!</h1>
 <br>
 <h4>Modificar la información de usuario: </h4>
@@ -19,6 +23,7 @@
         text-align: left;
     }
 </style>
+
 @if (modelo != null)
 {
     <EditForm Model="modelo" OnValidSubmit="GuardarCambios">
@@ -47,8 +52,49 @@ else
 {
     <p>Cargando datos del usuario...</p>
 }
+<br>
+<h4>Permisos asignados</h4>
+
+@if (Servicio.UsuarioActual?.Permisos?.Count > 0)
+{
+    <ul class="list-unstyled">
+        @foreach (var permiso in Servicio.UsuarioActual.Permisos)
+        {
+            <li class="mb-1">
+                <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 6px;">
+                    verified_user
+                </span>
+                @permiso.Permiso?.Tipo
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No posee permisos asignados.</p>
+}
+
 
 @code {
+
+    private bool accesoPermitido;
+    private bool redirigido = false;
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !Servicio.EstaAutenticado && !redirigido)
+        {
+            redirigido = true;
+            Navegador.NavigateTo("/");
+        }
+        else if (firstRender)
+        {
+            accesoPermitido = true;
+            StateHasChanged(); // actualiza el render
+        }
+
+        return Task.CompletedTask;
+    }
     private Usuario? modelo;
 
     protected override void OnInitialized()
@@ -72,7 +118,7 @@ else
     {
         if (modelo is not null)
         {
-            ModificarUsuarioUseCase.Ejecutar(modelo, 1);
+            ModificarUsuarioUseCase.Ejecutar(modelo, Servicio.UsuarioActual!.Id);
             Servicio.IniciarSesion(modelo); // Actualiza la sesión
             Navegador.NavigateTo("/home", forceLoad: false); // o quedate en perfil si querés
         }

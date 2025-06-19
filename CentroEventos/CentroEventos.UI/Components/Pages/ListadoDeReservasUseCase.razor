@@ -7,7 +7,10 @@
 @inject ListadoReservaUseCase ListadoReservaUseCase
 @inject BajaReservaUseCase BajaReservaUseCase
 @inject NavigationManager Navegador
-
+@if (!accesoPermitido)
+{
+  <p>Redirigiendo...</p>
+}
 <DialogoConfirmacion @ref="dialogo" OnConfirmado="Eliminar"/>
 
 @if (_errores.Count > 0)
@@ -53,6 +56,25 @@
 </table>
 
 @code {
+
+    private bool accesoPermitido;
+    private bool redirigido = false;
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !Servicio.EstaAutenticado && !redirigido)
+        {
+            redirigido = true;
+            Navegador.NavigateTo("/");
+        }
+        else if (firstRender)
+        {
+            accesoPermitido = true;
+            StateHasChanged(); // actualiza el render
+        }
+
+        return Task.CompletedTask;
+    }
     List<Reserva> _lista = new List<Reserva>();
     List<string> _errores = new();
 

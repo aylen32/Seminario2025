@@ -6,6 +6,11 @@
 @inject ModificarPersonaUseCase ModificarPersonaUseCase
 @inject ObtenerPersonaUseCase ObtenerPersonaUseCase
 @inject AltaPersonaUseCase AltaPersonaUseCase
+@if(!accesoPermitido){
+  <p>
+    Redirigiendo...
+  </p>
+}
 
 @if (_mensajeErrores?.Count > 0)
 {
@@ -16,6 +21,11 @@
         }
     </ul>
 }
+ <style>
+    h3{
+      color: darkblue;
+    }
+  </style>
 
 @if (_esNuevaPersona)
 {
@@ -24,16 +34,60 @@
 else
 {
   <h3>Modificando a la Persona "@_persona.Nombre"</h3>
+ 
 }
 
-<input placeholder="Nombre" @bind="_persona.Nombre" class="form-control" />
-<input placeholder="Apellido" @bind="_persona.Apellido" class="form-control" />
-<input placeholder="DNI" @bind="_persona.DNI" class="form-control" />
-<input placeholder="Telefono" @bind="_persona.Telefono" class="form-control" />
-<input placeholder="Email" @bind="_persona.Mail" class="form-control" />
-<button class="btn btn-primary" @onclick="Aceptar">Aceptar</button>
+<div class="mb-3">
+    <label>Nombre*:</label>
+    <input placeholder="Nombre" @bind="_persona.Nombre" class="form-control" />
+</div>
+
+<div class="mb-3">
+    <label>Apellido*:</label>
+    <input placeholder="Apellido" @bind="_persona.Apellido" class="form-control" />
+</div>
+
+<div class="mb-3">
+    <label>DNI*:</label>
+    <input placeholder="DNI" @bind="_persona.DNI" class="form-control" />
+</div>
+
+<div class="mb-3">
+    <label>Teléfono</label>
+    <input placeholder="Teléfono" @bind="_persona.Telefono" class="form-control" />
+</div>
+
+<div class="mb-3">
+    <label>Email*:</label>
+    <input placeholder="Email" @bind="_persona.Mail" class="form-control" />
+</div>
+
+<button class="btn btn-primary" @onclick="Aceptar">
+    <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 4px;">add_circle</span>
+    Aceptar
+</button>
+
 
 @code {
+  
+    private bool accesoPermitido;
+    private bool redirigido = false;
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !Servicio.EstaAutenticado && !redirigido)
+        {
+            redirigido = true;
+            Navegador.NavigateTo("/");
+        }
+        else if (firstRender)
+        {
+            accesoPermitido = true;
+            StateHasChanged(); // actualiza el render
+        }
+
+        return Task.CompletedTask;
+    }
   Persona _persona = Persona.CrearNueva();
   [Parameter] public int? Id { get; set; }
   bool _esNuevaPersona = true;

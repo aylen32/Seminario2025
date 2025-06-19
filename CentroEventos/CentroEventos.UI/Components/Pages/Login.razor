@@ -16,11 +16,7 @@
 
 <link href="estilosPrueba.css" rel="stylesheet" />
 <h1 class=" titulo"> Inicio </h1>
-
-
-
-
-    <div class="contenedor-formularios">
+ <div class="contenedor-formularios">
         <ul class="contenedor-tabs">
             <li class="@((modo == "login") ? "active" : "")">
                 <a @onclick='() => modo = "login"'>Iniciar Sesión</a>
@@ -32,6 +28,12 @@
 
         @if (modo == "login")
         {
+            @if (!string.IsNullOrEmpty(mensajeError)){
+                <div class="alert alert-danger">
+                     @mensajeError
+                </div>
+            }   
+
             <EditForm Model="modeloLogin" OnValidSubmit="IniciarSesion" FormName="loginForm">
                 <div class="contenedor-input">
                     <InputText @bind-Value="modeloLogin.Correo" placeholder="Correo" />
@@ -67,24 +69,38 @@
  
 
 @code {
+    
+    private string mensajeError = "";
+
     private string modo = "login";
 
     private LoginModel modeloLogin = new();
     private RegistroModel modeloRegistro = new();
 
     void IniciarSesion()
+{
+    mensajeError = "";
+
+    var usuario = Repositorio.ObtenerTodos().FirstOrDefault(u => u.CorreoElectronico == modeloLogin.Correo);
+
+    if (usuario == null)
     {
-        var usuario = Repositorio.ObtenerTodos().FirstOrDefault(u => u.CorreoElectronico == modeloLogin.Correo);
-        if (usuario == null) return;
-
-        var hashIngresado = SHA256Helper.ComputeSHA256(modeloLogin.Contrasenia); // + usuario.Salt si corresponde
-
-        if (usuario.HashContrasenia == hashIngresado)
-        {
-            Sesion.IniciarSesion(usuario);
-            Navigation.NavigateTo("/home",  forceLoad: false);
-        }
+        mensajeError = "Correo no registrado.";
+        return;
     }
+
+    var hashIngresado = SHA256Helper.ComputeSHA256(modeloLogin.Contrasenia);
+
+    if (usuario.HashContrasenia != hashIngresado)
+    {
+        mensajeError = "Contraseña incorrecta.";
+        return;
+    }
+
+    Sesion.IniciarSesion(usuario);
+    Navigation.NavigateTo("/home", forceLoad: false);
+}
+
 
     void RegistrarUsuario()
     {

@@ -9,7 +9,10 @@
 @inject NavigationManager Navegador
 
 <DialogoConfirmacion @ref="dialogo" OnConfirmado="Eliminar"/>
-
+@if (!accesoPermitido)
+{
+    <p>Redirigiendo...</p>
+}
 @if (_mensajeErrores.Count > 0)
 {
     <div class="alert alert-danger">
@@ -58,6 +61,24 @@
 </table>
 
 @code {
+  private bool accesoPermitido;
+    private bool redirigido = false;
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !Servicio.EstaAutenticado && !redirigido)
+        {
+            redirigido = true;
+            Navegador.NavigateTo("/");
+        }
+        else if (firstRender)
+        {
+            accesoPermitido = true;
+            StateHasChanged(); // actualiza el render
+        }
+
+        return Task.CompletedTask;
+    }
     List<EventoDeportivo> _lista = new List<EventoDeportivo>();
     List<string> _mensajeErrores = new();
     protected override void OnInitialized()

@@ -1,44 +1,339 @@
 ﻿@page "/home"
+@using CentroEventos.Aplicacion.Excepciones
 @inject IServicioSesion Sesion
 @inject NavigationManager Navigation
+@inject IRepositorioReserva _reservaRepo
+@inject ListarEventosConCupoDisponibleUseCase ListarEventosConCupo
+@inject ListarAsistenciaAEventoUseCase ListarAsistencias
 
 @if (!accesoPermitido)
 {
-    <p>Redirigiendo...</p>
+    <div class="d-flex justify-content-center align-items-center vh-100">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+    </div>
 }
 else
 {
     <style>
-      h1{
-        color: navy;
-        text-align: center;
-      }
-      h3{
-        color: lightseagreen;
-        text-align: center;
-      }
+        
+        .busqueda-container {
+            max-width: 800px;
+            margin: 30px auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        
+        .form-busqueda {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .input-id {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+        
+        .btn-buscar {
+            background: #0d6efd;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .asistentes-list {
+            margin-top: 20px;
+        }
+        
+        .asistente-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .asistente-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .asistente-nombre {
+            font-weight: bold;
+        }
+        
+        .asistente-email {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        
+        .no-resultados {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            margin-top: 10px;
+        }
+         h1 {
+            color: navy;
+            text-align: center;
+        }
+        h3 {
+            color: lightseagreen;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .eventos-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .evento-card {
+            border-left: 4px solid #0d6efd;
+            margin-bottom: 15px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            background: #f8f9fa;
+        }
+        .evento-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            background: white;
+        }
+        .evento-header {
+            font-weight: bold;
+            color: #0d6efd;
+            margin-bottom: 5px;
+        }
+        .evento-fecha {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        .evento-cupo {
+            color: #198754;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+        .evento-lugar {
+            margin-top: 5px;
+            font-style: italic;
+        }
+        .btn-reservar {
+            background: #0d6efd;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+        .btn-reservar:hover {
+            background: #0b5ed7;
+        }
+        .section-title {
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .no-eventos {
+            text-align: center;
+            color: #6c757d;
+            padding: 20px;
+        }
     </style>
+
     <h1>Sistema de Gestión del Centro Deportivo Universitario</h1>
     <h3>¡Bienvenido/a, @Sesion.UsuarioActual?.Nombre!</h3>
+
+    <div class="eventos-container">
+       <h4 class="section-title">Próximos eventos con cupo disponible</h4>
+        
+        @if (eventosConCupo == null)
+        {
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando eventos...</span>
+                </div>
+            </div>
+        }
+        else if (!eventosConCupo.Any())
+        {
+            <div class="no-eventos">
+                <p>No hay eventos próximos con cupo disponible en este momento.</p>
+                <p>¡Vuelve a consultar más tarde!</p>
+            </div>
+        }
+        else
+        {
+            <div class="eventos-list">
+                @foreach (var evento in eventosConCupo)
+                {
+                    var cupoDisponible = evento.CupoMaximo - reservasPorEvento[evento.Id];
+                    
+                    <div class="evento-card">
+                        <div class="evento-header">@evento.Nombre</div>
+                        <div class="evento-fecha">
+                            @evento.FechaHoraInicio.ToString("dddd, d 'de' MMMM 'a las' HH:mm")
+                        </div>
+                        
+                        <div class="evento-cupo">
+                            Cupos disponibles: @cupoDisponible de @evento.CupoMaximo
+                        </div>
+                        <a href="/eventos/reservar/@evento.Id" class="btn-reservar">
+                            Reservar ahora
+                        </a>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+   
+
+    <div class="busqueda-container">
+        <h4 class="section-title">Verificar asistentes a eventos pasados</h4>
+        
+        <div class="form-busqueda">
+            <input type="number" class="input-id" placeholder="Ingrese ID del evento" @bind="idEventoBusqueda" />
+            <button class="btn-buscar" @onclick="BuscarAsistentes">Buscar</button>
+        </div>
+        
+        @if (buscando)
+        {
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Buscando asistentes...</span>
+                </div>
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(mensajeError))
+        {
+            <div class="error-message">@mensajeError</div>
+        }
+        else if (asistentes != null)
+        {
+            <div class="asistentes-list">
+                @if (asistentes.Any())
+                {
+                    <p>Total de asistentes: @asistentes.Count</p>
+                    @foreach (var asistente in asistentes)
+                    {
+                        <div class="asistente-item">
+                            <div class="asistente-info">
+                                <span class="asistente-nombre">@asistente.Nombre @asistente.Apellido</span>
+                                <span class="asistente-email">@asistente.Mail</span>
+                            </div>
+                            <div>
+                                <span>DNI: @asistente.DNI</span>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="no-resultados">
+                        <p>No se encontraron asistentes para este evento</p>
+                        <p>Verifique el ID o si el evento ya ha ocurrido</p>
+                    </div>
+                }
+            </div>
+        }
+    </div>
 }
 
 @code {
+
     private bool accesoPermitido;
     private bool redirigido = false;
+    private List<EventoDeportivo>? eventosConCupo;
+    private Dictionary<int, int> reservasPorEvento = new Dictionary<int, int>();
+    private int? idEventoBusqueda;
+    private List<Persona>? asistentes;
+    private bool buscando;
+    private string ?mensajeError="";
 
-    protected override Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (firstRender && !Sesion.EstaAutenticado && !redirigido)
+        if (!Sesion.EstaAutenticado)
         {
             redirigido = true;
             Navigation.NavigateTo("/");
+            return;
         }
-        else if (firstRender)
+        
+        accesoPermitido = true;
+        await CargarEventosConCupo();
+    }
+
+    private async Task CargarEventosConCupo()
+    {
+        try
         {
-            accesoPermitido = true;
-            StateHasChanged(); // actualiza el render
+            eventosConCupo = ListarEventosConCupo.Ejecutar() ?? new List<EventoDeportivo>();
+            foreach (var evento in eventosConCupo)
+            {
+
+                int reservas = ObtenerCantidadReservas(evento.Id);
+                reservasPorEvento[evento.Id] = reservas;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error cargando eventos: {ex.Message}");
+            eventosConCupo = new List<EventoDeportivo>();
+        }
+    }
+    private int ObtenerCantidadReservas(int eventoId){
+        int cant = _reservaRepo.ObtenerReservasPorEvento(eventoId).Count;
+        return cant;
+    }
+        private async Task BuscarAsistentes(){
+    
+        if (!idEventoBusqueda.HasValue || idEventoBusqueda <= 0)
+        {
+            mensajeError = "Por favor ingrese un ID de evento válido";
+            asistentes = null;
+            return;
         }
 
-        return Task.CompletedTask;
+        try
+        {
+            buscando = true;
+            mensajeError = null;
+            asistentes = null;
+            await InvokeAsync(StateHasChanged);
+            
+            asistentes = ListarAsistencias.Ejecutar(idEventoBusqueda.Value);
+        }
+        catch (EntidadNotFoundException ex)
+        {
+            mensajeError = ex.Message;
+            asistentes = null;
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error al buscar asistentes: {ex.Message}";
+            asistentes = null;
+        }
+        finally
+        {
+            buscando = false;
+        }
     }
 }

@@ -11,7 +11,7 @@ public class Reserva
     public int Id { get; set; }
     public int PersonaId {get;set;}
     public int EventoDeportivoId {get;set;}
-    public DateTime FechaAltaReserva {get;set;}
+    public DateTime FechaAltaReserva { get; set; } = DateTime.Now;
     public EstadoAsistencia Estado { get; set; } 
 
     public override string ToString()

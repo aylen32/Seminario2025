@@ -6,7 +6,10 @@
 @inject ListadoPersonasUseCase ListadoPersonasUseCase
 @inject BajaPersonaUseCase BajaPersonaUseCase
 @inject NavigationManager Navegador
-
+@if (!accesoPermitido)
+{
+    <p>Redirigiendo...</p>
+}
 <DialogoConfirmacion @ref="dialogo" OnConfirmado="Eliminar"/>
 <table class="table">
   <thead>
@@ -43,6 +46,25 @@
 </table>
 
 @code {
+    private bool accesoPermitido;
+    private bool redirigido = false;
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !Servicio.EstaAutenticado && !redirigido)
+        {
+            redirigido = true;
+            Navegador.NavigateTo("/");
+        }
+        else if (firstRender)
+        {
+            accesoPermitido = true;
+            StateHasChanged(); // actualiza el render
+        }
+
+        return Task.CompletedTask;
+    }
+
     List<Persona> _lista = new List<Persona>();
     protected override void OnInitialized()
     {
