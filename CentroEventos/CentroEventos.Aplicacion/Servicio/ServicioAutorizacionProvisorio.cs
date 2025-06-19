@@ -24,7 +24,6 @@ namespace CentroEventos.Aplicacion.Servicio
       return usuario.Permisos.Any(up => up.Permiso != null && up.Permiso.Tipo == permisoTipo);
     }
 
-
     public bool EsAdministrador(int idUsuario)
     {
         return idUsuario == 1;
