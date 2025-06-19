@@ -7,6 +7,8 @@
 @using CentroEventos.Aplicacion.Validaciones
 @using CentroEventos.Aplicacion.Enumerativos
 @using CentroEventos.Aplicacion.Hash
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components
 @inject IServicioSesion Sesion
 @inject IRepositorioUsuario Repositorio
 @inject IValidadorUsuario Validador
@@ -14,8 +16,7 @@
 @inject NavigationManager Navigation
 
 <PageTitle>Iniciar Sesión</PageTitle>
-
-<link href="estilosPrueba.css" rel="stylesheet" />
+<link href="/estilosPrueba.css"rel="stylesheet" />
 <h1 class=" titulo"> Inicio </h1>
  <div class="contenedor-formularios">
         <ul class="contenedor-tabs">
