@@ -82,7 +82,9 @@
 {
     mensajeError = "";
 
-    var usuario = Repositorio.ObtenerTodos().FirstOrDefault(u => u.CorreoElectronico == modeloLogin.Correo);
+    var usuario = Repositorio.ObtenerTodosConPermisos()
+    .FirstOrDefault(u => u.CorreoElectronico == modeloLogin.Correo);
+
 
     if (usuario == null)
     {
