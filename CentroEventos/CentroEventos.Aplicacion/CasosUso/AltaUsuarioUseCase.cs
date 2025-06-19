@@ -18,27 +18,19 @@ public class AltaUsuarioUseCase
         _autorizacion = autorizacion;
     }
 
-    public void Ejecutar(Usuario usuario, int idSolicitante)
+    public void Ejecutar(Usuario usuario)
     {
-        if (!_validador.Validar(usuario))
-            throw new ValidacionException(_validador.ObtenerError() ?? "Usuario inválido");
+      if (!_validador.Validar(usuario))
+        throw new ValidacionException(_validador.ObtenerError() ?? "Usuario inválido");
 
-        // Si no es el primer usuario, verificar permisos del solicitante
-        /*if (_repositorio.CantidadUsuariosRegistrados() > 0 &&
-            !_autorizacion.TienePermisoDeGestion(idSolicitante))
-        {
-            throw new OperacionInvalidaException("No tiene permiso para dar de alta usuarios.");
-        }*/
+      _repositorio.AgregarUsuario(usuario); 
 
-        _repositorio.AgregarUsuario(usuario);
+      if (_repositorio.CantidadUsuariosRegistrados() == 1)
+      {
+        var permisos = _repositorio.ObtenerTodosLosPermisos().ToList();
+        var lista = permisos.Select(p => new UsuarioPermiso(usuario.Id, p.Id)).ToList();
 
-        if (_repositorio.CantidadUsuariosRegistrados() == 1)
-        {
-            var permisos = _repositorio.ObtenerTodosLosPermisos()
-                .Select(p => new UsuarioPermiso(usuario.Id, p.Id))
-                .ToList();
-
-            _repositorio.AsignarPermisos(usuario.Id, permisos);
-        }
+        _repositorio.AsignarPermisos(usuario.Id, lista);
+      }
     }
 }

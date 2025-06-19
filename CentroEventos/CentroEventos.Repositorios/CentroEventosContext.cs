@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using CentroEventos.Aplicacion.Entidades;
 using CentroEventos.Aplicacion.Enumerativos;
 using Microsoft.EntityFrameworkCore;
@@ -62,19 +63,7 @@ namespace CentroEventos.Repositorios
             modelBuilder.Entity<Permiso>()
                 .Property(p => p.Tipo)
                 .HasConversion<string>();
-
-            base.OnModelCreating(modelBuilder);
-               var permisos = Enum.GetValues(typeof(PermisoTipo))
-            .Cast<PermisoTipo>()
-            .Select((tipo, index) => new Permiso
-            {
-                Id = index + 1, // Asegurate de que los IDs no se repitan
-                Tipo = tipo
-            }).ToArray();
-
-        modelBuilder.Entity<Permiso>().HasData(permisos);
-    }
-        
+        }
 
         // Método para asegurar la base y configurar journal_mode=DELETE
         public void ConfigurarJournalModeDelete()
@@ -92,7 +81,18 @@ namespace CentroEventos.Repositorios
             }
         }
         
+        public void InicializarPermisos()
+        {
+          if (!Permisos.Any())
+          {
+             var permisos = Enum.GetValues(typeof(PermisoTipo))
+            .Cast<PermisoTipo>()
+            .Select(tipo => Permiso.Crear(tipo))
+            .ToList();
 
-    }
-    
-    }
+            Permisos.AddRange(permisos);
+            SaveChanges();
+          }
+        }
+    } 
+}

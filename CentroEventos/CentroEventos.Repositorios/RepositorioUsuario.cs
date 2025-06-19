@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using CentroEventos.Aplicacion.Entidades;
 using CentroEventos.Aplicacion.Excepciones;
@@ -102,23 +103,26 @@ namespace CentroEventos.Repositorios
         }
       }
 
-      public void AsignarPermisos(int usuarioId, List<UsuarioPermiso> permisos)
-      {
-        var usuario = _context.Usuarios
-            .Include(u => u.Permisos)
-            .FirstOrDefault(u => u.Id == usuarioId);
+    public void AsignarPermisos(int usuarioId, List<UsuarioPermiso> permisos)
+    {
+      var usuario = _context.Usuarios
+      .Include(u => u.Permisos)
+      .FirstOrDefault(u => u.Id == usuarioId);
 
-        if (usuario == null)
-          return;
+      if (usuario == null) 
+      return;
+        // Primero borrá todos los permisos actuales de ese usuario
+        _context.UsuarioPermisos.RemoveRange(usuario.Permisos);
 
-        usuario.Permisos.Clear();
+        // Luego agregá explícitamente las nuevas entidades al DbSet
         foreach (var permiso in permisos)
         {
-          usuario.Permisos.Add(new UsuarioPermiso(usuarioId, permiso.PermisoId));
+          _context.UsuarioPermisos.Add(new UsuarioPermiso(usuarioId, permiso.PermisoId));
         }
 
-        _context.SaveChanges();
+       _context.SaveChanges();
       }
+
 
       public int CantidadUsuariosRegistrados() =>
           _context.Usuarios.Count();

@@ -10,6 +10,7 @@
 @inject IServicioSesion Sesion
 @inject IRepositorioUsuario Repositorio
 @inject IValidadorUsuario Validador
+@inject AltaUsuarioUseCase AltaUsuarioUseCase
 @inject NavigationManager Navigation
 
 <PageTitle>Iniciar Sesión</PageTitle>
@@ -100,7 +101,7 @@
       if (!Validador.Validar(nuevo))
         return;
 
-        Repositorio.AgregarUsuario(nuevo);
+        AltaUsuarioUseCase.Ejecutar(nuevo);
         Sesion.IniciarSesion(nuevo);
         Navigation.NavigateTo("/home",  forceLoad: false);
     }

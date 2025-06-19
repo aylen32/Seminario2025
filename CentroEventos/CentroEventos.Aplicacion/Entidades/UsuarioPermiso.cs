@@ -5,7 +5,6 @@ namespace CentroEventos.Aplicacion.Entidades;
 public class UsuarioPermiso
 {
     protected UsuarioPermiso() { }
-
     public UsuarioPermiso(int usuarioId, int permisoId)
     {
         UsuarioId = usuarioId;
