@@ -1,0 +1,113 @@
+.evento-form-container {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 25px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.evento-form-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #0F8F9D;
+}
+
+.evento-form-header h3 {
+    color: #0F8F9D;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.evento-form-group {
+    margin-bottom: 22px;
+}
+
+.evento-form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #2C3E50;
+    font-size: 1.05rem;
+}
+
+.evento-form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.evento-form-control:focus {
+    border-color: #0F8F9D;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(15, 143, 157, 0.15);
+}
+
+.evento-form-control[readonly] {
+    background-color: #f8f9fa;
+    opacity: 0.8;
+}
+
+.btn-submit-evento {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0F8F9D, #0a6c76);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+}
+
+.btn-submit-evento:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(15, 143, 157, 0.3);
+}
+
+.btn-submit-evento:active {
+    transform: translateY(0);
+}
+
+.material-symbols-outlined {
+    margin-right: 8px;
+    font-size: 1.2rem;
+}
+
+.error-container {
+    background-color: rgba(231, 76, 60, 0.1);
+    border-left: 4px solid #E74C3C;
+    border-radius: 6px;
+    padding: 15px 20px;
+    margin-bottom: 25px;
+}
+
+.error-list {
+    padding-left: 20px;
+    margin: 10px 0 0 0;
+}
+
+.error-item {
+    color: #c0392b;
+    margin: 8px 0;
+    font-weight: 500;
+}
+
+.status-loading {
+    text-align: center;
+    padding: 20px;
+    font-size: 1.1rem;
+    color: #0F8F9D;
+    font-weight: 500;
+}
+

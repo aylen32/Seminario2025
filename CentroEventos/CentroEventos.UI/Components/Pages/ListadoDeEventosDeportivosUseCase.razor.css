@@ -44,11 +44,7 @@
     min-width: 1000px;
 }
 
-.eventos-table thead {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
+
 
 .eventos-table thead tr {
     background: #0F8F9D;

@@ -9,71 +9,85 @@
 @inject ObtenerReservaUseCase ObtenerReservaUseCase
 @inject AltaReservaUseCase AltaReservaUseCase
 
-@if (!_usuarioAutenticado)
-{
-    <p>Redirigiendo...</p>
-}
+<div class="reserva-form-container">
+    @if (!_usuarioAutenticado)
+    {
+        <p class="status-loading">Redirigiendo...</p>
+    }
 
-@if (_errores.Count > 0)
-{
-    <div class="alert alert-danger">
-        <ul>
-            @foreach (var error in _errores)
-            {
-                <li>@error</li>
-            }
-        </ul>
+    @if (_errores.Count > 0)
+    {
+        <div class="error-container">
+            <strong>Se encontraron los siguientes errores:</strong>
+            <ul class="error-list">
+                @foreach (var error in _errores)
+                {
+                    <li class="error-item">@error</li>
+                }
+            </ul>
+        </div>
+    }
+
+    <div class="reserva-form-header">
+        @if (_esNuevaReserva)
+        {
+            <h3>Agregar Nueva Reserva</h3>
+            <p>Complete todos los campos requeridos (*)</p>
+        }
+        else
+        {
+            <h3>Modificar Reserva del @_reserva.FechaAltaReserva.ToString("dd/MM/yyyy")</h3>
+            <p>Actualice los campos necesarios</p>
+        }
     </div>
-}
 
-<style>
-  h3 { color: darkblue; }
-</style>
+    <div class="reserva-form-group">
+        <label class="reserva-form-label">ID de Persona*:</label>
+        <input placeholder="Ingrese el ID de la persona" 
+               @bind="_reserva.PersonaId" 
+               class="reserva-form-control" 
+               readonly="@(!_esNuevaReserva)" />
+    </div>
 
-@if (_esNuevaReserva)
-{
-    <h3>Agregando una Nueva Reserva</h3>
-}
-else
-{
-    <h3>Modificando la Reserva creada el: @_reserva.FechaAltaReserva</h3>
-}
+    <div class="reserva-form-group">
+        <label class="reserva-form-label">ID de Evento Deportivo*:</label>
+        <input placeholder="Ingrese el ID del evento" 
+               @bind="_reserva.EventoDeportivoId" 
+               class="reserva-form-control" 
+               readonly="@(!_esNuevaReserva)" />
+    </div>
 
-<div class="mb-3">
-    <label>Id de Persona*:</label>
-    <input placeholder="Id de Persona" @bind="_reserva.PersonaId" class="form-control" readonly="@(!_esNuevaReserva)" />
+    <div class="reserva-form-group">
+        <label class="reserva-form-label">Fecha de la Reserva:</label>
+        <input type="datetime-local" 
+               @bind="_reserva.FechaAltaReserva" 
+               class="reserva-form-control" 
+               readonly />
+    </div>
+
+    <div class="reserva-form-group">
+        <label class="reserva-form-label">Estado de la Reserva:</label>
+        @if (_esNuevaReserva)
+        {
+            <input class="reserva-form-control" 
+                   value="Pendiente" 
+                   readonly />
+        }
+        else
+        {
+            <select class="reserva-form-control" @bind="_reserva.Estado">
+                <option value="Pendiente">Pendiente</option>
+                <option value="Presente">Presente</option>
+                <option value="Ausente">Ausente</option>
+            </select>
+        }
+    </div>
+
+    <button class="btn-submit-reserva" @onclick="AceptarFormulario">
+        <span class="material-symbols-outlined">@(_esNuevaReserva ? "add_circle" : "save")</span>
+        @(_esNuevaReserva ? "Crear Reserva" : "Guardar Cambios")
+    </button>
 </div>
-
-<div class="mb-3">
-    <label>Id de Evento Deportivo*:</label>
-    <input placeholder="Id de Evento Deportivo" @bind="_reserva.EventoDeportivoId" class="form-control" readonly="@(!_esNuevaReserva)" />
-</div>
-
-<div class="mb-3">
-    <label>Fecha de la Reserva:</label>
-    <input placeholder="Fecha de la Reserva" @bind="_reserva.FechaAltaReserva" class="form-control" readonly />
-</div>
-
-<div class="mb-3">
-    <label>Estado de la Reserva:</label>
-    @if (_esNuevaReserva)
-    {
-        <input class="form-control" value="Pendiente" readonly />
-    }
-    else
-    {
-        <select class="form-control" @bind="_reserva.Estado">
-            <option value="Pendiente">Pendiente</option>
-            <option value="Presente">Presente</option>
-            <option value="Ausente">Ausente</option>
-        </select>
-    }
-</div>
-
-<button class="btn btn-primary" @onclick="AceptarFormulario">
-    <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 4px;">add_circle</span>
-    Aceptar
-</button>
 
 @code {
     private bool _usuarioAutenticado;
