@@ -13,19 +13,6 @@
         <p class="status-loading">Redirigiendo...</p>
     }
 
-    @if (_mensajeErrores?.Count > 0)
-    {
-        <div class="error-container">
-            <strong>Se encontraron los siguientes errores:</strong>
-            <ul class="error-list">
-                @foreach (var error in _mensajeErrores)
-                {
-                    <li class="error-item">@error</li>
-                }
-            </ul>
-        </div>
-    }
-
     <div class="evento-form-header">
         @if (_esNuevoEvento)
         {
@@ -38,6 +25,18 @@
             <p>Modifique los campos necesarios</p>
         }
     </div>
+    @if (_mensajeErrores?.Count > 0)
+    {
+        <div class="error-container">
+            <strong>Se encontraron los siguientes errores:</strong>
+            <ul class="error-list">
+                @foreach (var error in _mensajeErrores)
+                {
+                    <li class="error-item">@error</li>
+                }
+            </ul>
+        </div>
+    }
 
     <div class="evento-form-group">
         <label class="evento-form-label">Nombre del Evento*:</label>
@@ -119,7 +118,9 @@
 
     protected override void OnParametersSet()
     {
-        if (Id != null)
+      if (Id != null)
+      {
+        try
         {
             var eventoEncontrado = ObtenerEventoDeportivoUseCase.Ejecutar(Id.Value);
             if (eventoEncontrado != null)
@@ -127,34 +128,58 @@
                 _evento = eventoEncontrado;
                 _esNuevoEvento = false;
             }
+            else
+            {
+                _mensajeErrores.Add("No se encontró el evento solicitado.");
+            }
         }
-    }
+        catch (Exception)
+        {
+            _mensajeErrores.Add("Ocurrió un error al cargar los datos del evento.");
+        }
+      }
+    } 
+
 
     void ProcesarFormulario()
     {
-        _mensajeErrores.Clear();
+      _mensajeErrores.Clear();
 
-        try
-        {
-            if (_esNuevoEvento)
-                AltaEventoDeportivoUseCase.Ejecutar(_evento, Servicio.UsuarioActual!.Id);
-            else
-                ModificarEventoDeportivoUseCase.Ejecutar(_evento, Servicio.UsuarioActual!.Id);
+      try
+      {
+        if (_esNuevoEvento)
+            AltaEventoDeportivoUseCase.Ejecutar(_evento, Servicio.UsuarioActual!.Id);
+        else
+            ModificarEventoDeportivoUseCase.Ejecutar(_evento, Servicio.UsuarioActual!.Id);
 
-            _evento = EventoDeportivo.CrearNuevo();
-            ActualizarEstado();
-            Navegador.NavigateTo("ListadoEventosDeportivos");
-        }
-        catch (CentroEventos.Aplicacion.Excepciones.ValidacionException ex)
-        {
-            var msg = ex.Message;
-            _mensajeErrores = msg
-                .Split(new string[] { ". " }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(s => s.Trim() + ".")
-                .ToList();
-            ActualizarEstado();
-        }
+        _evento = EventoDeportivo.CrearNuevo();
+        Navegador.NavigateTo("ListadoEventosDeportivos");
+      }
+      catch (CentroEventos.Aplicacion.Excepciones.ValidacionException ex)
+      {
+        _mensajeErrores = ex.Message
+            .Split(new string[] { ". " }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(s => s.Trim() + ".")
+            .ToList();
+      }
+      catch (CentroEventos.Aplicacion.Excepciones.OperacionInvalidaException ex)
+      {
+        _mensajeErrores.Add(ex.Message);
+      }
+      catch (CentroEventos.Aplicacion.Excepciones.EntidadNotFoundException ex)
+      {
+        _mensajeErrores.Add(ex.Message);
+      }
+      catch (Exception)
+      {
+        _mensajeErrores.Add("Ocurrió un error inesperado al guardar el evento.");
+      }
+      finally
+      {
+        ActualizarEstado();
+      }
     }
+
 
     private void ActualizarEstado()
     {

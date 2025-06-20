@@ -13,19 +13,6 @@
         <p class="status-loading">Redirigiendo...</p>
     }
 
-    @if (_mensajeErrores?.Count > 0)
-    {
-        <div class="error-container">
-            <strong>Se encontraron los siguientes errores:</strong>
-            <ul class="error-list">
-                @foreach (var error in _mensajeErrores)
-                {
-                    <li class="error-item">@error</li>
-                }
-            </ul>
-        </div>
-    }
-
     <div class="persona-form-header">
         @if (_esNuevaPersona)
         {
@@ -38,6 +25,18 @@
             <p>Modifique los campos necesarios</p>
         }
     </div>
+    @if (_mensajeErrores?.Count > 0)
+    {
+        <div class="error-container">
+            <strong>Se encontraron los siguientes errores:</strong>
+            <ul class="error-list">
+                @foreach (var error in _mensajeErrores)
+                {
+                    <li class="error-item">@error</li>
+                }
+            </ul>
+        </div>
+    }
 
     <div class="persona-form-group">
         <label class="persona-form-label">Nombre*:</label>

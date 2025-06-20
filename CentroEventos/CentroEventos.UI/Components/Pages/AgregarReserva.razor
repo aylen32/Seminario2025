@@ -15,19 +15,6 @@
         <p class="status-loading">Redirigiendo...</p>
     }
 
-    @if (_errores.Count > 0)
-    {
-        <div class="error-container">
-            <strong>Se encontraron los siguientes errores:</strong>
-            <ul class="error-list">
-                @foreach (var error in _errores)
-                {
-                    <li class="error-item">@error</li>
-                }
-            </ul>
-        </div>
-    }
-
     <div class="reserva-form-header">
         @if (_esNuevaReserva)
         {
@@ -40,6 +27,18 @@
             <p>Actualice los campos necesarios</p>
         }
     </div>
+     @if (_errores.Count > 0)
+    {
+        <div class="error-container">
+            <strong>Se encontraron los siguientes errores:</strong>
+            <ul class="error-list">
+                @foreach (var error in _errores)
+                {
+                    <li class="error-item">@error</li>
+                }
+            </ul>
+        </div>
+    }
 
     <div class="reserva-form-group">
         <label class="reserva-form-label">ID de Persona*:</label>

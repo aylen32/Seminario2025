@@ -240,7 +240,12 @@
 
     private void ConfirmarModificacion()
     {
-        _mensajeErrores = new List<string>();
+        if (!ServicioSesion.UsuarioActual!.Permisos.Any(p => p.Permiso?.Tipo == PermisoTipo.UsuarioModificacion))
+        {
+           _mensajeErrores = new List<string>() { "No tiene permiso para modificar usuarios." };
+           StateHasChanged();
+           return;
+        }
         try
         {
             if (modelo != null)
@@ -250,7 +255,6 @@
                     modelo.HashContrasenia = SHA256Helper.ComputeSHA256(nuevaCon);
                 }
                 ModificarUsuarioUseCase.Ejecutar(modelo, ServicioSesion.UsuarioActual!.Id);
-                // No mostramos mensaje de éxito, solo limpiamos errores
                 _mensajeErrores = new List<string>();
             }
         }
