@@ -90,22 +90,13 @@
                                        @bind="nuevaCon" />
                             </div>
 
-                            @if (ServicioSesion.UsuarioActual!.Permisos.Any(p => p.Permiso?.Tipo == PermisoTipo.UsuarioModificacion))
-                            {
+
                                 <button class="btn btn-primary" type="submit">Guardar cambios</button>
-                            }
-                            else
-                            {
-                                <button disabled>Guardar cambios</button>
-                            }
-                            @if (ServicioSesion.UsuarioActual!.Permisos.Any(p => p.Permiso?.Tipo == PermisoTipo.UsuarioBaja))
-                            {
+                            
                                 <button class="btn btn-danger ms-2" type="button" @onclick="MostrarDialogoConfirmacionEliminar">Eliminar Usuario</button>
-                            }
-                            else
-                            {
-                                <button disabled class="ms-2">Eliminar Usuario</button>
-                            }
+                            
+                        
+                           
                         </EditForm>
                     </div>
                     
@@ -285,9 +276,9 @@
     }
 
     void GuardarPermisos()
-    {
+    {try{
         if (usuarioSeleccionado != null)
-        {
+        {   
             int idAdministrador = ServicioSesion.UsuarioActual!.Id;
             var listaPermisos = permisosSeleccionados.ToList();
 
@@ -295,6 +286,10 @@
 
             usuarioSeleccionado = usuarios.First(u => u.Id == usuarioSeleccionado.Id);
             StateHasChanged();
+                
+        }
+            }catch(OperacionInvalidaException ex){
+            _mensajeErrores = ParsearErrores(ex.Message); 
         }
     }
 
