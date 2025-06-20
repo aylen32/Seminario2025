@@ -4,6 +4,7 @@ using CentroEventos.Aplicacion.Enumerativos;
 using CentroEventos.Aplicacion.Servicio;
 using CentroEventos.Aplicacion.Entidades;
 namespace CentroEventos.Aplicacion.CasosUso;
+
 public class AltaEventoDeportivoUseCase
 {
     private readonly IRepositorioEventoDeportivo _repositorioEvento;
@@ -22,7 +23,7 @@ public class AltaEventoDeportivoUseCase
 
     public void Ejecutar(EventoDeportivo evento, int idUsuario)
     {
-        if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.EventoAlta))
+        if (!_autorizacion.TienePermiso(idUsuario, PermisoTipo.EventoAlta))
             throw new OperacionInvalidaException("No tiene permiso para dar de alta eventos deportivos");
 
         if (!_validadorEvento.Validar(evento))
@@ -30,4 +31,4 @@ public class AltaEventoDeportivoUseCase
 
         _repositorioEvento.AgregarEvento(evento);
     }
-} 
+}

@@ -23,7 +23,7 @@ public class ModificarUsuarioUseCase
 
         var esModificacionPropia = usuarioModificado.Id == idSolicitante;
 
-        if (!esModificacionPropia && !_autorizacion.TienePermisoDeGestion(idSolicitante))
+        if (!esModificacionPropia && !_autorizacion.TieneAlgunoPermisoGestion(idSolicitante))
         {
             throw new OperacionInvalidaException("No tiene permiso para modificar otros usuarios.");
         }

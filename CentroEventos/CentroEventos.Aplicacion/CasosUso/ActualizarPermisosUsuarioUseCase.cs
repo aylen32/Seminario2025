@@ -17,17 +17,18 @@ public class ActualizarPermisosUsuarioUseCase
 
     public void Ejecutar(int adminId, int usuarioId, List<PermisoTipo> permisosDeseados)
     {
-        if (!_autorizacion.EsAdministrador(adminId))
-            throw new OperacionInvalidaException("No tenés permiso para modificar los permisos de otros usuarios");
+        // Solo administrador o quien tenga TODOS los permisos de gestion puede modificar permisos de otros usuarios
+        if (!_autorizacion.EsAdministrador(adminId) && !_autorizacion.TieneTodosLosPermisosGestion(adminId))
+            throw new OperacionInvalidaException("No tenés permiso para modificar los permisos de otros usuarios.");
 
         var usuario = _repoUsuarios.ObtenerUsuario(usuarioId);
         if (usuario == null)
-            throw new EntidadNotFoundException("Usuario no encontrado");
+            throw new EntidadNotFoundException("Usuario no encontrado.");
 
         var permisosActuales = usuario.Permisos.Select(p => p.Permiso!.Tipo).ToHashSet();
         var permisosNuevos = permisosDeseados.ToHashSet();
 
-        var todosLosPermisos = _repoUsuarios.ObtenerTodosLosPermisos(); 
+        var todosLosPermisos = _repoUsuarios.ObtenerTodosLosPermisos();
 
         // Quitar los permisos que ya no están seleccionados
         foreach (var tipo in permisosActuales.Except(permisosNuevos))

@@ -22,19 +22,19 @@ public class ModificarEventoDeportivoUseCase
 
     public void Ejecutar(EventoDeportivo evento, int idUsuario)
     {
-        if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.EventoModificacion))
-            throw new OperacionInvalidaException("No tiene permiso para modificar eventos deportivos");
+      if (!_autorizacion.TienePermiso(idUsuario, PermisoTipo.EventoModificacion))
+        throw new OperacionInvalidaException("No tiene permiso para modificar eventos deportivos");
 
-        var eventoOriginal = _repositorioEvento.ObtenerEvento(evento.Id);
-        if (eventoOriginal == null)
-            throw new EntidadNotFoundException($"El evento con ID {evento.Id} no existe");
+      var eventoOriginal = _repositorioEvento.ObtenerEvento(evento.Id);
+      if (eventoOriginal == null)
+        throw new EntidadNotFoundException($"El evento con ID {evento.Id} no existe");
 
-        if (eventoOriginal.FechaHoraInicio < DateTime.Now)
-            throw new OperacionInvalidaException("No se puede modificar un evento deportivo que ya ocurrió");
+      if (eventoOriginal.FechaHoraInicio < DateTime.Now)
+        throw new OperacionInvalidaException("No se puede modificar un evento deportivo que ya ocurrió");
 
-        if (!_validadorEvento.Validar(evento))
-            throw new ValidacionException(_validadorEvento.ObtenerError() ?? "Error desconocido en la validación del evento");
+      if (!_validadorEvento.Validar(evento))
+        throw new ValidacionException(_validadorEvento.ObtenerError() ?? "Error desconocido en la validación del evento");
 
-        _repositorioEvento.ModificarEvento(evento.Id, evento.Nombre, evento.Descripcion, evento.FechaHoraInicio, evento.DuracionHoras, evento.CupoMaximo);
+      _repositorioEvento.ModificarEvento(evento.Id, evento.Nombre, evento.Descripcion, evento.FechaHoraInicio, evento.DuracionHoras, evento.CupoMaximo);
     }
 }

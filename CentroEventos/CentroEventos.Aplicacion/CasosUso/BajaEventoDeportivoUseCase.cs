@@ -21,7 +21,7 @@ public class BajaEventoDeportivoUseCase
   
     public void Ejecutar(int idEvento, int idUsuario)
     {
-        if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.EventoBaja))
+        if (!_autorizacion.TienePermisoBaja(idUsuario))
             throw new OperacionInvalidaException("No tiene permiso para eliminar eventos");
 
         if (!_repositorioEventoDeportivo.ExisteEventoPorId(idEvento))

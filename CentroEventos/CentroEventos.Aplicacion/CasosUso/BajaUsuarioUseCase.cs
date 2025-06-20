@@ -19,7 +19,8 @@ public class BajaUsuarioUseCase
 
     public void Ejecutar(int idUsuarioAEliminar, int idSolicitante)
     {
-        if (!_autorizacion.TienePermisoDeGestion(idSolicitante))
+        // Solo usuarios con los 3 permisos completos de gestión pueden eliminar usuarios
+        if (!_autorizacion.TieneTodosLosPermisosGestion(idSolicitante))
             throw new OperacionInvalidaException("No tiene permiso para eliminar usuarios.");
 
         if (idUsuarioAEliminar == 1)

@@ -15,7 +15,7 @@
     <div class="header text-center">
         <h1>Administración de Usuarios</h1>
     </div>
-    
+
     <div class="card-container">
         @if (!tieneAcceso)
         {
@@ -32,7 +32,7 @@
         else
         {
             <h2 class="main-title">Listado de Usuarios</h2>
-            
+
             <div class="user-select">
                 <h3 class="section-title">Seleccionar Usuario</h3>
                 <select class="select-box" @onchange="AlSeleccionarUsuario">
@@ -43,7 +43,7 @@
                     }
                 </select>
             </div>
-            
+
             @if (usuarioSeleccionado != null)
             {
                 <div>
@@ -61,73 +61,62 @@
                             </ul>
                         </div>
                     }
-                    
+
                     <div class="form-container">
                         <EditForm Model="modelo" OnValidSubmit="ConfirmarModificacion">
                             <DataAnnotationsValidator />
                             <ValidationSummary />
-                            
+
                             <div class="mb-3">
                                 <label class="form-label">Nombre:</label>
                                 <InputText class="form-control" @bind-Value="modelo!.Nombre" />
                             </div>
-                            
+
                             <div class="mb-3">
                                 <label class="form-label">Apellido:</label>
                                 <InputText class="form-control" @bind-Value="modelo.Apellido" />
                             </div>
-                            
+
                             <div class="mb-3">
                                 <label class="form-label">Correo electrónico:</label>
                                 <InputText class="form-control" @bind-Value="modelo.CorreoElectronico" />
                             </div>
-                            
+
                             <div class="mb-3 password-field">
                                 <label class="form-label">Contraseña:</label>
-                                <input type="password" 
-                                       class="form-control" 
+                                <input type="password"
+                                       class="form-control"
                                        placeholder="Dejar en blanco para no cambiar"
                                        @bind="nuevaCon" />
                             </div>
 
-                            @if (ServicioSesion.UsuarioActual!.Permisos.Any(p => p.Permiso?.Tipo == PermisoTipo.UsuarioModificacion))
-                            {
-                                <button class="btn btn-primary" type="submit">Guardar cambios</button>
-                            }
-                            else
-                            {
-                                <button disabled>Guardar cambios</button>
-                            }
-                            @if (ServicioSesion.UsuarioActual!.Permisos.Any(p => p.Permiso?.Tipo == PermisoTipo.UsuarioBaja))
-                            {
-                                <button class="btn btn-danger ms-2" type="button" @onclick="MostrarDialogoConfirmacionEliminar">Eliminar Usuario</button>
-                            }
-                            else
-                            {
-                                <button disabled class="ms-2">Eliminar Usuario</button>
-                            }
+                            <button class="btn btn-primary" type="submit">Guardar cambios</button>
+                            <button class="btn btn-danger ms-2" type="button" @onclick="MostrarDialogoConfirmacionEliminar">Eliminar Usuario</button>
                         </EditForm>
                     </div>
-                    
-                    <div class="permissions-container">
-                        <h3 class="section-title">Administración de Permisos</h3>
-                        <h4 class="sub-title">Permisos de @usuarioSeleccionado.Nombre @usuarioSeleccionado.Apellido</h4>
-                        
-                        @foreach (var tipo in Enum.GetValues<PermisoTipo>())
-                        {
-                            <div class="permission-item">
-                                <input type="checkbox"
-                                       class="form-check-input"
-                                       checked="@permisosSeleccionados.Contains(tipo)"
-                                       @onchange="() => AlternarPermiso(tipo)" />
-                                <label class="form-check-label">@tipo</label>
+
+                    @if (usuarioSeleccionado.Id != 1)
+                    {
+                        <div class="permissions-container">
+                            <h3 class="section-title">Administración de Permisos</h3>
+                            <h4 class="sub-title">Permisos de @usuarioSeleccionado.Nombre @usuarioSeleccionado.Apellido</h4>
+
+                            @foreach (var tipo in Enum.GetValues<PermisoTipo>())
+                            {
+                                <div class="permission-item">
+                                    <input type="checkbox"
+                                           class="form-check-input"
+                                           checked="@permisosSeleccionados.Contains(tipo)"
+                                           @onchange="() => AlternarPermiso(tipo)" />
+                                    <label class="form-check-label">@tipo</label>
+                                </div>
+                            }
+
+                            <div class="mt-3">
+                                <button class="btn btn-secondary" @onclick="GuardarPermisos">Guardar Cambios</button>
                             </div>
-                        }
-                        
-                        <div class="mt-3">
-                            <button class="btn btn-secondary" @onclick="GuardarPermisos">Guardar Cambios</button>
                         </div>
-                    </div>
+                    }
                 </div>
             }
         }
@@ -151,7 +140,9 @@
     {
         if (firstRender)
         {
-            if (!ServicioSesion.EstaAutenticado || !ServicioAutorizacion.EsAdministrador(ServicioSesion.UsuarioActual!.Id))
+            if (!ServicioSesion.EstaAutenticado ||
+                !(ServicioAutorizacion.EsAdministrador(ServicioSesion.UsuarioActual!.Id) ||
+                  ServicioAutorizacion.TieneAlgunoPermisoGestion(ServicioSesion.UsuarioActual.Id)))
             {
                 if (!yaRedirigio)
                 {
@@ -183,7 +174,7 @@
                 .Select(p => p.Permiso!.Tipo)
                 .ToHashSet() ?? new HashSet<PermisoTipo>();
         }
-        
+
         if (ServicioSesion.UsuarioActual is not null && usuarioSeleccionado != null)
         {
             modelo = Usuario.CrearNuevo();
@@ -212,6 +203,12 @@
 
         try
         {
+            if (!ServicioAutorizacion.TienePermisoBaja(ServicioSesion.UsuarioActual.Id))
+            {
+                _mensajeErrores = new() { "No tenés permiso para eliminar usuarios." };
+                return;
+            }
+
             BajaUsuarioUseCase.Ejecutar(usuarioSeleccionado.Id, ServicioSesion.UsuarioActual.Id);
             usuarios = ListarUsuariosUseCase.Ejecutar();
             usuarioSeleccionado = null;
@@ -220,17 +217,9 @@
             permisosSeleccionados.Clear();
             _mensajeErrores = new List<string>();
         }
-        catch (OperacionInvalidaException ex)
+        catch (Exception ex)
         {
             _mensajeErrores = ParsearErrores(ex.Message);
-        }
-        catch (EntidadNotFoundException ex)
-        {
-            _mensajeErrores = ParsearErrores(ex.Message);
-        }
-        catch (Exception)
-        {
-            _mensajeErrores = new List<string>() { "Ocurrió un error inesperado al eliminar el usuario." };
         }
         finally
         {
@@ -240,14 +229,14 @@
 
     private void ConfirmarModificacion()
     {
-        if (!ServicioSesion.UsuarioActual!.Permisos.Any(p => p.Permiso?.Tipo == PermisoTipo.UsuarioModificacion))
-        {
-           _mensajeErrores = new List<string>() { "No tiene permiso para modificar usuarios." };
-           StateHasChanged();
-           return;
-        }
         try
         {
+            if (!ServicioAutorizacion.TienePermisoModificacion(ServicioSesion.UsuarioActual!.Id))
+            {
+                _mensajeErrores = new() { "No tenés permiso para modificar usuarios." };
+                return;
+            }
+
             if (modelo != null)
             {
                 if (!string.IsNullOrWhiteSpace(nuevaCon))
@@ -258,17 +247,9 @@
                 _mensajeErrores = new List<string>();
             }
         }
-        catch (ValidacionException ex)
+        catch (Exception ex)
         {
             _mensajeErrores = ParsearErrores(ex.Message);
-        }
-        catch (OperacionInvalidaException ex)
-        {
-            _mensajeErrores = ParsearErrores(ex.Message);
-        }
-        catch (Exception)
-        {
-            _mensajeErrores = new List<string>() { "Ocurrió un error inesperado al modificar el usuario." };
         }
         finally
         {
@@ -288,12 +269,23 @@
     {
         if (usuarioSeleccionado != null)
         {
-            int idAdministrador = ServicioSesion.UsuarioActual!.Id;
-            var listaPermisos = permisosSeleccionados.ToList();
+            if (!ServicioAutorizacion.TieneTodosLosPermisosGestion(ServicioSesion.UsuarioActual!.Id)
+                && !ServicioAutorizacion.EsAdministrador(ServicioSesion.UsuarioActual.Id))
+            {
+                _mensajeErrores = new() { "No tenés permiso para modificar los permisos de otros usuarios." };
+                return;
+            }
 
-            ActualizarPermisosUseCase.Ejecutar(idAdministrador, usuarioSeleccionado.Id, listaPermisos);
-
-            usuarioSeleccionado = usuarios.First(u => u.Id == usuarioSeleccionado.Id);
+            try
+            {
+                ActualizarPermisosUseCase.Ejecutar(ServicioSesion.UsuarioActual.Id, usuarioSeleccionado.Id, permisosSeleccionados.ToList());
+                usuarioSeleccionado = usuarios.First(u => u.Id == usuarioSeleccionado.Id);
+                _mensajeErrores = new List<string>();
+            }
+            catch (Exception ex)
+            {
+                _mensajeErrores = ParsearErrores(ex.Message);
+            }
             StateHasChanged();
         }
     }

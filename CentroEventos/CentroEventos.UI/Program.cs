@@ -57,7 +57,7 @@ builder.Services.AddScoped<ListarAsistenciaAEventoUseCase>();
 
 
 //Servicio Autorizacion y sesion
-builder.Services.AddScoped<IServicioAutorizacion, ServicioAutorizacionProvisorio>();
+builder.Services.AddScoped<IServicioAutorizacion, ServicioAutorizacion>();
 builder.Services.AddScoped<IServicioSesion, ServicioSesion>();
 
 //Validadores

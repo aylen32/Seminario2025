@@ -23,7 +23,7 @@ public class AltaReservaUseCase
 
     public void Ejecutar(Reserva reserva, int idUsuario)
     {
-        if (!_autorizacion.PoseeElPermiso(idUsuario, PermisoTipo.ReservaAlta))
+        if (!_autorizacion.TienePermiso(idUsuario, PermisoTipo.ReservaAlta))
             throw new OperacionInvalidaException("No tiene permiso para dar de alta reservas");
 
         if (!_validadorReserva.ValidarParaAlta(reserva))
