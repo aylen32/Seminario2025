@@ -21,14 +21,19 @@
         <p>Administra todos los eventos deportivos del sistema</p>
     </div>
     
-    @if (_mensajesDeError.Count > 0)
+    @if (_mensajesDeError?.Count > 0)
     {
-        <div class="error-list">
+        <div class="error-container alert alert-danger mt-2">
+        <strong>Se encontraron los siguientes errores:</strong>
+        <ul class="error-list mb-0">
             @foreach (var error in _mensajesDeError)
             {
-                <div class="error-item">@error</div>
+                <li class="error-item">@error</li>
             }
+        </ul>
         </div>
+    }
+
     }
 
     <div class="eventos-card">
