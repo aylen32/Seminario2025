@@ -151,7 +151,7 @@
     {
         if (firstRender)
         {
-            if (!ServicioSesion.EstaAutenticado || !ServicioAutorizacion.EsAdministrador(ServicioSesion.UsuarioActual!.Id))
+            if (!ServicioSesion.EstaAutenticado)
             {
                 if (!yaRedirigio)
                 {

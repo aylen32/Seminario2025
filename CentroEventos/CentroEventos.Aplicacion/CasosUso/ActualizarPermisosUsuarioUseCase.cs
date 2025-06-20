@@ -17,7 +17,7 @@ public class ActualizarPermisosUsuarioUseCase
 
     public void Ejecutar(int adminId, int usuarioId, List<PermisoTipo> permisosDeseados)
     {
-        if (!_autorizacion.EsAdministrador(adminId))
+        if (!_autorizacion.PoseeElPermiso(adminId,PermisoTipo.UsuarioModificacion))
             throw new OperacionInvalidaException("No tenés permiso para modificar los permisos de otros usuarios");
 
         var usuario = _repoUsuarios.ObtenerUsuario(usuarioId);
