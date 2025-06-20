@@ -30,9 +30,9 @@
 
         @if (modo == "login")
         {
-            @if (!string.IsNullOrEmpty(mensajeError)){
+            @if (!string.IsNullOrEmpty(mensajeErrorLogin)){
                 <div class="alert alert-danger">
-                     @mensajeError
+                     @mensajeErrorLogin
                 </div>
             }   
 
@@ -48,18 +48,22 @@
         }
         else
         {
+            @if (!string.IsNullOrEmpty(mensajeErrorRegis))
+            {
+                <div class="alert alert-danger">@mensajeErrorRegis</div>
+            }
             <EditForm Model="modeloRegistro" OnValidSubmit="RegistrarUsuario"FormName="registroForm">
-    <div class="fila-inputs">
-        <div class="contenedor-input">
-            <InputText @bind-Value="modeloRegistro.Nombre" placeholder="Nombre"/>
-        </div>
-        <div class="contenedor-input">
+            <div class="fila-inputs">
+                 <div class="contenedor-input">
+                    <InputText @bind-Value="modeloRegistro.Nombre" placeholder="Nombre"/>
+                </div>
+            <div class="contenedor-input">
             <InputText @bind-Value="modeloRegistro.Apellido" placeholder="Apellido" />
-        </div>
-    </div>
-    <div class="contenedor-input">
-        <InputText @bind-Value="modeloRegistro.CorreoElectronico" placeholder="Correo" />
-    </div>
+            </div>
+            </div>
+            <div class="contenedor-input">
+            <InputText @bind-Value="modeloRegistro.CorreoElectronico" placeholder="Correo" />
+         </div>
     <div class="contenedor-input">
         <InputText @bind-Value="modeloRegistro.Contrasenia" placeholder="Contraseña" type="password" />
     </div>
@@ -72,8 +76,8 @@
 
 @code {
     
-    private string mensajeError = "";
-
+    private string mensajeErrorLogin = "";
+    private string mensajeErrorRegis = "";
     private string modo = "login";
 
     private LoginModel modeloLogin = new();
@@ -81,7 +85,7 @@
 
     void IniciarSesion()
 {
-    mensajeError = "";
+    mensajeErrorLogin = "";
 
     var usuario = Repositorio.ObtenerTodosConPermisos()
     .FirstOrDefault(u => u.CorreoElectronico == modeloLogin.Correo);
@@ -89,7 +93,7 @@
 
     if (usuario == null)
     {
-        mensajeError = "Correo no registrado.";
+        mensajeErrorLogin = "Correo no registrado.";
         return;
     }
 
@@ -97,7 +101,7 @@
 
     if (usuario.HashContrasenia != hashIngresado)
     {
-        mensajeError = "Contraseña incorrecta.";
+        mensajeErrorLogin = "Contraseña incorrecta.";
         return;
     }
 
@@ -108,6 +112,30 @@
 
     void RegistrarUsuario()
     {
+        if (string.IsNullOrWhiteSpace(modeloRegistro.Contrasenia))
+    {
+        mensajeErrorRegis = "La contraseña no puede estar vacía.";
+        modo = "registro"; 
+        return;
+    }
+        if (string.IsNullOrWhiteSpace(modeloRegistro.Nombre))
+    {
+        mensajeErrorRegis = "El nombre no puede estar vacío.";
+        modo = "registro"; 
+        return;
+    }
+        if (string.IsNullOrWhiteSpace(modeloRegistro.Apellido))
+    {
+        mensajeErrorRegis = "El apellido no puede estar vacío.";
+        modo = "registro"; 
+        return;
+    }
+        if (string.IsNullOrWhiteSpace(modeloRegistro.CorreoElectronico))
+    {
+        mensajeErrorRegis = "La dirección de correo no puede estar vacía.";
+        modo = "registro"; 
+        return;
+    }
     
       var hash = SHA256Helper.ComputeSHA256(modeloRegistro.Contrasenia);
 

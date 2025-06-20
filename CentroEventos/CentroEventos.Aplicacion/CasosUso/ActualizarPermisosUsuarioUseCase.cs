@@ -21,6 +21,7 @@ public class ActualizarPermisosUsuarioUseCase
         if (!_autorizacion.EsAdministrador(adminId) && !_autorizacion.TieneTodosLosPermisosGestion(adminId))
             throw new OperacionInvalidaException("No tenés permiso para modificar los permisos de otros usuarios.");
 
+
         var usuario = _repoUsuarios.ObtenerUsuario(usuarioId);
         if (usuario == null)
             throw new EntidadNotFoundException("Usuario no encontrado.");

@@ -27,7 +27,7 @@ public class ListarAsistenciaAEventoUseCase
         var personas = new List<Persona>();
         foreach (Reserva reserva in _repositorioReserva.ObtenerReservasPorEvento(id))
         {
-            if (reserva.Estado == EstadoAsistencia.Presente)
+            if ((_repositorioEvento?.ObtenerEvento(id)?.FechaHoraInicio<DateTime.Now)&&(reserva.Estado == EstadoAsistencia.Presente))
             {
                 Persona ? persona = _repositorioPersona.ObtenerPersona(reserva.PersonaId);
                 if (persona != null)
