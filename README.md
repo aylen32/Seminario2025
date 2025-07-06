@@ -1,9 +1,5 @@
 # Seminario2025
-Proyecto entregable de Seminario de Lenguajes opción .NET  1er Semestre - 2025
-Adjunto el PDF con el enunciado.
-El proyecto será programado e C#, con el entorno .NET 8.0
-Voy a agregar un resumen de ejemplo de trabajo en git:
+Proyecto entregable de Seminario de Lenguajes opción .NET  1er Semestre - 2025 UNLP
 
-1. Antes de comenzar a trabajar, ir a GitHub Desktop.
-2. Hacer clic en "Fetch origin" para ver si hay cambios nuevos.
-3. Si hay cambios, hacer clic en "Pull origin" para descargarlos a su copia local.
+El proyecto será programado e C#, con el entorno .NET 8.0
+
